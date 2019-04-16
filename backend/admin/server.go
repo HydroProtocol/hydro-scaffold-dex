@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/models"
+	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/connection"
@@ -27,7 +27,7 @@ func GetOrdersHandler(e echo.Context) error {
 		MarketID string `json:"marketID" query:"marketID" validate:"required"`
 		Status   string `json:"status"   query:"status"`
 		Offset   int    `json:"offset"   query:"offset"`
-		limit    int    `json:"limit "   query:"limit"`
+		Limit    int    `json:"Limit "   query:"Limit"`
 	}
 
 	var orders []*models.Order
@@ -35,7 +35,7 @@ func GetOrdersHandler(e echo.Context) error {
 	var err error
 	err = e.Bind(req)
 	if err == nil {
-		count, orders = models.OrderDao.FindByAccount(req.Account, req.MarketID, req.Status, req.Offset, req.limit)
+		count, orders = models.OrderDao.FindByAccount(req.Account, req.MarketID, req.Status, req.Offset, req.Limit)
 	}
 
 	return response(e, map[string]interface{}{"count": count, "orders": orders}, err)
@@ -68,11 +68,14 @@ func DeleteOrderHandler(e echo.Context) error {
 	return response(e, nil, err)
 }
 
-func EditMarketHandler(e echo.Context) error {
+func EditMarketHandler(e echo.Context) (err error) {
 	market := &models.Market{}
-	e.Bind(market)
+	err = e.Bind(market)
+	if err != nil {
+		return response(e, nil, err)
+	}
+
 	dbMarket := models.MarketDao.FindMarketByID(market.ID)
-	var err error
 	if dbMarket != nil {
 		err = fmt.Errorf("cannot find market by ID %s", market.ID)
 	} else {
@@ -82,11 +85,14 @@ func EditMarketHandler(e echo.Context) error {
 	return response(e, nil, err)
 }
 
-func CreateMarketHandler(e echo.Context) error {
+func CreateMarketHandler(e echo.Context) (err error) {
 	market := &models.Market{}
-	e.Bind(market)
+	err = e.Bind(market)
+	if err != nil {
+		return response(e, nil, err)
+	}
 
-	err := models.MarketDao.InsertMarket(market)
+	err = models.MarketDao.InsertMarket(market)
 	return response(e, nil, err)
 }
 

@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/models"
+	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"net/url"
 )
@@ -67,7 +67,7 @@ func (a *Admin) ListAccountOrders(reqData string) (err error) {
 		MarketID string `json:"market_id"`
 		Status   string `json:"status"`
 		Offset   int    `json:"offset"`
-		Limit    int    `json:"limit"`
+		Limit    int    `json:"Limit"`
 	}{}
 
 	err = json.Unmarshal([]byte(reqData), &req)
@@ -79,7 +79,7 @@ func (a *Admin) ListAccountOrders(reqData string) (err error) {
 	params = append(params, utils.KeyValue{Key: "marketID", Value: req.MarketID})
 	params = append(params, utils.KeyValue{Key: "status", Value: req.Status})
 	params = append(params, utils.KeyValue{Key: "offset", Value: fmt.Sprintf("%d", req.Offset)})
-	params = append(params, utils.KeyValue{Key: "limit", Value: fmt.Sprintf("%d", req.Limit)})
+	params = append(params, utils.KeyValue{Key: "Limit", Value: fmt.Sprintf("%d", req.Limit)})
 
 	err, _, _ = a.client.Get(a.ListOrderUrl, params, nil, nil)
 	return
