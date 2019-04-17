@@ -5,5 +5,9 @@ import (
 )
 
 func TestCli(t *testing.T) {
-	process([]string{"admin", "nmt", "hello"})
+	app := newDexCli()
+	app.Run([]string{"hydro-dex-cli", "market"})
+	app.Run([]string{"hydro-dex-cli", "address"})
+	app.Run([]string{"hydro-dex-cli", "engine"})
+	app.Run([]string{"hydro-dex-cli", "status"})
 }

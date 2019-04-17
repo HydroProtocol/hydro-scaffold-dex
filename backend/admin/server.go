@@ -10,6 +10,7 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/shopspring/decimal"
 	"net/http"
 	"time"
 )
@@ -19,9 +20,74 @@ func loadRoutes(e *echo.Echo) {
 	e.Add("PUT", "/markets", EditMarketHandler)
 	e.Add("DELETE", "/orders/:orderID", DeleteOrderHandler)
 	e.Add("GET", "/orders", GetOrdersHandler)
+	e.Add("GET", "/trades", GetTradesHandler)
+	e.Add("GET", "/balances", GetBalancesHandler)
+	e.Add("GET", "/status", GetStatusHandler)
+	e.Add("POST", "/restart_engine", RestartEngineHandler)
 }
 
-func GetOrdersHandler(e echo.Context) error {
+func RestartEngineHandler(e echo.Context) (err error) {
+
+	return
+}
+
+func GetStatusHandler(e echo.Context) (err error) {
+
+	return
+}
+
+func GetBalancesHandler(e echo.Context) (err error) {
+	var req struct {
+		Address string `json:"address" query:"address" validate:"required"`
+		Limit   string `json:"limit"`
+		Offset  string `json:"offset"`
+	}
+
+	var resp []struct {
+		Symbol        string          `json:"symbol"`
+		LockedBalance decimal.Decimal `json:"lockedBalance"`
+	}
+
+	err = e.Bind(req)
+	if err == nil {
+		tokens := models.TokenDao.GetAllTokens()
+
+		for _, token := range tokens {
+			lockedBalance := models.BalanceDao.GetByAccountAndSymbol(req.Address, token.Symbol, token.Decimals)
+			resp = append(resp, struct {
+				Symbol        string          `json:"symbol"`
+				LockedBalance decimal.Decimal `json:"lockedBalance"`
+			}{
+				Symbol:        token.Symbol,
+				LockedBalance: lockedBalance,
+			},
+			)
+		}
+	}
+
+	return response(e, map[string]interface{}{"balances": resp}, err)
+}
+
+func GetTradesHandler(e echo.Context) (err error) {
+	var req struct {
+		Address  string `json:"address"  query:"address" validate:"required"`
+		MarketID string `json:"marketID" query:"marketID" validate:"required"`
+		Status   string `json:"status"   query:"status"`
+		Offset   int    `json:"offset"   query:"offset"`
+		Limit    int    `json:"Limit "   query:"Limit"`
+	}
+
+	var trades []*models.Trade
+	var count int64
+	err = e.Bind(req)
+	if err == nil {
+		count, trades = models.TradeDao.FindAccountMarketTrades(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
+	}
+
+	return response(e, map[string]interface{}{"count": count, "trades": trades}, err)
+}
+
+func GetOrdersHandler(e echo.Context) (err error) {
 	var req struct {
 		Account  string `json:"account"  query:"account" validate:"required"`
 		MarketID string `json:"marketID" query:"marketID" validate:"required"`
@@ -32,7 +98,7 @@ func GetOrdersHandler(e echo.Context) error {
 
 	var orders []*models.Order
 	var count int64
-	var err error
+
 	err = e.Bind(req)
 	if err == nil {
 		count, orders = models.OrderDao.FindByAccount(req.Account, req.MarketID, req.Status, req.Offset, req.Limit)
@@ -41,9 +107,9 @@ func GetOrdersHandler(e echo.Context) error {
 	return response(e, map[string]interface{}{"count": count, "orders": orders}, err)
 }
 
-func DeleteOrderHandler(e echo.Context) error {
+func DeleteOrderHandler(e echo.Context) (err error) {
 	orderID := e.Param("orderID")
-	var err error
+
 	if orderID == "" {
 		err = fmt.Errorf("orderID is blank, check param")
 	} else {
