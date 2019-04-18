@@ -10,7 +10,7 @@ services:
     restart: on-failure:5
   ethereum-node:
     container_name: hydro-box-dex-ethereum-node
-    image: hydroprotocolio/ethereum-test-node:latest
+    image: hydroprotocolio/hydro-box-dex-ethereum-node:latest
     ports:
       - 8545:8545
     restart: on-failure:5
