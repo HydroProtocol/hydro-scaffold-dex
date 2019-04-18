@@ -1,4 +1,4 @@
-package augur_engine
+package dex_engine
 
 import (
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
