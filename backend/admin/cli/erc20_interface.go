@@ -1,4 +1,4 @@
-package main
+package cli
 
 //TODO move to backend sdk
 type Erc20 interface {
