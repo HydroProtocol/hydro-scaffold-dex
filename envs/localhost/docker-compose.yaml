@@ -19,6 +19,7 @@ services:
     container_name: hydro-box-dex-db
     volumes:
       - datavolume:/data
+      - ${PWD}/envs/localhost/seed.sql:/db/seed.sql
     command: sh -c "cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3.db"
   web:
     image: hydroprotocolio/hydro-box-dex-web:latest
