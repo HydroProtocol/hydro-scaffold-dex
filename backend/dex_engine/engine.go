@@ -44,7 +44,7 @@ type RedisOrderBookActivitiesHandler struct {
 
 func (handler RedisOrderBookActivitiesHandler) Update(webSocketMessages []common.WebSocketMessage) sync.WaitGroup {
 	for _, msg := range webSocketMessages {
-		if strings.HasPrefix(msg.ChannelID, "MarketID#") {
+		if strings.HasPrefix(msg.ChannelID, "Market#") {
 			pushMessage(msg)
 		}
 	}
