@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/HydroProtocol/hydro-sdk-backend/models"
+	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
