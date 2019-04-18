@@ -56,7 +56,10 @@ func (s *marketHandlerSuite) SetupTest() {
 		GasUsedEstimation:  250000,
 	}
 
-	_ = models.MarketDao.InsertMarket(market)
+	err := models.MarketDao.InsertMarket(market)
+	if err != nil {
+		panic(err)
+	}
 
 	token := &models.Token{
 		Name:     "HOT",
@@ -76,6 +79,8 @@ func (s *marketHandlerSuite) SetupTest() {
 	marketHotDai := models.MarketHotDai()
 	marketHandler, _ := NewMarketHandler(context.Background(), kvStore, marketHotDai, engine.NewEngine(context.Background()))
 	s.marketHandler = marketHandler
+
+	s.marketHandler.hydroEngine.RegisterOrderBookActivitiesHandler(RedisOrderBookActivitiesHandler{})
 }
 
 func (s *marketHandlerSuite) TearDownTest() {
@@ -113,7 +118,7 @@ type batchMatchOrdersTest struct {
 	expectedTradesCount       int
 	expectedTransactionsCount int
 
-	whenPedding *expectedResult
+	whenPending *expectedResult
 	whenSuccess *expectedResult
 	whenFailed  *expectedResult
 
@@ -167,7 +172,7 @@ func (s *marketHandlerSuite) newBatchMatchOrdersTest(
 	makerOrdersParams []*buildOrderParams,
 	expectedTradesCount int,
 	expectedTransactionsCount int,
-	whenPedding *expectedResult,
+	whenPending *expectedResult,
 	whenSuccess *expectedResult,
 	whenFailed *expectedResult,
 ) {
@@ -176,7 +181,7 @@ func (s *marketHandlerSuite) newBatchMatchOrdersTest(
 		makerOrdersParams,
 		expectedTradesCount,
 		expectedTransactionsCount,
-		whenPedding,
+		whenPending,
 		whenSuccess,
 		whenFailed,
 		nil,
@@ -188,12 +193,12 @@ func (s *marketHandlerSuite) newBatchMatchOrdersTest(
 
 func (s *marketHandlerSuite) batchNewOrderTest(b *batchMatchOrdersTest) {
 	b.Reset()
-	s.batchNewOrderTestPenddingPart(b)
+	s.batchNewOrderTestPendingPart(b)
 
 	if b.whenSuccess != nil {
 		s.SetupTest()
 		b.Reset()
-		_, launchLog := s.batchNewOrderTestPenddingPart(b)
+		_, launchLog := s.batchNewOrderTestPendingPart(b)
 		hash := "fake-success"
 		launchLog.Hash = sql.NullString{
 			hash,
@@ -212,7 +217,7 @@ func (s *marketHandlerSuite) batchNewOrderTest(b *batchMatchOrdersTest) {
 	if b.whenFailed != nil {
 		s.SetupTest()
 		b.Reset()
-		_, launchLog := s.batchNewOrderTestPenddingPart(b)
+		_, launchLog := s.batchNewOrderTestPendingPart(b)
 		hash := "fake-failed"
 		launchLog.Hash = sql.NullString{
 			hash,
@@ -263,6 +268,12 @@ func (s *marketHandlerSuite) assertExpectedResult(b *batchMatchOrdersTest, resul
 				Payload:   payload,
 			}
 
+			//expectedMsg, _ := json.Marshal(msg)
+			//log.Println("msg expected:", string(expectedMsg))
+			//for _, real := range queueBuffers {
+			//	log.Println(" == ", string(real))
+			//}
+
 			msgBytes, _ := json.Marshal(msg)
 			s.True(contains(queueBuffers, msgBytes), fmt.Sprintf("msg %s not exist", msgBytes))
 		}
@@ -270,8 +281,8 @@ func (s *marketHandlerSuite) assertExpectedResult(b *batchMatchOrdersTest, resul
 
 	assertHasOrderChangeMsgFunc := func(order *models.Order) {
 		msg := common.WebSocketMessage{
-			common.GetAccountChannelID(order.TraderAddress),
-			&common.WebsocketOrderChangePayload{
+			ChannelID: common.GetAccountChannelID(order.TraderAddress),
+			Payload: &common.WebsocketOrderChangePayload{
 				Type:  common.WsTypeOrderChange,
 				Order: order,
 			},
@@ -288,7 +299,7 @@ func (s *marketHandlerSuite) assertExpectedResult(b *batchMatchOrdersTest, resul
 	}
 }
 
-func (s *marketHandlerSuite) batchNewOrderTestPenddingPart(b *batchMatchOrdersTest) (*models.Transaction, *models.LaunchLog) {
+func (s *marketHandlerSuite) batchNewOrderTestPendingPart(b *batchMatchOrdersTest) (*models.Transaction, *models.LaunchLog) {
 	oldTradesCount := models.TradeDao.Count()
 	oldTransactionsCount := models.TransactionDao.Count()
 
@@ -314,11 +325,46 @@ func (s *marketHandlerSuite) batchNewOrderTestPenddingPart(b *batchMatchOrdersTe
 	s.Equal(b.expectedTradesCount, newTradesCount-oldTradesCount)
 	s.Equal(b.expectedTransactionsCount, newTransactionsCount-oldTransactionsCount)
 
-	if b.whenPedding != nil {
-		s.assertExpectedResult(b, b.whenPedding)
+	if b.whenPending != nil {
+		s.assertExpectedResult(b, b.whenPending)
 	}
 
 	return transaction, launchLog
+}
+
+func (s *marketHandlerSuite) TestMatchOrders0() {
+	s.newBatchMatchOrdersTest(
+		&buildOrderParams{"sell", "140", "100"},
+		[]*buildOrderParams{
+			{"buy", "140", "140"},
+		},
+		1,
+		1,
+		&expectedResult{
+			[][]string{
+				{"0", "100", "0", "0"},
+				{"40", "100", "0", "0"},
+			},
+			[]string{common.ORDER_PENDING, common.ORDER_PENDING},
+
+			[]*common.WebsocketMarketOrderChangePayload{
+				{
+					"buy",
+					1,
+					"140",
+					"140",
+				},
+				{
+					"buy",
+					2,
+					"140",
+					"-100",
+				},
+			},
+		},
+		nil,
+		nil,
+	)
 }
 
 // 1 v 1
@@ -328,7 +374,7 @@ func (s *marketHandlerSuite) TestMatchOrders1() {
 	s.newBatchMatchOrdersTest(
 		&buildOrderParams{"sell", "140", "100"},
 		[]*buildOrderParams{
-			&buildOrderParams{"buy", "140", "140"},
+			{"buy", "140", "140"},
 		},
 		1,
 		1,

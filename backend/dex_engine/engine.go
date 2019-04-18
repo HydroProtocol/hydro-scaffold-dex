@@ -12,6 +12,7 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/go-redis/redis"
 	"github.com/labstack/gommon/log"
+	"strings"
 	"sync"
 )
 
@@ -43,10 +44,9 @@ type RedisOrderBookActivitiesHandler struct {
 
 func (handler RedisOrderBookActivitiesHandler) Update(webSocketMessages []common.WebSocketMessage) sync.WaitGroup {
 	for _, msg := range webSocketMessages {
-		//body, _ := json.Marshal(msg)
-		//log.Print("push msg:", string(body))
-
-		pushMessage(msg)
+		if strings.HasPrefix(msg.ChannelID, "MarketID#") {
+			pushMessage(msg)
+		}
 	}
 
 	return sync.WaitGroup{}

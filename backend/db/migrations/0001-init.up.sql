@@ -9,19 +9,9 @@ create table tokens(
 );
 create unique index idx_tokens_address on tokens (address);
 
-create table augur_markets(
-  id integer primary key AUTOINCREMENT,
-  category text not null,
-  title text not null,
-  description text not null,
-  address text not null,
-  author text not null
-);
-
 -- markets table
 create table markets(
  id text primary key,
- augur_market_id integer not null,
  base_token_address text not null,
  base_token_decimals text not null,
  base_token_symbol text not null,
