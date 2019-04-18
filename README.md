@@ -60,7 +60,11 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 
     This will show each service running status.
 
-1.  View logs
+1. Operate your dex
+
+    See [admin cli manual](./manual/admin-api-and-cli.md).
+
+2.  View logs
 
         # view logs of the service that defined in docker-compose.yml services
         # e.g. view watcher log
@@ -70,7 +74,7 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 
     This will show logs of the service which you point.
 
-1.  Stop
+3.  Stop
 
         docker-compose stop
 
