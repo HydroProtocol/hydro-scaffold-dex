@@ -1,1 +1,1 @@
-docker-compose/localhost.yaml
+envs/localhost/docker-compose.yaml

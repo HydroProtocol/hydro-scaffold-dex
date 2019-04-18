@@ -1,0 +1,122 @@
+version: "3"
+volumes:
+  datavolume: {}
+services:
+  redis:
+    container_name: hydro-box-dex-redis
+    image: redis:5.0
+    ports:
+      - 6379:6379
+    restart: on-failure:5
+  ethereum-node:
+    container_name: hydro-box-dex-ethereum-node
+    image: hydroprotocolio/ethereum-test-node:latest
+    ports:
+      - 8545:8545
+    restart: on-failure:5
+  db:
+    image: hydroprotocolio/hydro-box-dex-backend:latest
+    container_name: hydro-box-dex-db
+    volumes:
+      - datavolume:/data
+    command: sh -c "cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3.db"
+  web:
+    image: hydroprotocolio/hydro-box-dex-web:latest
+    container_name: hydro-box-dex-web
+    ports:
+      - 3000:8043
+    environment:
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE
+      - REACT_APP_API_URL=http://localhost:3001
+      - REACT_APP_WS_URL=ws://localhost:3002
+      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deEd90825564
+      - REACT_APP_HYDRO_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
+      - REACT_APP_HYDRO_PROXY_MODE=deposit
+    restart: on-failure:5
+  api:
+    image: hydroprotocolio/hydro-box-dex-backend:latest
+    container_name: hydro-box-dex-api
+    command: /bin/api
+    ports:
+      - 3001:3001
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deEd90825564
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
+      - HSK_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
+      - HSK_PROXY_MODE=deposit
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+      - redis
+      - ethereum-node
+    restart: on-failure:5
+  ws:
+    image: hydroprotocolio/hydro-box-dex-backend:latest
+    container_name: hydro-box-dex-ws
+    command: /bin/websocket
+    ports:
+      - 3002:3002
+    environment:
+      - HSK_API_URL=http://api:3001
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - api
+    restart: on-failure:5
+  watcher:
+    image: hydroprotocolio/hydro-box-dex-backend:latest
+    container_name: hydro-box-dex-watcher
+    command: /bin/watcher
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - ethereum-node
+      - db
+  engine:
+    image: hydroprotocolio/hydro-box-dex-backend:latest
+    container_name: hydro-box-dex-engine
+    command: /bin/engine
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - HSK_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - db
+    restart: on-failure:5
+  launcher:
+    image: hydroprotocolio/hydro-box-dex-backend:latest
+    container_name: hydro-box-dex-launcher
+    command: /bin/launcher
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
+      - HSK_RELAYER_PK=95b0a982c0dfc5ab70bf915dcf9f4b790544d25bc5e6cff0f38a59d0bba58651
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - ethereum-node
+      - db
+    restart: on-failure:5
