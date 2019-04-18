@@ -1,0 +1,37 @@
+@import '../../styles/variables.scss';
+
+.trade {
+    .trade-tab {
+        border: 0;
+        padding: 12px;
+        background: $backgroundGrey;
+        border-bottom: 1px solid $borderGrey;
+        cursor: pointer;
+        &:first-child {
+            border-left: 1px solid $borderGrey;
+        }
+        &.active {
+            background: $white;
+            border-bottom: 0;
+        }
+    }
+    .form-title {
+        color: $black;
+        font-size: 16px;
+    }
+    .list {
+        margin-top: 8px;
+        .item {
+            padding: 2px 0;
+        }
+    }
+    .input-group {
+        display: flex;
+        align-items: center;
+        position: relative;
+        .unit {
+            position: absolute;
+            right: 12px;
+        }
+    }
+}
