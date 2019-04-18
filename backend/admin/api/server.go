@@ -1,12 +1,12 @@
-package main
+package api
 
 import (
 	"context"
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
+	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -14,6 +14,9 @@ import (
 	"net/http"
 	"time"
 )
+
+var queueService common.IQueue
+var healthCheckService IHealthCheckMonitor
 
 func loadRoutes(e *echo.Echo) {
 	e.Add("POST", "/markets", CreateMarketHandler)
@@ -27,13 +30,23 @@ func loadRoutes(e *echo.Echo) {
 }
 
 func RestartEngineHandler(e echo.Context) (err error) {
-
-	return
+	return response(e, map[string]interface{}{
+		"web":       healthCheckService.CheckWeb(),
+		"api":       healthCheckService.CheckApi(),
+		"engine":    healthCheckService.CheckEngine(),
+		"watcher":   healthCheckService.CheckWatcher(),
+		"launcher":  healthCheckService.CheckLauncher(),
+		"websocket": healthCheckService.CheckWebSocket(),
+	}, err)
 }
 
 func GetStatusHandler(e echo.Context) (err error) {
+	restartEngineEvent := common.Event{
+		Type: common.EventRestartEngine,
+	}
 
-	return
+	err = queueService.Push([]byte(utils.ToJsonString(restartEngineEvent)))
+	return response(e, nil, err)
 }
 
 func GetBalancesHandler(e echo.Context) (err error) {
@@ -127,7 +140,7 @@ func DeleteOrderHandler(e echo.Context) (err error) {
 				ID:    order.ID,
 			}
 
-			err = QueueService.Push([]byte(utils.ToJsonString(cancelOrderEvent)))
+			err = queueService.Push([]byte(utils.ToJsonString(cancelOrderEvent)))
 		}
 	}
 
@@ -195,8 +208,11 @@ func StartServer(ctx context.Context) {
 	//init database
 	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
 
+	//init health check service
+	healthCheckService = NewHealthCheckService(nil)
+
 	//init event queue
-	QueueService, _ = common.InitQueue(
+	queueService, _ = common.InitQueue(
 		&common.RedisQueueConfig{
 			Name:   common.HYDRO_ENGINE_EVENTS_QUEUE_KEY,
 			Ctx:    ctx,

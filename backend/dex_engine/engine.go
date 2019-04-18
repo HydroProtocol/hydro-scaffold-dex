@@ -3,10 +3,10 @@ package augur_engine
 import (
 	"context"
 	"encoding/json"
-	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
+	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
@@ -17,6 +17,7 @@ import (
 
 type PgDBHandler struct {
 }
+
 func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
 	log.Info("testing PgDBHandler")
 	return sync.WaitGroup{}
@@ -25,6 +26,7 @@ func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
 type RedisOrderBookHandler struct {
 	kvStore common.IKVStore
 }
+
 func (handler RedisOrderBookHandler) Update(key string, bookSnapshot *common.SnapshotV2) sync.WaitGroup {
 	bts, err := json.Marshal(bookSnapshot)
 	if err != nil {
@@ -48,7 +50,7 @@ type AugurEngine struct {
 	ctx context.Context
 
 	HydroEngine *engine.Engine
-	kvStore common.IKVStore
+	kvStore     common.IKVStore
 }
 
 func NewAugurEngine(ctx context.Context, redis *redis.Client) *AugurEngine {
@@ -56,7 +58,6 @@ func NewAugurEngine(ctx context.Context, redis *redis.Client) *AugurEngine {
 
 	handler := PgDBHandler{}
 	e.RegisterDBHandler(&handler)
-
 
 	queue, _ := common.InitQueue(&common.RedisQueueConfig{
 		Name:   common.HYDRO_ENGINE_EVENTS_QUEUE_KEY,
@@ -71,7 +72,7 @@ func NewAugurEngine(ctx context.Context, redis *redis.Client) *AugurEngine {
 		},
 	)
 
-	snapshotHandler := RedisOrderBookHandler{kvStore:kvStore}
+	snapshotHandler := RedisOrderBookHandler{kvStore: kvStore}
 	e.RegisterOrderBookSnapshotHandler(snapshotHandler)
 
 	engine := &AugurEngine{
@@ -81,7 +82,7 @@ func NewAugurEngine(ctx context.Context, redis *redis.Client) *AugurEngine {
 		Wg:               sync.WaitGroup{},
 
 		HydroEngine: e,
-		kvStore: kvStore,
+		kvStore:     kvStore,
 	}
 
 	markets := models.MarketDao.FindAllMarkets()
