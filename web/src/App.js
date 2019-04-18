@@ -8,6 +8,9 @@ import Trade from './components/Trade';
 import Wallet from './components/Wallet';
 import Orders from './components/Orders';
 import TradeHistory from './components/TradeHistory';
+import { HydroWallet } from 'hydro-sdk-wallet/build/wallets';
+import { loadHydroWallet } from 'hydro-sdk-wallet/build/actions/wallet';
+import env from './lib/env';
 
 const mapStateToProps = state => {
   return {
@@ -19,6 +22,7 @@ class App extends React.PureComponent {
   componentDidMount() {
     const { dispatch, currentMarket } = this.props;
     dispatch(loadMarkets());
+    this.initTestBrowserWallet();
     if (currentMarket) {
       dispatch(loadTradeHistory(currentMarket.id));
     }
@@ -29,6 +33,15 @@ class App extends React.PureComponent {
     if (currentMarket !== prevProps.currentMarket) {
       dispatch(loadTradeHistory(currentMarket.id));
     }
+  }
+
+  async initTestBrowserWallet() {
+    HydroWallet.setNodeUrl(env.NODE_URL);
+    const wallet = await HydroWallet.import(
+      'B7A0C9D2786FC4DD080EA5D619D36771AEB0C8C26C290AFD3451B92BA2B7BC2C',
+      '123456'
+    );
+    this.props.dispatch(loadHydroWallet(wallet));
   }
 
   render() {

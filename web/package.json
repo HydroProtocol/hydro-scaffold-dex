@@ -5,7 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bignumber.js": "^8.1.1",
-    "hydro-sdk-wallet": "^1.0.10",
+    "hydro-sdk-wallet": "^1.0.11",
     "immutable": "^4.0.0-rc.12",
     "moment": "^2.24.0",
     "node-sass": "^4.11.0",

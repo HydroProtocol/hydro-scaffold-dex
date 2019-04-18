@@ -4147,9 +4147,9 @@ https-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
 
-hydro-sdk-wallet@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/hydro-sdk-wallet/-/hydro-sdk-wallet-1.0.10.tgz#a7bb69f18a80d082d51b04ad725ec83549c2cd3d"
+hydro-sdk-wallet@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/hydro-sdk-wallet/-/hydro-sdk-wallet-1.0.11.tgz#72395507da78c36dcab4016d693546c045bcc501"
   dependencies:
     ethereumjs-util "5.2.0"
     ethers "^4.0.27"
