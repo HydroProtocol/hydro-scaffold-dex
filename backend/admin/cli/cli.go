@@ -1,4 +1,4 @@
-package cli
+package admincli
 
 import (
 	"fmt"
@@ -8,6 +8,8 @@ import (
 )
 
 func NewDexCli() *cli.App {
+	admin := NewAdmin(os.Getenv("ADMIN_API_URL"))
+
 	app := cli.NewApp()
 	app.Usage = "hydro-dex-cli COMMAND"
 	app.Version = "0.0.1"
@@ -43,7 +45,6 @@ func NewDexCli() *cli.App {
 			Name:        "quoteTokenAddress",
 			Destination: &quoteTokenAddress,
 		},
-
 		cli.StringFlag{
 			Name:        "minOrderSize",
 			Destination: &minOrderSize,
@@ -124,7 +125,6 @@ func NewDexCli() *cli.App {
 		},
 	}
 
-	admin := NewAdmin(os.Getenv("ADMIN_API_URL"))
 	app.Commands = []cli.Command{
 		{
 			Name:        "market",

@@ -1,4 +1,4 @@
-package cli
+package admincli
 
 import (
 	"fmt"
@@ -20,6 +20,8 @@ const (
 	DefaultLimit  = "10"
 	DefaultOffset = "10"
 	DefaultStatus = "pending"
+
+	DefaultAdminAPIURL = "http://localhost:3003"
 )
 
 type IAdminApi interface {
@@ -54,9 +56,13 @@ type Admin struct {
 }
 
 func NewAdmin(adminApiUrl string) IAdminApi {
-	_, err := url.Parse(adminApiUrl)
-	if err != nil {
-		panic(err)
+	if len(adminApiUrl) == 0 {
+		adminApiUrl = DefaultAdminAPIURL
+	} else {
+		_, err := url.Parse(adminApiUrl)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	a := Admin{}

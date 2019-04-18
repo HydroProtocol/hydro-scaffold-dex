@@ -33,6 +33,24 @@ services:
       - REACT_APP_HYDRO_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
       - REACT_APP_HYDRO_PROXY_MODE=deposit
     restart: on-failure:5
+  adminapi:
+    image: hydroprotocolio/hydro-box-dex-backend:latest
+    container_name: hydro-box-dex-api
+    command: /bin/adminapi
+    ports:
+      - 3003:3003
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+      - redis
+      - ethereum-node
+    restart: on-failure:5
   api:
     image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-box-dex-api
