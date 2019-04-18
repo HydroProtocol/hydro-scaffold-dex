@@ -13,7 +13,10 @@ export const loginRequest = () => {
     const selectedAccount = getSelectedAccount(state);
     const address = selectedAccount ? selectedAccount.get('address') : null;
     const wallet = state.WalletReducer.getIn(['accounts', selectedType, 'wallet']);
-    const signature = await wallet.personalSignMessage(message);
+    if (!address || !wallet) {
+      return;
+    }
+    const signature = await wallet.personalSignMessage(message, address);
     if (!signature) {
       return;
     }
