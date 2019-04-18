@@ -8,8 +8,7 @@ const initialState = Map({
     decimals: 18
   },
   hotTokenAmount: new BigNumber(0),
-  websocketConnected: false,
-  web3NetworkID: null
+  websocketConnected: false
 });
 
 export default (state = initialState, action) => {
