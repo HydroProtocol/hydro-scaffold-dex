@@ -2,9 +2,7 @@ import { Map, OrderedMap } from 'immutable';
 import BigNumber from 'bignumber.js';
 
 export const initState = Map({
-  address: null,
   isLoggedIn: Map(),
-  ethBalance: new BigNumber('0'),
   lockedBalances: Map(),
   tokensInfo: Map(),
   approving: Map(),
@@ -15,12 +13,6 @@ export const initState = Map({
 
 export default (state = initState, action) => {
   switch (action.type) {
-    case 'LOAD_ACCOUNT':
-      state = state.set('address', action.payload.address);
-      return state;
-    case 'LOAD_BALANCE':
-      state = state.set('ethBalance', action.payload.balance);
-      return state;
     case 'UPDATE_TOKEN_LOCKED_BALANCES':
       for (let k of Object.keys(action.payload)) {
         state = state.setIn(['lockedBalances', k], action.payload[k]);
