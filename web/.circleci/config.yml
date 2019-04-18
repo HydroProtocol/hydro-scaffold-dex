@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+        - master
+    docker:
+      - image: circleci/node:11
+    steps:
+      - checkout
+      - run:
+          name: run ESLint
+          command: |
+            yarn install
+            yarn eslint

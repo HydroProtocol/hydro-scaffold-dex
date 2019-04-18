@@ -1,0 +1,19 @@
+@import '../../styles/variables.scss';
+.selector {
+    .nav-tabs {
+        border: 1px solid $borderGrey;
+        border-radius: 4px;
+    }
+    .nav-item {
+        padding: 4px 20px;
+        cursor: pointer;
+        border-left: 1px solid $borderGrey;
+        margin-bottom: 0;
+        &:first-child {
+            border-left: 0;
+        }
+        &.active {
+            background: $backgroundGrey;
+        }
+    }
+}
