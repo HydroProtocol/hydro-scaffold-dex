@@ -1,5 +1,4 @@
 import { Map, OrderedMap } from 'immutable';
-import BigNumber from 'bignumber.js';
 
 export const initState = Map({
   isLoggedIn: Map(),
