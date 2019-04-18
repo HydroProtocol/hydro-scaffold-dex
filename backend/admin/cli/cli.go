@@ -2,21 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/urfave/cli"
 	"os"
 	"sort"
 )
 
-func main() {
-	app := newDexCli()
-	err := app.Run(os.Args)
-	if err != nil {
-		utils.Error("error: %v", err)
-	}
-}
-
-func newDexCli() *cli.App {
+func NewDexCli() *cli.App {
 	app := cli.NewApp()
 	app.Usage = "hydro-dex-cli COMMAND"
 	app.Version = "0.0.1"

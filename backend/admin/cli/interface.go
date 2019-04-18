@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"net/url"
 )
@@ -41,7 +42,7 @@ type IAdminApi interface {
 
 type Admin struct {
 	client           utils.IHttpClient
-	erc20            Erc20
+	erc20            ethereum.IErc20
 	AdminApiUrl      string
 	MarketUrl        string
 	CancelOrderUrl   string
@@ -50,6 +51,27 @@ type Admin struct {
 	ListTradeUrl     string
 	RestartEngineUrl string
 	StatusUrl        string
+}
+
+func NewAdmin(adminApiUrl string) IAdminApi {
+	_, err := url.Parse(adminApiUrl)
+	if err != nil {
+		panic(err)
+	}
+
+	a := Admin{}
+	a.client = utils.NewHttpClient(nil)
+	a.erc20 = ethereum.NewErc20Service(nil)
+	a.AdminApiUrl = adminApiUrl
+	a.MarketUrl = fmt.Sprintf("%s/%s", adminApiUrl, "markets")
+	a.CancelOrderUrl = fmt.Sprintf("%s/%s", adminApiUrl, "orders")
+	a.ListOrderUrl = fmt.Sprintf("%s/%s", adminApiUrl, "orders")
+	a.ListTradeUrl = fmt.Sprintf("%s/%s", adminApiUrl, "trades")
+	a.ListBalanceUrl = fmt.Sprintf("%s/%s", adminApiUrl, "balances")
+	a.RestartEngineUrl = fmt.Sprintf("%s/%s", adminApiUrl, "restart_engine")
+	a.StatusUrl = fmt.Sprintf("%s/%s", adminApiUrl, "status")
+
+	return &a
 }
 
 func (a *Admin) Status() error {
@@ -200,26 +222,6 @@ func (a *Admin) CancelOrder(ID string) (err error) {
 func (a *Admin) RestartEngine() (err error) {
 	err, _, _ = a.client.Get(a.RestartEngineUrl, nil, nil, nil)
 	return
-}
-
-func NewAdmin(adminApiUrl string) IAdminApi {
-	_, err := url.Parse(adminApiUrl)
-	if err != nil {
-		panic(err)
-	}
-
-	a := Admin{}
-	a.client = utils.NewHttpClient(nil)
-	a.AdminApiUrl = adminApiUrl
-	a.MarketUrl = fmt.Sprintf("%s/%s", adminApiUrl, "markets")
-	a.CancelOrderUrl = fmt.Sprintf("%s/%s", adminApiUrl, "orders")
-	a.ListOrderUrl = fmt.Sprintf("%s/%s", adminApiUrl, "orders")
-	a.ListTradeUrl = fmt.Sprintf("%s/%s", adminApiUrl, "trades")
-	a.ListBalanceUrl = fmt.Sprintf("%s/%s", adminApiUrl, "balances")
-	a.RestartEngineUrl = fmt.Sprintf("%s/%s", adminApiUrl, "restart_engine")
-	a.StatusUrl = fmt.Sprintf("%s/%s", adminApiUrl, "status")
-
-	return &a
 }
 
 func DefaultIfNil(ori, dft string) string {

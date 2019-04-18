@@ -30,11 +30,6 @@ func loadRoutes(e *echo.Echo) {
 }
 
 func RestartEngineHandler(e echo.Context) (err error) {
-
-	return
-}
-
-func GetStatusHandler(e echo.Context) (err error) {
 	return response(e, map[string]interface{}{
 		"web":       healthCheckService.CheckWeb(),
 		"api":       healthCheckService.CheckApi(),
@@ -43,6 +38,15 @@ func GetStatusHandler(e echo.Context) (err error) {
 		"launcher":  healthCheckService.CheckLauncher(),
 		"websocket": healthCheckService.CheckWebSocket(),
 	}, err)
+}
+
+func GetStatusHandler(e echo.Context) (err error) {
+	restartEngineEvent := common.Event{
+		Type: common.EventRestartEngine,
+	}
+
+	err = queueService.Push([]byte(utils.ToJsonString(restartEngineEvent)))
+	return response(e, nil, err)
 }
 
 func GetBalancesHandler(e echo.Context) (err error) {
