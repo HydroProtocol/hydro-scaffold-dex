@@ -108,6 +108,10 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 - [Sqlite3](https://www.sqlite.org/index.html) as database
 - [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node
 
+## Run on other network
+
+        See [change network manual](./manual/change-network.md).
+
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details
