@@ -1,5 +1,5 @@
 import api from '../lib/api';
-import { getSelectedAccount, getSelectedAccountWallet } from 'hydro-sdk-wallet';
+import { getSelectedAccount, getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
 
 export const TRADE_FORM_ID = 'TRADE';
 

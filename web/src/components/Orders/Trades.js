@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { loadTrades } from '../../actions/account';
 import PerfectScrollbar from 'perfect-scrollbar';
-import { getSelectedAccount } from 'hydro-sdk-wallet';
+import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
   const selectedAccount = getSelectedAccount(state);

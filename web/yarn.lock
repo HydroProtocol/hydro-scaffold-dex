@@ -773,6 +773,13 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
 
+"@gongddex/hydro-sdk-wallet@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@gongddex/hydro-sdk-wallet/-/hydro-sdk-wallet-0.0.2.tgz#b4a6c0d7471e108122f5cf6676c29581b895fb2e"
+  dependencies:
+    ethereumjs-util "5.2.0"
+    ethers "^4.0.27"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -4147,18 +4154,6 @@ https-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
 
-hydro-sdk-wallet@^1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/hydro-sdk-wallet/-/hydro-sdk-wallet-1.0.11.tgz#72395507da78c36dcab4016d693546c045bcc501"
-  dependencies:
-    ethereumjs-util "5.2.0"
-    ethers "^4.0.27"
-    immutable "^4.0.0-rc.12"
-    react "^16.8.3"
-    react-dom "^16.8.3"
-    react-redux "^7.0.2"
-    redux "^4.0.1"
-
 iconv-lite@0.4.23:
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.23.tgz#297871f63be507adcfbfca715d0cd0eed84e9a63"
@@ -7237,7 +7232,7 @@ react-dev-utils@^7.0.3:
     strip-ansi "5.0.0"
     text-table "0.2.0"
 
-react-dom@^16.8.3:
+react-dom@^16.8.6:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.6.tgz#71d6303f631e8b0097f56165ef608f051ff6e10f"
   dependencies:

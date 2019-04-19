@@ -2,7 +2,7 @@ import { getAllowance, getTokenBalance } from '../lib/wallet';
 import { saveLoginData } from '../lib/session';
 import BigNumber from 'bignumber.js';
 import api from '../lib/api';
-import { getSelectedAccount } from 'hydro-sdk-wallet';
+import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 // request ddex private auth token
 export const loginRequest = () => {

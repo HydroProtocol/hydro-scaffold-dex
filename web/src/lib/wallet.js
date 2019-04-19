@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { watchToken } from '../actions/account';
 import abi from './abi';
 import env from './env';
-import { getSelectedAccountWallet } from 'hydro-sdk-wallet';
+import { getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
 export let web3, Contract;
 
 export const getTokenBalance = (tokenAddress, accountAddress, getState) => {
