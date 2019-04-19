@@ -4,7 +4,7 @@ COPY . /app
 WORKDIR /app
 
 RUN go mod download
-RUN go build -o bin/admincli -v -ldflags '-s -w' cli/admincli/main.go && \
+RUN go build -o bin/hydor-dex-ctl -v -ldflags '-s -w' cli/admincli/main.go && \
   go build -o bin/adminapi -v -ldflags '-s -w' cli/adminapi/main.go && \
   go build -o bin/api -v -ldflags '-s -w' cli/api/main.go && \
   go build -o bin/engine -v -ldflags '-s -w' cli/engine/main.go && \
@@ -21,6 +21,8 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 
 COPY --from=0 /app/db /db/
+COPY --from=0 /app/bin/adminapi /bin/
+COPY --from=0 /app/bin/hydor-dex-ctl /bin/
 COPY --from=0 /app/bin/api /bin/
 COPY --from=0 /app/bin/maker /bin/
 COPY --from=0 /app/bin/engine /bin/
