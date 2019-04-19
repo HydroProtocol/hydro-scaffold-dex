@@ -6,9 +6,9 @@ import { toUnitAmount } from '../../lib/utils';
 
 const mapStateToProps = state => {
   const WETH = state.config.get('WETH');
-  const selectedType = state.WalletReducer.get('selectedType');
+  const selectedAccountID = state.WalletReducer.get('selectedAccountID');
   return {
-    ethBalance: toUnitAmount(state.WalletReducer.getIn(['accounts', selectedType, 'balance']), 18),
+    ethBalance: toUnitAmount(state.WalletReducer.getIn(['accounts', selectedAccountID, 'balance']), 18),
     wethBalance: toUnitAmount(state.account.getIn(['tokensInfo', 'WETH', 'balance']) || new BigNumber(0), WETH.decimals)
   };
 };

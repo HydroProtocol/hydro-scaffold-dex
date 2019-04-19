@@ -7,7 +7,7 @@ import { enable, disable } from '../../lib/wallet';
 import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
-  const selectedType = state.WalletReducer.get('selectedType');
+  const selectedAccountID = state.WalletReducer.get('selectedAccountID');
   const selectedAccount = getSelectedAccount(state);
   const address = selectedAccount ? selectedAccount.get('address') : null;
   return {
@@ -15,7 +15,7 @@ const mapStateToProps = state => {
     address,
     lockedBalances: state.account.get('lockedBalances'),
     isLoggedIn: state.account.getIn(['isLoggedIn', address]),
-    ethBalance: toUnitAmount(state.WalletReducer.getIn(['accounts', selectedType, 'balance']), 18)
+    ethBalance: toUnitAmount(state.WalletReducer.getIn(['accounts', selectedAccountID, 'balance']), 18)
   };
 };
 

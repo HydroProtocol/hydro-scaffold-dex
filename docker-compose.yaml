@@ -26,12 +26,13 @@ services:
     ports:
       - 3000:8043
     environment:
-      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
       - REACT_APP_HYDRO_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
       - REACT_APP_HYDRO_PROXY_MODE=deposit
+      - REACT_APP_NODE_URL=http://localhost:8545
     restart: on-failure:5
   admin:
     image: hydroprotocolio/hydro-box-dex-backend:latest

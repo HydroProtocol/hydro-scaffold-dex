@@ -116,6 +116,8 @@ func main() {
 
 	w.RegisterHandler(DBTransactionHandler{w})
 
+	go utils.StartMetrics()
+
 	w.Run()
 
 	utils.Info("Watcher Exit")

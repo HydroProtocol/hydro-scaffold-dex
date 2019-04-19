@@ -33,7 +33,6 @@ export const wrapETH = amount => {
   return async (dispatch, getState) => {
     const state = getState();
     const WETH = state.config.get('WETH');
-    const selectedType = state.WalletReducer.get('selectedType');
     const value = new BigNumber(amount).multipliedBy(Math.pow(10, WETH.decimals)).toString();
 
     let params = {
@@ -45,7 +44,7 @@ export const wrapETH = amount => {
     };
 
     try {
-      const wallet = state.WalletReducer.getIn(['accounts', selectedType, 'wallet']);
+      const wallet = getSelectedAccountWallet(state);
       const transactionID = await wallet.sendTransaction(params);
 
       alert(`Wrap ETH request submitted`);
@@ -69,9 +68,8 @@ export const unwrapWETH = amount => {
   return async (dispatch, getState) => {
     const state = getState();
     const WETH = state.config.get('WETH');
-    const selectedType = state.WalletReducer.get('selectedType');
     const value = new BigNumber(amount).multipliedBy(Math.pow(10, WETH.decimals)).toString(16);
-    const wallet = state.WalletReducer.getIn(['accounts', selectedType, 'wallet']);
+    const wallet = getSelectedAccountWallet(state);
     const functionSelector = '2e1a7d4d';
     const valueString = get64BytesString(value);
 
@@ -124,7 +122,6 @@ export const disable = (address, symbol) => {
 export const approve = (tokenAddress, symbol, allowance, action) => {
   return async (dispatch, getState) => {
     const state = getState();
-    const selectedType = state.WalletReducer.get('selectedType');
     const functionSelector = '095ea7b3';
     let spender = get64BytesString(env.HYDRO_PROXY_ADDRESS);
     if (spender.length !== 64) {
@@ -140,7 +137,7 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
     };
 
     try {
-      const wallet = state.WalletReducer.getIn(['accounts', selectedType, 'wallet']);
+      const wallet = getSelectedAccountWallet(state);
       const transactionID = await wallet.sendTransaction(params);
 
       alert(`${action} ${symbol} request submitted`);

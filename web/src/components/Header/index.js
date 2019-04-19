@@ -8,7 +8,7 @@ import { loadAccountHydroAuthentication } from '../../lib/session';
 import env from '../../lib/env';
 
 const mapStateToProps = state => {
-  const selectedType = state.WalletReducer.get('selectedType');
+  const selectedAccountID = state.WalletReducer.get('selectedAccountID');
   const selectedAccount = getSelectedAccount(state);
   const address = selectedAccount ? selectedAccount.get('address') : null;
   return {
@@ -17,7 +17,7 @@ const mapStateToProps = state => {
     isLoggedIn: state.account.getIn(['isLoggedIn', address]),
     currentMarket: state.market.getIn(['markets', 'currentMarket']),
     markets: state.market.getIn(['markets', 'data']),
-    networkId: state.WalletReducer.getIn(['accounts', selectedType, 'networkId'])
+    networkId: state.WalletReducer.getIn(['accounts', selectedAccountID, 'networkId'])
   };
 };
 
@@ -81,7 +81,7 @@ class Header extends React.PureComponent {
           DOCUMENTATION
         </a>
         <WalletButton />
-        <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} />
+        <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Browser Wallet" />
         {this.renderAccount()}
       </div>
     );

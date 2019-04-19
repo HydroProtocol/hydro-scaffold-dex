@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -47,6 +48,7 @@ func run() int {
 		websocket.StartSocketServer(ctx)
 	}()
 
+	go utils.StartMetrics()
 	wg.Wait()
 
 	return 0

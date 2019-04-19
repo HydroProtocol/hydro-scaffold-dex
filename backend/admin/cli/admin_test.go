@@ -46,6 +46,9 @@ func (a *AdminTest) TestStatus() {
 
 func (a *AdminTest) TestNewMarket() {
 	var marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string
+	marketID = "HOT-WETH"
+	baseTokenAddress = "0x0000000000000000000000000000000000000001"
+	quoteTokenAddress = "0x0000000000000000000000000000000000000002"
 	assert.Nil(a.T(), a.admin.NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation))
 }
 
@@ -88,6 +91,8 @@ func TestAdmin(t *testing.T) {
 	suite.Run(t, new(AdminTest))
 }
 
+
+//mock erc20 service
 type MockErc20 struct {
 }
 
