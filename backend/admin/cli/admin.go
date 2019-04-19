@@ -1,6 +1,7 @@
 package admincli
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
@@ -55,7 +56,7 @@ type Admin struct {
 	StatusUrl        string
 }
 
-func NewAdmin(adminApiUrl string) IAdminApi {
+func NewAdmin(adminApiUrl string, httpClient utils.IHttpClient, erc20 ethereum.IErc20) IAdminApi {
 	if len(adminApiUrl) == 0 {
 		adminApiUrl = DefaultAdminAPIURL
 	} else {
@@ -66,8 +67,18 @@ func NewAdmin(adminApiUrl string) IAdminApi {
 	}
 
 	a := Admin{}
-	a.client = utils.NewHttpClient(nil)
-	a.erc20 = ethereum.NewErc20Service(nil)
+	if httpClient == nil {
+		a.client = utils.NewHttpClient(nil)
+	} else {
+		a.client = httpClient
+	}
+
+	if erc20 == nil {
+		a.erc20 = ethereum.NewErc20Service(nil)
+	} else {
+		a.erc20 = erc20
+	}
+
 	a.AdminApiUrl = adminApiUrl
 	a.MarketUrl = fmt.Sprintf("%s/%s", adminApiUrl, "markets")
 	a.CancelOrderUrl = fmt.Sprintf("%s/%s", adminApiUrl, "orders")
@@ -80,8 +91,20 @@ func NewAdmin(adminApiUrl string) IAdminApi {
 	return &a
 }
 
-func (a *Admin) Status() error {
-	panic("implement me")
+func (a *Admin) Status() (err error) {
+	var statusResult struct{
+		Data map[string]string `json:"data"`
+	}
+
+	err, _, data := a.client.Get(a.StatusUrl, nil, nil, nil)
+
+	if err != nil {
+		utils.Debug("call status error: %v", err)
+		return
+	}
+
+	err = json.Unmarshal(data, &statusResult)
+	return
 }
 
 func (a *Admin) NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) (err error) {
