@@ -2,6 +2,7 @@ github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419061400-9b6969f425f
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419071923-f9e533899579/go.mod h1:K2urw166Bn9qqjXiALQcBig2A8SDa7IejBzM89vnrXM=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3 h1:GraWKEJwNDWHlO7eZjSj8PkIwwFsuNiBN4+DGh4WTY8=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3/go.mod h1:s6BzPp3Oed01zWubFguGismWzQhwekI6CXBA32XfDf0=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.5/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d h1:xG8Pj6Y6J760xwETNmMzmlt38QSwz0BLp1cZ09g27uw=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d/go.mod h1:d3C0AkH6BRcvO8T0UEPu53cnw4IbV63x1bEjildYhO0=
