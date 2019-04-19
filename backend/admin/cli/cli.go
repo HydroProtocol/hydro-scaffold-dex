@@ -11,9 +11,9 @@ func NewDexCli() *cli.App {
 	admin := NewAdmin(os.Getenv("ADMIN_API_URL"), nil, nil)
 
 	app := cli.NewApp()
-	app.Usage = "hydro-dex-cli COMMAND"
+	app.Usage = "A tool to manage hydro dex"
 	app.Version = "0.0.1"
-	app.Name = "dex admin management tool"
+	app.Name = "hydro-dex-ctl"
 
 	var marketID string
 	var baseTokenAddress string
@@ -129,7 +129,7 @@ func NewDexCli() *cli.App {
 		{
 			Name:        "market",
 			Description: "manage markets",
-			Usage:       "",
+			Usage:       "Manage markets. (create, update)",
 			Subcommands: []cli.Command{
 				{
 					Name:        "list",
@@ -141,8 +141,8 @@ func NewDexCli() *cli.App {
 				},
 				{
 					Name:        "new",
-					Usage:       "",
-					Description: "create a market",
+					Usage:       "Create a market",
+					Description: "Create a market",
 					Flags:       marketFlags,
 					Action: func(c *cli.Context) error {
 						if len(marketID) == 0 || len(baseTokenAddress) == 0 || len(quoteTokenAddress) == 0 {
@@ -154,8 +154,8 @@ func NewDexCli() *cli.App {
 				},
 				{
 					Name:        "update",
-					Usage:       "",
-					Description: "update a market",
+					Usage:       "Update a market",
+					Description: "Update a market",
 					Flags:       marketUpdateFlags,
 					Action: func(c *cli.Context) error {
 						if len(marketID) == 0 || len(baseTokenAddress) == 0 || len(quoteTokenAddress) == 0 {
@@ -167,8 +167,8 @@ func NewDexCli() *cli.App {
 				},
 				{
 					Name:        "publish",
-					Usage:       "",
-					Description: "publish a market",
+					Usage:       "Publish a market",
+					Description: "Publish a market",
 					Action: func(c *cli.Context) error {
 						marketID = c.Args().Get(1)
 						if len(marketID) == 0 {
@@ -180,8 +180,8 @@ func NewDexCli() *cli.App {
 				},
 				{
 					Name:        "unpublish",
-					Usage:       "",
-					Description: "unpublish a market",
+					Usage:       "Unpublish a market",
+					Description: "Unpublish a market",
 					Action: func(c *cli.Context) error {
 						marketID = c.Args().Get(1)
 						if len(marketID) == 0 {
@@ -193,8 +193,8 @@ func NewDexCli() *cli.App {
 				},
 				{
 					Name:        "changeFees",
-					Usage:       "",
-					Description: "change market fees",
+					Usage:       "Change maker fee and taker fee of a market",
+					Description: "Change maker fee and taker fee of a market",
 					Action: func(c *cli.Context) error {
 						marketID = c.Args().Get(1)
 						makerFee := c.Args().Get(2)
@@ -211,11 +211,11 @@ func NewDexCli() *cli.App {
 		},
 		{
 			Name:  "address",
-			Usage: "",
+			Usage: "Get info of an address",
 			Subcommands: cli.Commands{
 				{
 					Name:  "orders",
-					Usage: "",
+					Usage: "Get address orders",
 					Flags: orderListFlags,
 					Action: func(c *cli.Context) error {
 						address := c.Args().Get(1)
@@ -225,7 +225,7 @@ func NewDexCli() *cli.App {
 				},
 				{
 					Name:  "balances",
-					Usage: "",
+					Usage: "Get address balances",
 					Flags: orderListFlags,
 					Action: func(c *cli.Context) error {
 						address := c.Args().Get(1)
@@ -234,8 +234,8 @@ func NewDexCli() *cli.App {
 					},
 				},
 				{
-					Name:  "trades",
-					Usage: "",
+					Name: "trades",
+					Usage: "Get address trades",
 					Flags: orderListFlags,
 					Action: func(c *cli.Context) error {
 						address := c.Args().Get(1)
@@ -246,12 +246,12 @@ func NewDexCli() *cli.App {
 			},
 		},
 		{
-			Name:  "order",
-			Usage: "",
+			Name: "order",
+			Usage: "Manage order. (cancel)",
 			Subcommands: cli.Commands{
 				{
 					Name:  "cancel",
-					Usage: "",
+					Usage: "Cancel an order by orderID",
 					Action: func(c *cli.Context) error {
 						orderID := c.Args().Get(1)
 						if len(orderID) == 0 {
@@ -265,7 +265,7 @@ func NewDexCli() *cli.App {
 		},
 		{
 			Name:  "engine",
-			Usage: "",
+			Usage: "Manage hydro dex engine",
 			Subcommands: cli.Commands{
 				{
 					Name:  "restart",
@@ -284,7 +284,7 @@ func NewDexCli() *cli.App {
 		},
 		{
 			Name:  "status",
-			Usage: "",
+			Usage: "Get current status of the ",
 			Action: func(c *cli.Context) error {
 				option := c.Args().Get(1)
 				if len(option) == 0 {

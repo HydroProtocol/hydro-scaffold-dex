@@ -2,10 +2,6 @@
 
 Admin api is used to change the states of hydro dex. You can use it to add markets, changes fees and so on.The admin api server should not be exposed and should be well protected. An easy way to keep it safe is never start the admin api server on `0.0.0.0`. Always run it on localhost and use admin cli to interative with it.
 
-## Admin api
-
-See details at [here](./backend/admin/api/server.go).
-
 ## Admin cli
 
 ### Step 0: Enter the admin docker container
@@ -63,3 +59,9 @@ Restart engine
 ```
 hydor-dex-ctl engine restart
 ```
+
+## Admin api
+
+Beside the hydor-dex-ctl command, you can also use rest api to manage your dex.
+
+See details at [here](./backend/admin/api/server.go).

@@ -18,7 +18,7 @@ import (
 )
 
 func run() int {
-	_, stop := context.WithCancel(context.Background())
+	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
 	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
@@ -28,7 +28,7 @@ func run() int {
 	signService := launcher.NewDefaultSignService(config.Getenv("HSK_RELAYER_PK"), hydro.GetTransactionCount)
 	gasService := func() decimal.Decimal { return utils.StringToDecimal("3000000000") } // default 10 Gwei
 
-	launcher := launcher.NewLauncher(context.Background(), signService, hydro, gasService)
+	launcher := launcher.NewLauncher(ctx, signService, hydro, gasService)
 
 	Run(launcher, utils.StartMetrics)
 
