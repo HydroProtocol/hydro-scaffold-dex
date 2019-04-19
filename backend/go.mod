@@ -22,4 +22,4 @@ require (
 )
 
 // for local test only
-replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
+// replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
