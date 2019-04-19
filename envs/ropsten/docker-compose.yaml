@@ -18,20 +18,22 @@ services:
     image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-box-dex-db
     volumes:
+      - ./seed.sql:/tmp/seed.sql
       - datavolume:/data
-    command: sh -c "cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3.db"
+    command: sh -c "cat /db/migrations/0001-init.up.sql /tmp/seed.sql | sqlite3 /data/sqlite3.db"
   web:
     image: hydroprotocolio/hydro-box-dex-web:latest
     container_name: hydro-box-dex-web
     ports:
       - 3000:8043
     environment:
-      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deEd90825564
       - REACT_APP_HYDRO_PROXY_ADDRESS=0x1b9540F50b3B9DDE35CEA9A403026a78965234aC
       - REACT_APP_HYDRO_PROXY_MODE=deposit
+      - REACT_APP_NODE_URL=https://ropsten.infura.io
     restart: on-failure:5
   api:
     image: hydroprotocolio/hydro-box-dex-backend:latest
