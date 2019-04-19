@@ -282,5 +282,8 @@ func InitTestDB() {
 		panic(err)
 	}
 
-	_, _ = DB.Exec(string(bts))
+	_, err = DB.Exec(string(bts))
+	if err != nil {
+		panic(err)
+	}
 }

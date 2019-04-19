@@ -10,7 +10,7 @@ services:
     restart: on-failure:5
   ethereum-node:
     container_name: hydro-box-dex-ethereum-node
-    image: hydroprotocolio/hydro-box-dex-ethereum-node:latest
+    image: hydroprotocolio/ethereum-test-node:latest
     ports:
       - 8545:8545
     restart: on-failure:5
@@ -19,6 +19,7 @@ services:
     container_name: hydro-box-dex-db
     volumes:
       - datavolume:/data
+      - ${PWD}/envs/localhost/seed.sql:/db/seed.sql
     command: sh -c "cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3.db"
   web:
     image: hydroprotocolio/hydro-box-dex-web:latest
@@ -32,24 +33,6 @@ services:
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
       - REACT_APP_HYDRO_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
       - REACT_APP_HYDRO_PROXY_MODE=deposit
-    restart: on-failure:5
-  adminapi:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-api
-    command: /bin/adminapi
-    ports:
-      - 3003:3003
-    environment:
-      - HSK_DATABASE_URL=/data/sqlite3.db
-      - HSK_REDIS_URL=redis://redis:6379/0
-      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
-      - HSK_LOG_LEVEL=DEBUG
-    volumes:
-      - datavolume:/data
-    depends_on:
-      - db
-      - redis
-      - ethereum-node
     restart: on-failure:5
   api:
     image: hydroprotocolio/hydro-box-dex-backend:latest

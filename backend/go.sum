@@ -1,3 +1,7 @@
+github.com/HydroProtocol/hydro-box-dex v0.0.0-20190418125926-5774ff167060 h1:v7XifIpn2fdu+zwHeNxJMsiUTyWKLJjGlu+M9ZwVwV8=
+github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190418120149-747219632c15 h1:kc262OzykTxK7OvhBvhqzlbSzPx/RDR9cPyH/TH34QU=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.0-20190416090304-3de52adf566c h1:jCnxVh3XzWNOpR42X+cbA3RP/Y3HCrFD1tc8YIuI7A0=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.0-20190416090304-3de52adf566c/go.mod h1:NjmV0VEC4aCb3D+pM+gJL1sNHGenP1Mea64JImj6aDo=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d h1:xG8Pj6Y6J760xwETNmMzmlt38QSwz0BLp1cZ09g27uw=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d/go.mod h1:d3C0AkH6BRcvO8T0UEPu53cnw4IbV63x1bEjildYhO0=
@@ -97,6 +101,7 @@ github.com/stretchr/objx v0.1.1 h1:2vfRuCMp5sSVIDSqO8oNnWJq7mPa6KVP3iPIwFBuy8A=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.0 h1:LThGCOvhuJic9Gyd1VBCkhyUXmO8vKaBFvBsJ2k03rg=
 github.com/stretchr/testify v1.2.0/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
+github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=

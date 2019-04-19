@@ -3,7 +3,7 @@ module github.com/HydroProtocol/hydro-box-dex/backend
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.0
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -31,4 +31,4 @@ require (
 )
 
 // for local test only
-// replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
+replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend

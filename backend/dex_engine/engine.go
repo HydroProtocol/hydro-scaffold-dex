@@ -1,4 +1,4 @@
-package augur_engine
+package dex_engine
 
 import (
 	"context"
@@ -11,23 +11,23 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/go-redis/redis"
-	"github.com/labstack/gommon/log"
+	"strings"
 	"sync"
 )
 
-type PgDBHandler struct {
-}
+//type PgDBHandler struct {
+//}
+//
+//func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
+//	log.Info("testing PgDBHandler")
+//	return sync.WaitGroup{}
+//}
 
-func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
-	log.Info("testing PgDBHandler")
-	return sync.WaitGroup{}
-}
-
-type RedisOrderBookHandler struct {
+type RedisOrderBookSnapshotHandler struct {
 	kvStore common.IKVStore
 }
 
-func (handler RedisOrderBookHandler) Update(key string, bookSnapshot *common.SnapshotV2) sync.WaitGroup {
+func (handler RedisOrderBookSnapshotHandler) Update(key string, bookSnapshot *common.SnapshotV2) sync.WaitGroup {
 	bts, err := json.Marshal(bookSnapshot)
 	if err != nil {
 		panic(err)
@@ -38,7 +38,20 @@ func (handler RedisOrderBookHandler) Update(key string, bookSnapshot *common.Sna
 	return sync.WaitGroup{}
 }
 
-type AugurEngine struct {
+type RedisOrderBookActivitiesHandler struct {
+}
+
+func (handler RedisOrderBookActivitiesHandler) Update(webSocketMessages []common.WebSocketMessage) sync.WaitGroup {
+	for _, msg := range webSocketMessages {
+		if strings.HasPrefix(msg.ChannelID, "Market#") {
+			pushMessage(msg)
+		}
+	}
+
+	return sync.WaitGroup{}
+}
+
+type DexEngine struct {
 	// all redis queues handlers
 	marketHandlerMap map[string]*MarketHandler
 	queue            common.IQueue
@@ -53,11 +66,11 @@ type AugurEngine struct {
 	kvStore     common.IKVStore
 }
 
-func NewAugurEngine(ctx context.Context, redis *redis.Client) *AugurEngine {
+func NewDexEngine(ctx context.Context, redis *redis.Client) *DexEngine {
 	e := engine.NewEngine(context.Background())
 
-	handler := PgDBHandler{}
-	e.RegisterDBHandler(&handler)
+	//handler := PgDBHandler{}
+	//e.RegisterDBHandler(&handler)
 
 	queue, _ := common.InitQueue(&common.RedisQueueConfig{
 		Name:   common.HYDRO_ENGINE_EVENTS_QUEUE_KEY,
@@ -72,10 +85,13 @@ func NewAugurEngine(ctx context.Context, redis *redis.Client) *AugurEngine {
 		},
 	)
 
-	snapshotHandler := RedisOrderBookHandler{kvStore: kvStore}
+	snapshotHandler := RedisOrderBookSnapshotHandler{kvStore: kvStore}
 	e.RegisterOrderBookSnapshotHandler(snapshotHandler)
 
-	engine := &AugurEngine{
+	activityHandler := RedisOrderBookActivitiesHandler{}
+	e.RegisterOrderBookActivitiesHandler(activityHandler)
+
+	engine := &DexEngine{
 		queue:            queue,
 		ctx:              ctx,
 		marketHandlerMap: make(map[string]*MarketHandler),
@@ -106,7 +122,7 @@ func NewAugurEngine(ctx context.Context, redis *redis.Client) *AugurEngine {
 	return engine
 }
 
-func (e *AugurEngine) start() {
+func (e *DexEngine) start() {
 	for i := range e.marketHandlerMap {
 		marketHandler := e.marketHandlerMap[i]
 		e.Wg.Add(1)
@@ -149,7 +165,7 @@ func (e *AugurEngine) start() {
 var hydroProtocol = &ethereum.EthereumHydroProtocol{}
 
 func Run(ctx context.Context) {
-	utils.Info("augur engine start...")
+	utils.Info("dex engine start...")
 
 	// init redis
 	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
@@ -167,10 +183,10 @@ func Run(ctx context.Context) {
 	//init database
 	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
 
-	//start augurEngine
-	augurEngine := NewAugurEngine(ctx, redisClient)
-	augurEngine.start()
+	//start dex engine
+	dexEngine := NewDexEngine(ctx, redisClient)
+	dexEngine.start()
 
-	augurEngine.Wg.Wait()
-	utils.Info("augurEngine stopped!")
+	dexEngine.Wg.Wait()
+	utils.Info("dex engine stopped!")
 }

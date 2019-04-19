@@ -64,7 +64,8 @@ func (launchLogDao) FindPendingLogWithMaxNonce() int64 {
 }
 
 func (launchLogDao) FindAllCreated() []*LaunchLog {
-	launchLogs := []*LaunchLog{}
+	var launchLogs []*LaunchLog
+
 	findAllBy(&launchLogs,
 		&OpEq{"status", "created"},
 		map[string]OrderByDirection{"created_at": OrderByAsc}, -1, -1)
@@ -114,3 +115,7 @@ type LaunchLog struct {
 	CreatedAt  time.Time `db:"created_at"`
 	UpdatedAt  time.Time `db:"updated_at"`
 }
+
+//type LaunchLog struct {
+//	launcher.LaunchLog
+//}
