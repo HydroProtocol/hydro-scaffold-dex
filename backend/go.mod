@@ -13,7 +13,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.10.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24
-	github.com/stretchr/testify v1.2.0
+	github.com/stretchr/testify v1.3.0
 	github.com/urfave/cli v1.20.0
 	gopkg.in/go-playground/validator.v9 v9.28.0
 )

@@ -17,15 +17,8 @@ FROM alpine
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 
 RUN apk update && \
-    apk add sqlite ca-certificates && \
-    rm -rf /var/cache/apk/*
+  apk add sqlite ca-certificates && \
+  rm -rf /var/cache/apk/*
 
 COPY --from=0 /app/db /db/
-COPY --from=0 /app/bin/adminapi /bin/
-COPY --from=0 /app/bin/hydor-dex-ctl /bin/
-COPY --from=0 /app/bin/api /bin/
-COPY --from=0 /app/bin/maker /bin/
-COPY --from=0 /app/bin/engine /bin/
-COPY --from=0 /app/bin/launcher /bin/
-COPY --from=0 /app/bin/watcher /bin/
-COPY --from=0 /app/bin/websocket /bin/
+COPY --from=0 /app/bin/* /bin/

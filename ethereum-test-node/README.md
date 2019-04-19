@@ -12,7 +12,7 @@
 
 Please install docker first.
 
-	
+
 	docker run -it --rm -p 8545:8545 $(docker build -q .)
 
 ## Available Accounts
@@ -72,25 +72,6 @@ Base HD Path: `m/44'/60'/0'/0/{account_index}`
 ### WETH Token:
 
 0x4a817489643A89a1428b2DD441c3fbe4DBf44789
-
-### Augur Shares Token Addresses
-
-#### Will an Asias team win The International DOTA2 Championships 2019?
-
-- **Long Share** `0x179fd00c328d4ecdb5043c8686d377a24ede9d11`
-- **Short Share** `0x114f5c774f8705f5b16b9fc494e3db6489f3237b`
-
-#### What will be the size of The International DOTA2 Championships 2019 prize pool?
-
-- **Long Share** `0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b`
-- **Short Share** `0x36f179ff6e8a4816509ed867bd273fddeb409331`
-
-#### Which team will win the 2019 DOTA2 TI competition?
-- **Virtus.Pro** `0x9354c30a5d9f75785b711ddd3a7e134e1739b30a`
-- **Secret** `0xdda6e6b3ca7ed44ed3b8dc64047221ed994618fc`
-- **ViciGaming** `0xf3c60116badca2c58e74e5fa8b20719284490c5e`
-- **EvilGeniuses** `0x31e67d461d79835c271fd11aec73336a3a6dd6d7`
-- **Other** `0xe05615f3b4cac6b1928b2a0ff31c0705e424a4bb`
 
 ## Special Accounts
 
