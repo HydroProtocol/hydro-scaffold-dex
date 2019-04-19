@@ -1,4 +1,4 @@
-package augur_engine
+package dex_engine
 
 import (
 	"context"
@@ -20,12 +20,12 @@ import (
 )
 
 type MarketHandler struct {
-	ctx       context.Context
-	market    *models.Market
+	ctx    context.Context
+	market *models.Market
 	//orderbook *Orderbook
-	KVStore   common.IKVStore
-	queue     chan []byte
-	getEvent  func() (interface{}, error)
+	KVStore  common.IKVStore
+	queue    chan []byte
+	getEvent func() (interface{}, error)
 
 	hydroEngine *engine.Engine
 }
@@ -117,12 +117,11 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 	eventOrderString := event.Order
 	var eventOrder models.Order
 	_ = json.Unmarshal([]byte(eventOrderString), &eventOrder)
-	eventMemoryOrder := &common.MemoryOrder{ID: eventOrder.ID, Price: eventOrder.Price, Amount: eventOrder.Amount, Side: eventOrder.Side}
+	eventMemoryOrder := &common.MemoryOrder{ID: eventOrder.ID, MarketID: eventOrder.MarketID, Price: eventOrder.Price, Amount: eventOrder.Amount, Side: eventOrder.Side}
 
 	utils.Debug("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
 
 	matchResult, hasMatch := m.hydroEngine.HandleNewOrder(eventMemoryOrder)
-
 	if hasMatch {
 		resultWithOrders := NewMatchResultWithOrders(&eventOrder, &matchResult)
 
@@ -135,8 +134,9 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 
 			eventOrder.AvailableAmount = eventOrder.AvailableAmount.Sub(item.MatchedAmount)
 			eventOrder.PendingAmount = eventOrder.PendingAmount.Add(item.MatchedAmount)
-			eventMemoryOrder.Amount = eventMemoryOrder.Amount.Sub(item.MatchedAmount)
+			//eventMemoryOrder.Amount = eventMemoryOrder.Amount.Sub(item.MatchedAmount)
 			_ = UpdateOrder(makerOrder)
+
 			utils.Debug("  [Take Liquidity] price: %s amount: %s (%s) ", item.MakerOrder.Price.StringFixed(5), item.MatchedAmount.StringFixed(5), item.MakerOrder.ID)
 		}
 
@@ -332,10 +332,10 @@ func NewMarketHandler(ctx context.Context, kvStore common.IKVStore, market *mode
 	}
 
 	marketHandler := MarketHandler{
-		market:    market,
-		queue:     make(chan []byte),
-		KVStore:   kvStore,
-		ctx:       ctx,
+		market:  market,
+		queue:   make(chan []byte),
+		KVStore: kvStore,
+		ctx:     ctx,
 
 		hydroEngine: engine,
 	}
