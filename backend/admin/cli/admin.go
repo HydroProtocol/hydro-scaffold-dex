@@ -208,10 +208,10 @@ func (a *Admin) UnPublishMarket(marketID string) (err error) {
 }
 
 func (a *Admin) UpdateMarketFee(marketID, makerFee, takerFee string) (err error) {
-	market := models.Market{
+	market := marketFields{
 		ID:           marketID,
-		MakerFeeRate: utils.StringToDecimal(makerFee),
-		TakerFeeRate: utils.StringToDecimal(takerFee),
+		MakerFeeRate: makerFee,
+		TakerFeeRate: takerFee,
 	}
 
 	err, _, _ = a.client.Put(a.MarketUrl, nil, market, nil)

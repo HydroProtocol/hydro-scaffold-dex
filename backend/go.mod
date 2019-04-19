@@ -3,7 +3,7 @@ module github.com/HydroProtocol/hydro-box-dex/backend
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.8
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.9
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-redis/redis v6.15.1+incompatible
 	github.com/jmoiron/sqlx v1.2.0
