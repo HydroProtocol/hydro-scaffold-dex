@@ -8,7 +8,7 @@ import (
 )
 
 func NewDexCli() *cli.App {
-	admin := NewAdmin(os.Getenv("ADMIN_API_URL"))
+	admin := NewAdmin(os.Getenv("ADMIN_API_URL"), nil, nil)
 
 	app := cli.NewApp()
 	app.Usage = "hydro-dex-cli COMMAND"
