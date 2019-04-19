@@ -161,14 +161,14 @@ const watchTransactionStatus = (wallet, txID, callback) => {
   const getTransaction = async () => {
     const tx = await wallet.getTransactionReceipt(txID);
     if (!tx) {
-      window.setTimeout(getTransaction(txID), 3000);
+      window.setTimeout(() => getTransaction(txID), 3000);
     } else if (callback) {
       callback(Number(tx.status) === 1);
     } else {
       alert('success');
     }
   };
-  window.setTimeout(getTransaction(txID), 3000);
+  window.setTimeout(() => getTransaction(txID), 3000);
 };
 
 const get64BytesString = string => {
