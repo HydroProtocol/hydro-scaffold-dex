@@ -15,7 +15,7 @@ func run() int {
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	augur_engine.Run(ctx)
+	dex_engine.Run(ctx)
 	return 0
 }
 

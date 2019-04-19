@@ -54,7 +54,7 @@ func newLaunchLog() *LaunchLog {
 		To:       config.User2,
 		Value:    decimal.Zero,
 		GasLimit: 1000000,
-		GasPrice: decimal.NullDecimal{utils.StringToDecimal("1000000000"), true},
+		GasPrice: decimal.NullDecimal{Decimal: utils.StringToDecimal("1000000000"), Valid: true},
 		Nonce:    sql.NullInt64{},
 		Data:     "some data",
 
@@ -62,5 +62,6 @@ func newLaunchLog() *LaunchLog {
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}
+
 	return &launchLog
 }
