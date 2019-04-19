@@ -11,18 +11,17 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/go-redis/redis"
-	"github.com/labstack/gommon/log"
 	"strings"
 	"sync"
 )
 
-type PgDBHandler struct {
-}
-
-func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
-	log.Info("testing PgDBHandler")
-	return sync.WaitGroup{}
-}
+//type PgDBHandler struct {
+//}
+//
+//func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
+//	log.Info("testing PgDBHandler")
+//	return sync.WaitGroup{}
+//}
 
 type RedisOrderBookSnapshotHandler struct {
 	kvStore common.IKVStore
@@ -70,8 +69,8 @@ type DexEngine struct {
 func NewDexEngine(ctx context.Context, redis *redis.Client) *DexEngine {
 	e := engine.NewEngine(context.Background())
 
-	handler := PgDBHandler{}
-	e.RegisterDBHandler(&handler)
+	//handler := PgDBHandler{}
+	//e.RegisterDBHandler(&handler)
 
 	queue, _ := common.InitQueue(&common.RedisQueueConfig{
 		Name:   common.HYDRO_ENGINE_EVENTS_QUEUE_KEY,

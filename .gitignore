@@ -2,5 +2,6 @@ vendor
 .idea
 
 engine
+launcher
 dump.rdb
 .env
