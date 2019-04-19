@@ -92,7 +92,7 @@ func NewAdmin(adminApiUrl string, httpClient utils.IHttpClient, erc20 ethereum.I
 }
 
 func (a *Admin) Status() (err error) {
-	var statusResult struct{
+	var statusResult struct {
 		Data map[string]string `json:"data"`
 	}
 
@@ -165,18 +165,27 @@ func (a *Admin) NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrde
 }
 
 func (a *Admin) UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string) (err error) {
-	market := models.Market{
+	fields := struct {
+		ID                string `json:"market_id"`
+		MinOrderSize      string `json:"min_order_size"`
+		PricePrecision    string `json:"price_precision"`
+		PriceDecimals     string `json:"price_decimals"`
+		AmountDecimals    string `json:"amount_decimals"`
+		MakerFeeRate      string `json:"maker_fee_rate"`
+		TakerFeeRate      string `json:"taker_fee_rate"`
+		GasUsedEstimation string `json:"gas_used_estimation"`
+	}{
 		ID:                marketID,
-		MinOrderSize:      utils.StringToDecimal(DefaultIfNil(minOrderSize, DefaultMinOrderSize)),
-		PricePrecision:    utils.ParseInt(pricePrecision, DefaultPricePrecision),
-		PriceDecimals:     utils.ParseInt(priceDecimals, DefaultPriceDecimals),
-		AmountDecimals:    utils.ParseInt(amountDecimals, DefaultAmountDecimals),
-		MakerFeeRate:      utils.StringToDecimal(DefaultIfNil(makerFeeRate, DefaultMakerFeeRate)),
-		TakerFeeRate:      utils.StringToDecimal(DefaultIfNil(takerFeeRate, DefaultTakerFeeRate)),
-		GasUsedEstimation: utils.ParseInt(gasUsedEstimation, DefaultGasUsedEstimation),
+		MinOrderSize:      minOrderSize,
+		PricePrecision:    pricePrecision,
+		PriceDecimals:     priceDecimals,
+		AmountDecimals:    amountDecimals,
+		MakerFeeRate:      makerFeeRate,
+		TakerFeeRate:      takerFeeRate,
+		GasUsedEstimation: gasUsedEstimation,
 	}
 
-	err, _, _ = a.client.Put(a.MarketUrl, nil, market, nil)
+	err, _, _ = a.client.Put(a.MarketUrl, nil, fields, nil)
 	return
 }
 

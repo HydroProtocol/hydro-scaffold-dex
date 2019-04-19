@@ -61,8 +61,6 @@ func (marketDao) InsertMarket(market *Market) error {
 	return err
 }
 
-
-func (marketDao) UpdateMarket(market *Market) error{
-	return update(market, "MakerFeeRate", "TakerFeeRate")
+func (marketDao) UpdateMarket(market *Market) error {
+	return update(market, "MinOrderSize", "PricePrecision", "PriceDecimals", "AmountDecimals", "MakerFeeRate", "TakerFeeRate", "GasUsedEstimation")
 }
-

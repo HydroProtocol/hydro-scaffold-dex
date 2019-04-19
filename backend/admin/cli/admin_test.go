@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/HydroProtocol/hydro-box-dex/backend/admin/api"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"math/big"
@@ -91,7 +92,6 @@ func TestAdmin(t *testing.T) {
 	suite.Run(t, new(AdminTest))
 }
 
-
 //mock erc20 service
 type MockErc20 struct {
 }
@@ -110,4 +110,15 @@ func (MockErc20) Name(address string) (error, string) {
 
 func (MockErc20) TotalSupply(address string) (error, *big.Int) {
 	return nil, big.NewInt(10000)
+}
+
+func TestArray(t *testing.T) {
+
+	a := []string{"0", "1", "2", "3", "4", "5"}
+	spew.Dump(a[0:1])
+	spew.Dump(a[0:0])
+	spew.Dump(a[1:1])
+	spew.Dump(a[0:2])
+	spew.Dump(a[2:5])
+	spew.Dump(a[2:6])
 }
