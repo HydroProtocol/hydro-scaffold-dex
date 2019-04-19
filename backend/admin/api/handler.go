@@ -201,7 +201,7 @@ func CreateMarketHandler(e echo.Context) (err error) {
 	market := &models.Market{}
 	err = e.Bind(market)
 	if err != nil {
-		utils.Error("bind param error: %v, params:%v", err, e.Request().Body)
+		utils.Debug("bind param error: %v, params:%v", err, e.Request().Body)
 		return response(e, nil, err)
 	}
 
@@ -220,5 +220,5 @@ func response(e echo.Context, data interface{}, err error) error {
 		ret["error_message"] = err.Error()
 	}
 
-	return e.JSON(http.StatusOK, ret)
+	return e.JSONPretty(http.StatusOK, ret, "\t")
 }
