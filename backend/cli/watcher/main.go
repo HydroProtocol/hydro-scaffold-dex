@@ -59,6 +59,7 @@ func main() {
 		QueueClient: queue,
 	}
 
+	go utils.StartMetrics()
 	w.Run()
 
 	utils.Info("Watcher Exit")

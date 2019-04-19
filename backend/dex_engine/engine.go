@@ -164,7 +164,7 @@ func (e *DexEngine) start() {
 
 var hydroProtocol = &ethereum.EthereumHydroProtocol{}
 
-func Run(ctx context.Context) {
+func Run(ctx context.Context, startMetrics func()) {
 	utils.Info("dex engine start...")
 
 	// init redis
@@ -186,6 +186,7 @@ func Run(ctx context.Context) {
 	//start dex engine
 	dexEngine := NewDexEngine(ctx, redisClient)
 	dexEngine.start()
+	go startMetrics()
 
 	dexEngine.Wg.Wait()
 	utils.Info("dex engine stopped!")

@@ -14,8 +14,11 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 )
+
+var apiURL = os.Getenv("HSK_API_URL")
 
 func randomNumber(min, max, decimals float64) float64 {
 	r := rand.Float64()*(max-min) + min
@@ -67,7 +70,7 @@ func placeOrder() {
 		"isMakerOnly": false,
 	})
 
-	req, _ := http.NewRequest(http.MethodPost, "http://localhost:3001/orders/build", bytes.NewReader(body))
+	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/orders/build", apiURL), bytes.NewReader(body))
 	setReqHeader(req)
 	res, err := http.DefaultClient.Do(req)
 
@@ -100,7 +103,7 @@ func placeOrder() {
 		"method":    0,
 	})
 
-	req, _ = http.NewRequest(http.MethodPost, "http://localhost:3001/orders", bytes.NewReader(placeOrderRequestBody))
+	req, _ = http.NewRequest(http.MethodPost, fmt.Sprintf("%s/orders", apiURL), bytes.NewReader(placeOrderRequestBody))
 	setReqHeader(req)
 	res, err = http.DefaultClient.Do(req)
 

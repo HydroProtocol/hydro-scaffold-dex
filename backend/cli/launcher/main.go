@@ -32,16 +32,17 @@ func run() int {
 
 	launcher := launcher.NewLauncher(context.Background(), signService, hydro, gasService)
 
-	Run(launcher)
+	Run(launcher, utils.StartMetrics)
 
 	return 0
 }
 
 const pollingIntervalSeconds = 5
 
-func Run(l *launcher.Launcher) {
+func Run(l *launcher.Launcher, startMetrics func()) {
 	utils.Info("launcher start!")
 	defer utils.Info("launcher stop!")
+	go startMetrics()
 
 	for {
 		launchLogs := models.LaunchLogDao.FindAllCreated()

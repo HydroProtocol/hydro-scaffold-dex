@@ -3,26 +3,27 @@ package admincli
 import (
 	"context"
 	"github.com/HydroProtocol/hydro-box-dex/backend/admin/api"
+	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"math/big"
 	"os"
 	"testing"
+	"time"
 )
 
 type AdminTest struct {
+	suite.Suite
 	admin IAdminApi
 }
 
-func (a AdminTest) T() *testing.T {
-	panic("implement me")
+func (a *AdminTest) SetupSuite() {
 }
 
-func (a AdminTest) SetT(*testing.T) {
-	panic("implement me")
-}
-
-func (a AdminTest) SetupTest() {
+func (a *AdminTest) SetupTest() {
+	utils.Error("sfsdfsf%s", "f")
 	os.Setenv("ADMIN_API_URL", "")
+	os.Setenv("HSK_REDIS_URL", "redis://127.0.0.1:6379/0")
 	os.Setenv("HSK_DATABASE_URL", "")
 	os.Setenv("HSK_HYBRID_EXCHANGE_ADDRESS", "")
 	os.Setenv("WEB_HEALTH_CHECK_URL", "")
@@ -31,50 +32,82 @@ func (a AdminTest) SetupTest() {
 	os.Setenv("LAUNCHER_HEALTH_CHECK_URL", "")
 	os.Setenv("WATCHER_HEALTH_CHECK_URL", "")
 	os.Setenv("WEBSOCKET_HEALTH_CHECK_URL", "")
-	os.Setenv("HSK_BLOCKCHAIN_RPC_URL", "")
+	os.Setenv("HSK_BLOCKCHAIN_RPC_URL", "http://localhost:8545")
 	os.Setenv("HSK_HYBRID_EXCHANGE_ADDRESS", "")
 
-	adminapi.StartServer(context.Background())
-	a.admin = NewAdmin("")
+	go adminapi.StartServer(context.Background())
+	<-time.After(time.Second)
+	a.admin = NewAdmin("", nil, &MockErc20{})
 }
 
-func (a *AdminTest) TestStatus(t *testing.T) {
-
-	a.admin.Status()
+func (a *AdminTest) TestStatus() {
+	assert.Nil(a.T(), a.admin.Status())
 }
 
-func (a *AdminTest) TestNewMarket(t *testing.T) {
+func (a *AdminTest) TestNewMarket() {
 	var marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string
-	assert.Nil(t, admin.NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation))
+	marketID = "HOT-WETH"
+	baseTokenAddress = "0x0000000000000000000000000000000000000001"
+	quoteTokenAddress = "0x0000000000000000000000000000000000000002"
+	assert.Nil(a.T(), a.admin.NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation))
 }
 
-func (a *AdminTest) TestUpdateMarket(t *testing.T) {
-
+func (a *AdminTest) TestUpdateMarket() {
+	var marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string
+	assert.Nil(a.T(), a.admin.UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish))
 }
 
-func (a *AdminTest) TestPublishMarket(t *testing.T) {
-
+func (a *AdminTest) TestPublishMarket() {
+	var marketID string
+	assert.Nil(a.T(), a.admin.PublishMarket(marketID))
 }
 
-func (a *AdminTest) TestUnPublishMarket(t *testing.T) {
-
+func (a *AdminTest) TestUnPublishMarket() {
+	var marketID string
+	assert.Nil(a.T(), a.admin.UnPublishMarket(marketID))
 }
 
-func (a *AdminTest) TestUpdateMarketFee(t *testing.T) {
-
+func (a *AdminTest) TestUpdateMarketFee() {
+	var marketID, makerFee, takerFee string
+	assert.Nil(a.T(), a.admin.UpdateMarketFee(marketID, makerFee, takerFee))
 }
 
-func (a *AdminTest) TestListAccountOrders(t *testing.T) {
-
+func (a *AdminTest) TestListAccountOrders() {
+	var address, limit, offset, status string
+	assert.Nil(a.T(), a.admin.ListAccountOrders(address, limit, offset, status))
 }
 
-func (a *AdminTest) TestListAccountBalances(t *testing.T) {
-
+func (a *AdminTest) TestListAccountBalances() {
+	var address, limit, offset string
+	assert.Nil(a.T(), a.admin.ListAccountBalances(address, limit, offset))
 }
 
-func (a *AdminTest) TestListAccountTrades(t *testing.T) {
+func (a *AdminTest) TestListAccountTrades() {
+	var address, limit, offset, status string
+	assert.Nil(a.T(), a.admin.ListAccountTrades(address, limit, offset, status))
 }
 
 func TestAdmin(t *testing.T) {
 	suite.Run(t, new(AdminTest))
+}
+
+
+//mock erc20 service
+type MockErc20 struct {
+}
+
+func (MockErc20) Symbol(address string) (error, string) {
+	return nil, "HOT"
+}
+
+func (MockErc20) Decimals(address string) (error, int) {
+	return nil, 18
+}
+
+func (MockErc20) Name(address string) (error, string) {
+	return nil, "hydro token"
+}
+
+func (MockErc20) TotalSupply(address string) (error, *big.Int) {
+	return nil, big.NewInt(10000)
 }
