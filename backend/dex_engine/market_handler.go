@@ -323,14 +323,15 @@ func NewMarketHandler(ctx context.Context, kvStore common.IKVStore, market *mode
 			continue
 		}
 
-		// todo sdk should prove method to re-insert orders without sending msg (receive, open, etc...)
-		//bookOrder := common.MemoryOrder{
-		//	ID:     order.ID,
-		//	Price:  order.Price,
-		//	Amount: order.AvailableAmount,
-		//	Side:   order.Side,
-		//}
-		//marketOrderbook.InsertOrder(&bookOrder)
+		bookOrder := common.MemoryOrder{
+			MarketID: order.MarketID,
+			ID:       order.ID,
+			Price:    order.Price,
+			Amount:   order.AvailableAmount,
+			Side:     order.Side,
+		}
+		msg := engine.ReInsertOrder(&bookOrder)
+		pushMessage(msg)
 	}
 
 	marketHandler := MarketHandler{
@@ -356,8 +357,6 @@ func NewMarketHandler(ctx context.Context, kvStore common.IKVStore, market *mode
 	}
 
 	_ = json.Unmarshal([]byte(res), &snapshot)
-
-	//marketOrderbook.Sequence = snapshot.Sequence
 
 	return &marketHandler, nil
 }
