@@ -49,16 +49,16 @@ func sendLockedBalanceChangeMessage(address, symbol string, newLockedBalance dec
 	})
 }
 
-func sendOrderbookChangeMessage(marketID string, sequence uint64, side string, price, amount decimal.Decimal) error {
-	payload := &common.WebsocketMarketOrderChangePayload{
-		Sequence: sequence,
-		Side:     side,
-		Price:    price.String(),
-		Amount:   amount.String(),
-	}
-
-	return pushMarketChannel(marketID, payload)
-}
+//func sendOrderbookChangeMessage(marketID string, sequence uint64, side string, price, amount decimal.Decimal) error {
+//	payload := &common.WebsocketMarketOrderChangePayload{
+//		Sequence: sequence,
+//		Side:     side,
+//		Price:    price.String(),
+//		Amount:   amount.String(),
+//	}
+//
+//	return pushMarketChannel(marketID, payload)
+//}
 
 func pushMarketChannel(marketID string, payload interface{}) error {
 	return pushMessage(&common.WebSocketMessage{
