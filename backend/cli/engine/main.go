@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/HydroProtocol/hydro-box-dex/backend/dex_engine"
 	_ "github.com/joho/godotenv/autoload"
 )
 
 import (
 	"context"
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
+	"github.com/HydroProtocol/hydro-box-dex/backend/dex_engine"
 	"os"
 )
 
