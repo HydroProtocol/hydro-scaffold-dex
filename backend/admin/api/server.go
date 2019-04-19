@@ -168,6 +168,7 @@ func CreateMarketHandler(e echo.Context) (err error) {
 	market := &models.Market{}
 	err = e.Bind(market)
 	if err != nil {
+		utils.Error("bind param error: %v, params:%v", err, e.Request().Body)
 		return response(e, nil, err)
 	}
 

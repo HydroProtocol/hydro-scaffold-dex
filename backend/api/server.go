@@ -126,7 +126,7 @@ func getEchoServer() *echo.Echo {
 
 var hydro sdk.Hydro
 
-func StartServer(ctx context.Context) {
+func StartServer(ctx context.Context, startMetric func()) {
 	// init redis
 	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
 
@@ -166,6 +166,7 @@ func StartServer(ctx context.Context) {
 		}
 	}()
 
+	go startMetric()
 	<-ctx.Done()
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
