@@ -1,28 +1,26 @@
 package main
 
+
 import (
-	"encoding/json"
+	_ "github.com/joho/godotenv/autoload"
+)
+import (
+	"context"
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/launcher"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
-	_ "github.com/joho/godotenv/autoload"
 	"github.com/shopspring/decimal"
-	"time"
-)
-
-import (
-	"context"
 	"os"
+	"time"
 )
 
 func run() int {
 	_, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	//todo
 	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
@@ -59,32 +57,52 @@ func Run(l *launcher.Launcher, startMetrics func()) {
 			}
 		}
 
-		for _, launchLog := range launchLogs {
-			launchLog.GasPrice = decimal.NullDecimal{
+		for _, modelLaunchLog := range launchLogs {
+			modelLaunchLog.GasPrice = decimal.NullDecimal{
 				Decimal: l.GasPrice(),
 				Valid:   true,
 			}
 
-			log := launcher.LaunchLog{}
-			payload, _ := json.Marshal(launchLog)
-
-			json.Unmarshal(payload, &log)
+			log := launcher.LaunchLog{
+				ID:          modelLaunchLog.ID,
+				ItemType:    modelLaunchLog.ItemType,
+				ItemID:      modelLaunchLog.ItemID,
+				Status:      modelLaunchLog.Status,
+				Hash:        modelLaunchLog.Hash,
+				BlockNumber: modelLaunchLog.BlockNumber,
+				From:        modelLaunchLog.From,
+				To:          modelLaunchLog.To,
+				Value:       modelLaunchLog.Value,
+				GasLimit:    modelLaunchLog.GasLimit,
+				GasUsed:     modelLaunchLog.GasUsed,
+				GasPrice:    modelLaunchLog.GasPrice,
+				Nonce:       modelLaunchLog.Nonce,
+				Data:        modelLaunchLog.Data,
+				ExecutedAt:  modelLaunchLog.ExecutedAt,
+				CreatedAt:   modelLaunchLog.CreatedAt,
+				UpdatedAt:   modelLaunchLog.UpdatedAt,
+			}
+			//payload, _ := json.Marshal(launchLog)
+			//json.Unmarshal(payload, &log)
 
 			signedRawTransaction := l.SignService.Sign(&log)
 			transactionHash, err := l.BlockChain.SendRawTransaction(signedRawTransaction)
 
 			if err != nil {
-				utils.Debug("%+v", launchLog)
-				utils.Info("Send Tx failed, launchLog ID: %d, err: %+v", launchLog.ID, err)
+				utils.Debug("%+v", modelLaunchLog)
+				utils.Info("Send Tx failed, launchLog ID: %d, err: %+v", modelLaunchLog.ID, err)
 				panic(err)
 			}
 
-			utils.Info("Send Tx, launchLog ID: %d, hash: %s", launchLog.ID, transactionHash)
+			utils.Info("Send Tx, launchLog ID: %d, hash: %s", modelLaunchLog.ID, transactionHash)
 
-			models.UpdateLaunchLogToPending(launchLog)
+			// todo any other fields?
+			modelLaunchLog.Hash = log.Hash
+
+			models.UpdateLaunchLogToPending(modelLaunchLog)
 
 			if err != nil {
-				utils.Info("Update Launch Log Failed, ID: %d, err: %s", launchLog.ID, err)
+				utils.Info("Update Launch Log Failed, ID: %d, err: %s", modelLaunchLog.ID, err)
 				panic(err)
 			}
 

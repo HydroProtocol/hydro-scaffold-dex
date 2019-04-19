@@ -15,21 +15,21 @@ class Wallet extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      selectedType: OPTIONS[0].value
+      selectedAccountID: OPTIONS[0].value
     };
   }
 
   render() {
-    const { selectedType } = this.state;
+    const { selectedAccountID } = this.state;
     return (
       <>
         <div className="title flex justify-content-between align-items-center">
           <div>Wallet</div>
           <Selector
             options={OPTIONS}
-            selectedValue={selectedType}
+            selectedValue={selectedAccountID}
             handleClick={option => {
-              this.setState({ selectedType: option.value });
+              this.setState({ selectedAccountID: option.value });
             }}
           />
         </div>
@@ -41,8 +41,8 @@ class Wallet extends React.PureComponent {
   }
 
   renderTabPanel() {
-    const { selectedType } = this.state;
-    switch (selectedType) {
+    const { selectedAccountID } = this.state;
+    switch (selectedAccountID) {
       case 'tokens':
         return <Tokens />;
       case 'wrap':

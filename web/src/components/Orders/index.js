@@ -9,11 +9,11 @@ class Orders extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      selectedType: OPTIONS[0].value
+      selectedAccountID: OPTIONS[0].value
     };
   }
   render() {
-    const { selectedType } = this.state;
+    const { selectedAccountID } = this.state;
     return (
       <>
         <div className="title flex justify-content-between align-items-center">
@@ -23,13 +23,13 @@ class Orders extends React.PureComponent {
           </div>
           <Selector
             options={OPTIONS}
-            selectedValue={selectedType}
+            selectedValue={selectedAccountID}
             handleClick={option => {
-              this.setState({ selectedType: option.value });
+              this.setState({ selectedAccountID: option.value });
             }}
           />
         </div>
-        {selectedType === 'openOrders' ? <OpenOrders /> : <Trades />}
+        {selectedAccountID === 'openOrders' ? <OpenOrders /> : <Trades />}
       </>
     );
   }
