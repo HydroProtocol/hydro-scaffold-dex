@@ -1,5 +1,6 @@
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419061400-9b6969f425f3/go.mod h1:K2urw166Bn9qqjXiALQcBig2A8SDa7IejBzM89vnrXM=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419071923-f9e533899579/go.mod h1:K2urw166Bn9qqjXiALQcBig2A8SDa7IejBzM89vnrXM=
+github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419100138-7cb5678476fc/go.mod h1:IYE+gQvjjMef6mgZCzm2NXuJ35ewytNT62+BILedt2s=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3 h1:GraWKEJwNDWHlO7eZjSj8PkIwwFsuNiBN4+DGh4WTY8=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3/go.mod h1:s6BzPp3Oed01zWubFguGismWzQhwekI6CXBA32XfDf0=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.5 h1:umztM/7Jc9eIuDZcMFWdSvU4U6e0bQW4a8SQ6SqoiW8=

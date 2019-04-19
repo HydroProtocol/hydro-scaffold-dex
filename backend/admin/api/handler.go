@@ -152,6 +152,7 @@ func EditMarketHandler(e echo.Context) (err error) {
 		MakerFeeRate      string `json:"maker_fee_rate"`
 		TakerFeeRate      string `json:"taker_fee_rate"`
 		GasUsedEstimation string `json:"gas_used_estimation"`
+		IsPublished       string `json:"is_published"`
 	}{}
 
 	err = e.Bind(fields)
@@ -183,6 +184,11 @@ func EditMarketHandler(e echo.Context) (err error) {
 		}
 		if len(fields.GasUsedEstimation) > 0 {
 			dbMarket.GasUsedEstimation = utils.ParseInt(fields.GasUsedEstimation, 0)
+		}
+		if fields.IsPublished == "true" {
+			dbMarket.IsPublished = 1
+		} else if fields.IsPublished == "false" {
+			dbMarket.IsPublished = 0
 		}
 
 		err = models.MarketDao.UpdateMarket(dbMarket)

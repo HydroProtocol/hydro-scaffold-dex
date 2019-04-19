@@ -30,6 +30,7 @@ type Market struct {
 	MakerFeeRate      decimal.Decimal `json:"makerFeeRate"      db:"maker_fee_rate"`
 	TakerFeeRate      decimal.Decimal `json:"takerFeeRate"      db:"taker_fee_rate"`
 	GasUsedEstimation int             `json:"gasUsedEstimation" db:"gas_used_estimation"`
+	IsPublished       int             `json:"siPublished"       db:"is_published"`
 }
 
 var MarketDao IMarketDao
@@ -62,5 +63,5 @@ func (marketDao) InsertMarket(market *Market) error {
 }
 
 func (marketDao) UpdateMarket(market *Market) error {
-	return update(market, "MinOrderSize", "PricePrecision", "PriceDecimals", "AmountDecimals", "MakerFeeRate", "TakerFeeRate", "GasUsedEstimation")
+	return update(market, "MinOrderSize", "PricePrecision", "PriceDecimals", "AmountDecimals", "MakerFeeRate", "TakerFeeRate", "GasUsedEstimation", "IsPublished")
 }

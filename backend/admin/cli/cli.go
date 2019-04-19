@@ -133,8 +133,8 @@ func NewDexCli() *cli.App {
 			Subcommands: []cli.Command{
 				{
 					Name:        "list",
-					Usage:       "",
-					Description: "lists market",
+					Usage:       "List markets",
+					Description: "List markets",
 					Action: func(c *cli.Context) error {
 						return admin.ListMarkets()
 					},
@@ -158,8 +158,9 @@ func NewDexCli() *cli.App {
 					Description: "Update a market",
 					Flags:       marketUpdateFlags,
 					Action: func(c *cli.Context) error {
-						if len(marketID) == 0 || len(baseTokenAddress) == 0 || len(quoteTokenAddress) == 0 {
-							return fmt.Errorf("require flag marketID, usage: hydro-dex-cli market new --marketId=xxx --baseTokenAddress=xxx --quoteTokenAddress=xxx")
+						marketID = c.Args().Get(1)
+						if len(marketID) == 0 {
+							return fmt.Errorf("require flag marketID, usage: hydro-dex-cli market update xxx [flags]")
 						}
 
 						return admin.UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish)
@@ -234,7 +235,7 @@ func NewDexCli() *cli.App {
 					},
 				},
 				{
-					Name: "trades",
+					Name:  "trades",
 					Usage: "Get address trades",
 					Flags: orderListFlags,
 					Action: func(c *cli.Context) error {
@@ -246,7 +247,7 @@ func NewDexCli() *cli.App {
 			},
 		},
 		{
-			Name: "order",
+			Name:  "order",
 			Usage: "Manage order. (cancel)",
 			Subcommands: cli.Commands{
 				{
