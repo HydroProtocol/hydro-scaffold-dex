@@ -16,6 +16,7 @@ var queueService common.IQueue
 var healthCheckService IHealthCheckMonitor
 
 func loadRoutes(e *echo.Echo) {
+	e.Add("GET", "/markets", ListMarketsHandler)
 	e.Add("POST", "/markets", CreateMarketHandler)
 	e.Add("PUT", "/markets", EditMarketHandler)
 	e.Add("DELETE", "/orders/:order_id", DeleteOrderHandler)

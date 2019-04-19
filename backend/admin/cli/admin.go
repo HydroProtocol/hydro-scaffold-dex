@@ -29,6 +29,7 @@ type IAdminApi interface {
 	Status() error
 
 	NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) error
+	ListMarkets() error
 	UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string) error
 	PublishMarket(marketID string) error
 	UnPublishMarket(marketID string) error
@@ -104,6 +105,11 @@ func (a *Admin) Status() (err error) {
 	}
 
 	err = json.Unmarshal(data, &statusResult)
+	return
+}
+
+func (a *Admin) ListMarkets() (err error) {
+	err, _, _ = a.client.Get(a.MarketUrl, nil, nil, nil)
 	return
 }
 

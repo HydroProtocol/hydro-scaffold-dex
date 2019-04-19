@@ -132,6 +132,14 @@ func NewDexCli() *cli.App {
 			Usage:       "",
 			Subcommands: []cli.Command{
 				{
+					Name:        "list",
+					Usage:       "",
+					Description: "lists market",
+					Action: func(c *cli.Context) error {
+						return admin.ListMarkets()
+					},
+				},
+				{
 					Name:        "new",
 					Usage:       "",
 					Description: "create a market",
@@ -183,7 +191,6 @@ func NewDexCli() *cli.App {
 						return admin.UnPublishMarket(marketID)
 					},
 				},
-
 				{
 					Name:        "changeFees",
 					Usage:       "",

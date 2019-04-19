@@ -137,6 +137,11 @@ func DeleteOrderHandler(e echo.Context) (err error) {
 	return response(e, nil, err)
 }
 
+func ListMarketsHandler(e echo.Context) (err error) {
+	markets := models.MarketDao.FindAllMarkets()
+	return response(e, markets, err)
+}
+
 func EditMarketHandler(e echo.Context) (err error) {
 	fields := struct {
 		ID                string `json:"market_id"`

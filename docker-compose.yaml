@@ -25,7 +25,6 @@ services:
     container_name: hydro-box-dex-web
     ports:
       - 3000:8043
-      - 3006:3006
     environment:
       - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL
       - REACT_APP_API_URL=http://localhost:3001
@@ -36,7 +35,7 @@ services:
       - REACT_APP_NODE_URL=http://localhost:8545
     restart: on-failure:5
   admin:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
+    image: box-dex-backend:latest
     container_name: hydro-box-dex-admin-api
     command: /bin/adminapi
     ports:
@@ -46,12 +45,12 @@ services:
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
       - HSK_LOG_LEVEL=DEBUG
-      - WEB_HEALTH_CHECK_URL=http://web:3006/metrics
-      - API_HEALTH_CHECK_URL=http://api:3006/metrics
-      - ENGINE_HEALTH_CHECK_URL=http://engine:3006/metrics
-      - LAUNCHER_HEALTH_CHECK_URL=http://launcher:3006/metrics
-      - WATCHER_HEALTH_CHECK_URL=http://watcher:3006/metrics
-      - WEBSOCKET_HEALTH_CHECK_URL=http://ws:3006/metrics
+      - WEB_HEALTH_CHECK_URL=http://web:8043
+      - API_HEALTH_CHECK_URL=http://api:4001/metrics
+      - ENGINE_HEALTH_CHECK_URL=http://engine:4004/metrics
+      - LAUNCHER_HEALTH_CHECK_URL=http://launcher:4005/metrics
+      - WATCHER_HEALTH_CHECK_URL=http://watcher:4003/metrics
+      - WEBSOCKET_HEALTH_CHECK_URL=http://ws:4002/metrics
     volumes:
       - datavolume:/data
     depends_on:
@@ -65,7 +64,7 @@ services:
     command: /bin/api
     ports:
       - 3001:3001
-      - 3006:3006
+      - 4001:4001
     environment:
       - HSK_DATABASE_URL=/data/sqlite3.db
       - HSK_REDIS_URL=redis://redis:6379/0
@@ -89,7 +88,7 @@ services:
     command: /bin/websocket
     ports:
       - 3002:3002
-      - 3006:3006
+      - 4002:4002
     environment:
       - HSK_API_URL=http://api:3001
       - HSK_REDIS_URL=redis://redis:6379/0
@@ -105,7 +104,7 @@ services:
     container_name: hydro-box-dex-watcher
     command: /bin/watcher
     ports:
-      - 3006:3006
+      - 4003:4003
     environment:
       - HSK_DATABASE_URL=/data/sqlite3.db
       - HSK_REDIS_URL=redis://redis:6379/0
@@ -122,7 +121,7 @@ services:
     container_name: hydro-box-dex-engine
     command: /bin/engine
     ports:
-      - 3006:3006
+      - 4004:4004
     environment:
       - HSK_DATABASE_URL=/data/sqlite3.db
       - HSK_REDIS_URL=redis://redis:6379/0
@@ -140,7 +139,7 @@ services:
     container_name: hydro-box-dex-launcher
     command: /bin/launcher
     ports:
-      - 3006:3006
+      - 4005:4005
     environment:
       - HSK_DATABASE_URL=/data/sqlite3.db
       - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
