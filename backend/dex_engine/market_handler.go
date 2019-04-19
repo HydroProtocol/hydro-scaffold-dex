@@ -250,15 +250,17 @@ func (m *MarketHandler) handleCancelOrder(event *common.CancelOrderEvent) (inter
 		return nil, errors.New(fmt.Sprintf("cannot find order with id %s", event.ID))
 	}
 
-	//bookOrder := &common.MemoryOrder{
-	//	ID:     order.ID,
-	//	Price:  order.Price,
-	//	Side:   order.Side,
-	//	Amount: order.AvailableAmount,
-	//}
-
-	//todo
-	//m.orderbook.RemoveOrder(bookOrder)
+	bookOrder := &common.MemoryOrder{
+		MarketID: m.market.ID,
+		ID:       order.ID,
+		Price:    order.Price,
+		Side:     order.Side,
+		Amount:   order.AvailableAmount,
+	}
+	msg, success := m.hydroEngine.HandleCancelOrder(bookOrder)
+	if success {
+		pushMessage(msg)
+	}
 
 	order.CanceledAmount = order.CanceledAmount.Add(order.AvailableAmount)
 	order.AvailableAmount = decimal.Zero
