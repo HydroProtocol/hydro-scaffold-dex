@@ -109,27 +109,6 @@ module.exports = async () => {
     await wrapETH(maker, "1000");
     await approveAllToken(relayer, [usd, hot, weth]);
 
-    exchange = await newContract(HybridExchange, proxy._address, hot._address);
-    console.log('HybridExchange address', web3.toChecksumAddress(exchange._address));
-
-    await Proxy.at(proxy._address).addAddress(exchange._address);
-    console.log('Proxy add exchange into whitelist');
-
-    const augurSharesCount = 9;
-    const augurShares = [];
-
-    for (let i = 0; i < augurSharesCount; i++) {
-      let share = await newContract(TestToken, "AugurShare", "AugurShare", 18);
-      console.log(
-        "Augur Share Token address",
-        web3.toChecksumAddress(share._address)
-      );
-      augurShares.push(share);
-    }
-
-    await approveAllToken(maker, augurShares);
-    await giveCoinsTo(maker, "100000", augurShares);
-
     process.exit(0);
   } catch (e) {
     console.log(e);
