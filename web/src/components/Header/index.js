@@ -2,7 +2,7 @@ import React from 'react';
 import { loginRequest, login } from '../../actions/account';
 import { updateCurrentMarket } from '../../actions/markets';
 import { connect } from 'react-redux';
-import { Wallet, WalletButton, getSelectedAccount } from 'hydro-sdk-wallet';
+import { Wallet, WalletButton, getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 import './styles.scss';
 import { loadAccountHydroAuthentication } from '../../lib/session';
 import env from '../../lib/env';

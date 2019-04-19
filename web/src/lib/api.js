@@ -3,7 +3,7 @@ import env from './env';
 import { store } from '../index';
 import { cleanLoginDate, loadAccountHydroAuthentication } from './session';
 import { logout } from '../actions/account';
-import { getSelectedAccount } from 'hydro-sdk-wallet';
+import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const getAxiosInstance = () => {
   const state = store.getState();

@@ -11,7 +11,7 @@ import { loginRequest } from '../../actions/account';
 import PerfectScrollbar from 'perfect-scrollbar';
 import './styles.scss';
 import { sleep } from '../../lib/utils';
-import { getSelectedAccount } from 'hydro-sdk-wallet';
+import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
   const selector = formValueSelector(TRADE_FORM_ID);

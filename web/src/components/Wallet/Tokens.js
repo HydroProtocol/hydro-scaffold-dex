@@ -4,7 +4,7 @@ import { loadTokens } from '../../actions/account';
 import { toUnitAmount, isTokenApproved } from '../../lib/utils';
 import BigNumber from 'bignumber.js';
 import { enable, disable } from '../../lib/wallet';
-import { getSelectedAccount } from 'hydro-sdk-wallet';
+import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
   const selectedType = state.WalletReducer.get('selectedType');

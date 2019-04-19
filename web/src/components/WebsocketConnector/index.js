@@ -8,7 +8,7 @@ import { setConfigs } from '../../actions/config';
 import { orderUpdate, watchToken, updateTokenLockedBalances } from '../../actions/account';
 import { tradeUpdate, marketTrade } from '../../actions/trade';
 import { sleep } from '../../lib/utils';
-import { getSelectedAccount } from 'hydro-sdk-wallet';
+import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
   const selectedAccount = getSelectedAccount(state);

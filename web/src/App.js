@@ -8,8 +8,8 @@ import Trade from './components/Trade';
 import Wallet from './components/Wallet';
 import Orders from './components/Orders';
 import TradeHistory from './components/TradeHistory';
-import { HydroWallet } from 'hydro-sdk-wallet/build/wallets';
-import { loadHydroWallet } from 'hydro-sdk-wallet/build/actions/wallet';
+import { HydroWallet } from '@gongddex/hydro-sdk-wallet/build/wallets';
+import { loadHydroWallet } from '@gongddex/hydro-sdk-wallet/build/actions/wallet';
 import env from './lib/env';
 
 const mapStateToProps = state => {
