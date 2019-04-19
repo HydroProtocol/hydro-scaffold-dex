@@ -45,7 +45,7 @@ class TradeHistory extends React.PureComponent {
                     <tr key={trade.id}>
                       <td className={[colorGreen ? 'text-success' : 'text-danger'].join(' ')}>
                         {new BigNumber(trade.price).toFixed(currentMarket.priceDecimals)}
-                        {trade.side === 'buy' ? (
+                        {trade.takerSide === 'buy' ? (
                           <i className="fa fa-arrow-up" aria-hidden="true" />
                         ) : (
                           <i className="fa fa-arrow-down" aria-hidden="true" />
