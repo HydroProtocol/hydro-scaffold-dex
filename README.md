@@ -52,39 +52,7 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 
 1.  View Relayer
 
-    Open `http://localhost:3000/` on your browser. Proceed to the next step to use your Relayer.
-
-1.  Setup wallet and address
-
-    1.  Install metamask wallet
-
-        Currently, we only support metamask as your wallet. If you have metamask installed, please move to the next section.
-
-        - For Chrome [Download](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn).
-        - For Firefox [Download](https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/)
-        - For Brave, metamask is built-in. <a href="about:preferences#extensions" targert="_blank">Enable</a>
-
-    1.  Setup network
-
-        The default network of metamask is mainnet. We will use **localhost** to test for now.
-
-        Open the metamask extension and switch the network to `localhost:8545`
-
-    1.  Import an account
-
-        We have already prepare an address for you. The private key is `0xb7a0c9d2786fc4dd080ea5d619d36771aeb0c8c26c290afd3451b92ba2b7bc2c`, address is `0x31ebd457b999bf99759602f5ece5aa5033cb56b3`.
-
-        Import the private key into your metamask then switch to this account.
-
-    1.  All set
-
-        Now you are free to play around with this box on `http://localhost:3000/`.
-
-1.  Launch a simple maker
-
-    Run the follow command in another terminal. It will start a simple maker to fill the orderbook of `HOT-DAI` market. You will see a live exchange in your browser now.
-
-        docker run --rm --net host hydroprotocolio/hydro-box-dex-backend:latest maker
+    Open `http://localhost:3000/` on your browser. You can connect to a wallet by clicking the button at right-top corner. An address is ready for you. You can find it under the `Browser Wallet` type. The address is `0x31ebd457b999bf99759602f5ece5aa5033cb56b3`.
 
 1.  Get status
 
@@ -92,7 +60,11 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 
     This will show each service running status.
 
-1.  View logs
+1. Operate your dex
+
+    See [admin cli manual](./manual/admin-api-and-cli.md).
+
+2.  View logs
 
         # view logs of the service that defined in docker-compose.yml services
         # e.g. view watcher log
@@ -102,7 +74,7 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 
     This will show logs of the service which you point.
 
-1.  Stop
+3.  Stop
 
         docker-compose stop
 
@@ -135,6 +107,10 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
   - Blockchain Monitor to watch for transaction changes on the blockchain
 - [Sqlite3](https://www.sqlite.org/index.html) as database
 - [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node
+
+## Run on other network
+
+        See [change network manual](./manual/change-network.md).
 
 ## License
 
