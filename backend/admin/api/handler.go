@@ -143,25 +143,15 @@ func ListMarketsHandler(e echo.Context) (err error) {
 }
 
 func EditMarketHandler(e echo.Context) (err error) {
-	fields := struct {
-		ID                string `json:"market_id"`
-		MinOrderSize      string `json:"min_order_size"`
-		PricePrecision    string `json:"price_precision"`
-		PriceDecimals     string `json:"price_decimals"`
-		AmountDecimals    string `json:"amount_decimals"`
-		MakerFeeRate      string `json:"maker_fee_rate"`
-		TakerFeeRate      string `json:"taker_fee_rate"`
-		GasUsedEstimation string `json:"gas_used_estimation"`
-		IsPublished       string `json:"is_published"`
-	}{}
+	var fields marketFields
 
-	err = e.Bind(fields)
+	err = e.Bind(&fields)
 	if err != nil {
 		return response(e, nil, err)
 	}
 
 	dbMarket := models.MarketDao.FindMarketByID(fields.ID)
-	if dbMarket != nil {
+	if dbMarket == nil {
 		err = fmt.Errorf("cannot find market by ID %s", fields.ID)
 	} else {
 		if len(fields.MinOrderSize) > 0 {
@@ -186,9 +176,9 @@ func EditMarketHandler(e echo.Context) (err error) {
 			dbMarket.GasUsedEstimation = utils.ParseInt(fields.GasUsedEstimation, 0)
 		}
 		if fields.IsPublished == "true" {
-			dbMarket.IsPublished = 1
+			dbMarket.IsPublished = true
 		} else if fields.IsPublished == "false" {
-			dbMarket.IsPublished = 0
+			dbMarket.IsPublished = false
 		}
 
 		err = models.MarketDao.UpdateMarket(dbMarket)
@@ -198,14 +188,14 @@ func EditMarketHandler(e echo.Context) (err error) {
 }
 
 func CreateMarketHandler(e echo.Context) (err error) {
-	market := &models.Market{}
-	err = e.Bind(market)
+	var market models.Market
+	err = e.Bind(&market)
 	if err != nil {
 		utils.Debug("bind param error: %v, params:%v", err, e.Request().Body)
 		return response(e, nil, err)
 	}
 
-	err = models.MarketDao.InsertMarket(market)
+	err = models.MarketDao.InsertMarket(&market)
 	return response(e, nil, err)
 }
 
@@ -221,4 +211,16 @@ func response(e echo.Context, data interface{}, err error) error {
 	}
 
 	return e.JSONPretty(http.StatusOK, ret, "\t")
+}
+
+type marketFields struct {
+	ID                string `json:"market_id"`
+	MinOrderSize      string `json:"min_order_size"`
+	PricePrecision    string `json:"price_precision"`
+	PriceDecimals     string `json:"price_decimals"`
+	AmountDecimals    string `json:"amount_decimals"`
+	MakerFeeRate      string `json:"maker_fee_rate"`
+	TakerFeeRate      string `json:"taker_fee_rate"`
+	GasUsedEstimation string `json:"gas_used_estimation"`
+	IsPublished       string `json:"is_published"`
 }
