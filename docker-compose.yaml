@@ -44,7 +44,7 @@ services:
       - HSK_DATABASE_URL=/data/sqlite3.db
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
-      - HSK_LOG_LEVEL=DEBUG
+      - HSK_LOG_LEVEL=ERROR
       - WEB_HEALTH_CHECK_URL=http://web:8043
       - API_HEALTH_CHECK_URL=http://api:4001/metrics
       - ENGINE_HEALTH_CHECK_URL=http://engine:4004/metrics

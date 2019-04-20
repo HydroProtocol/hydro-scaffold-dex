@@ -112,6 +112,10 @@ func NewDexCli() *cli.App {
 
 	orderListFlags := []cli.Flag{
 		cli.StringFlag{
+			Name:        "marketID",
+			Destination: &marketID,
+		},
+		cli.StringFlag{
 			Name:        "limit",
 			Destination: &limit,
 		},
@@ -122,6 +126,17 @@ func NewDexCli() *cli.App {
 		cli.StringFlag{
 			Name:        "status",
 			Destination: &status,
+		},
+	}
+
+	balanceListFlags := []cli.Flag{
+		cli.StringFlag{
+			Name:        "limit",
+			Destination: &limit,
+		},
+		cli.StringFlag{
+			Name:        "offset",
+			Destination: &offset,
 		},
 	}
 
@@ -237,14 +252,19 @@ func NewDexCli() *cli.App {
 							return nil
 						}
 
-						printIfErr(admin.ListAccountOrders(address, limit, offset, status))
+						if len(marketID) == 0 {
+							fmt.Println("missing arguments, usage: hydro-dex-cli address balances address --marketID=xxx")
+							return nil
+						}
+
+						printIfErr(admin.ListAccountOrders(marketID, address, limit, offset, status))
 						return nil
 					},
 				},
 				{
 					Name:  "balances",
 					Usage: "Get address balances",
-					Flags: orderListFlags,
+					Flags: balanceListFlags,
 					Action: func(c *cli.Context) error {
 						address := c.Args().Get(0)
 						if len(address) == 0 {
@@ -267,7 +287,12 @@ func NewDexCli() *cli.App {
 							return nil
 						}
 
-						printIfErr(admin.ListAccountTrades(address, limit, offset, status))
+						if len(marketID) == 0 {
+							fmt.Println("missing arguments, usage: hydro-dex-cli address trades address --marketID=xxx")
+							return nil
+						}
+
+						printIfErr(admin.ListAccountTrades(marketID, address, limit, offset, status))
 						return nil
 					},
 				},

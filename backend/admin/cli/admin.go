@@ -34,9 +34,9 @@ type IAdminApi interface {
 	UnPublishMarket(marketID string) ([]byte, error)
 	UpdateMarketFee(marketID, makerFee, takerFee string) ([]byte, error)
 
-	ListAccountOrders(address, limit, offset, status string) ([]byte, error)
+	ListAccountOrders(marketID, address, limit, offset, status string) ([]byte, error)
 	ListAccountBalances(address, limit, offset string) ([]byte, error)
-	ListAccountTrades(address, limit, offset, status string) ([]byte, error)
+	ListAccountTrades(marketID, address, limit, offset, status string) ([]byte, error)
 
 	CancelOrder(ID string) ([]byte, error)
 
@@ -206,8 +206,9 @@ func (a *Admin) UpdateMarketFee(marketID, makerFee, takerFee string) (ret []byte
 	return
 }
 
-func (a *Admin) ListAccountOrders(address, limit, offset, status string) (ret []byte, err error) {
+func (a *Admin) ListAccountOrders(marketID, address, limit, offset, status string) (ret []byte, err error) {
 	var params []utils.KeyValue
+	params = append(params, utils.KeyValue{Key: "market_id", Value: marketID})
 	params = append(params, utils.KeyValue{Key: "address", Value: address})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})
@@ -227,8 +228,9 @@ func (a *Admin) ListAccountBalances(address, limit, offset string) (ret []byte, 
 	return
 }
 
-func (a *Admin) ListAccountTrades(address, limit, offset, status string) (ret []byte, err error) {
+func (a *Admin) ListAccountTrades(marketID, address, limit, offset, status string) (ret []byte, err error) {
 	var params []utils.KeyValue
+	params = append(params, utils.KeyValue{Key: "market_id", Value: marketID})
 	params = append(params, utils.KeyValue{Key: "address", Value: address})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})

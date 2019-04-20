@@ -42,7 +42,7 @@ func GetBalancesHandler(e echo.Context) (err error) {
 		LockedBalance decimal.Decimal `json:"lockedBalance"`
 	}
 
-	err = e.Bind(req)
+	err = e.Bind(&req)
 	if err == nil {
 		tokens := models.TokenDao.GetAllTokens()
 
@@ -82,7 +82,7 @@ func GetTradesHandler(e echo.Context) (err error) {
 
 	var trades []*models.Trade
 	var count int64
-	err = e.Bind(req)
+	err = e.Bind(&req)
 	if err == nil {
 		count, trades = models.TradeDao.FindAccountMarketTrades(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
 	}
@@ -102,7 +102,7 @@ func GetOrdersHandler(e echo.Context) (err error) {
 	var orders []*models.Order
 	var count int64
 
-	err = e.Bind(req)
+	err = e.Bind(&req)
 	if err == nil {
 		count, orders = models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
 	}
