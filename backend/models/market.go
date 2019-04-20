@@ -12,7 +12,7 @@ type IMarketDao interface {
 }
 
 type Market struct {
-	ID                string `json:"id"                db:"id"`
+	ID                string `json:"id"                db:"id" primaryKey:"true"`
 	BaseTokenSymbol   string `json:"baseTokenSymbol"   db:"base_token_symbol"`
 	BaseTokenName     string `json:"BaseTokenName"     db:"base_token_name"`
 	BaseTokenAddress  string `json:"baseTokenAddress"  db:"base_token_address"`
@@ -30,6 +30,7 @@ type Market struct {
 	MakerFeeRate      decimal.Decimal `json:"makerFeeRate"      db:"maker_fee_rate"`
 	TakerFeeRate      decimal.Decimal `json:"takerFeeRate"      db:"taker_fee_rate"`
 	GasUsedEstimation int             `json:"gasUsedEstimation" db:"gas_used_estimation"`
+	IsPublished       bool            `json:"isPublished"       db:"is_published"`
 }
 
 var MarketDao IMarketDao
@@ -61,8 +62,6 @@ func (marketDao) InsertMarket(market *Market) error {
 	return err
 }
 
-
-func (marketDao) UpdateMarket(market *Market) error{
-	return update(market, "MakerFeeRate", "TakerFeeRate")
+func (marketDao) UpdateMarket(market *Market) error {
+	return update(market, "MinOrderSize", "PricePrecision", "PriceDecimals", "AmountDecimals", "MakerFeeRate", "TakerFeeRate", "GasUsedEstimation", "IsPublished")
 }
-

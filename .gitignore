@@ -1,6 +1,7 @@
+main
 vendor
 .idea
-
+sqlite3.db
 engine
 launcher
 dump.rdb
