@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/HydroProtocol/hydro-box-dex/backend/admin/api"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"math/big"
@@ -41,7 +42,8 @@ func (a *AdminTest) SetupTest() {
 }
 
 func (a *AdminTest) TestStatus() {
-	assert.Nil(a.T(), a.admin.Status())
+	_, err := a.admin.Status()
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestNewMarket() {
@@ -49,48 +51,55 @@ func (a *AdminTest) TestNewMarket() {
 	marketID = "HOT-WETH"
 	baseTokenAddress = "0x0000000000000000000000000000000000000001"
 	quoteTokenAddress = "0x0000000000000000000000000000000000000002"
-	assert.Nil(a.T(), a.admin.NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation))
+	_, err := a.admin.NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation)
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestUpdateMarket() {
 	var marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string
-	assert.Nil(a.T(), a.admin.UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish))
+	_, err := a.admin.UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish)
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestPublishMarket() {
 	var marketID string
-	assert.Nil(a.T(), a.admin.PublishMarket(marketID))
+	_, err := a.admin.PublishMarket(marketID)
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestUnPublishMarket() {
 	var marketID string
-	assert.Nil(a.T(), a.admin.UnPublishMarket(marketID))
+	_, err := a.admin.UnPublishMarket(marketID)
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestUpdateMarketFee() {
 	var marketID, makerFee, takerFee string
-	assert.Nil(a.T(), a.admin.UpdateMarketFee(marketID, makerFee, takerFee))
+	_, err := a.admin.UpdateMarketFee(marketID, makerFee, takerFee)
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestListAccountOrders() {
 	var address, limit, offset, status string
-	assert.Nil(a.T(), a.admin.ListAccountOrders(address, limit, offset, status))
+	_, err := a.admin.ListAccountOrders(address, limit, offset, status)
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestListAccountBalances() {
 	var address, limit, offset string
-	assert.Nil(a.T(), a.admin.ListAccountBalances(address, limit, offset))
+	_, err := a.admin.ListAccountBalances(address, limit, offset)
+	assert.Nil(a.T(), err)
 }
 
 func (a *AdminTest) TestListAccountTrades() {
 	var address, limit, offset, status string
-	assert.Nil(a.T(), a.admin.ListAccountTrades(address, limit, offset, status))
+	_, err := a.admin.ListAccountTrades(address, limit, offset, status)
+	assert.Nil(a.T(), err)
 }
 
 func TestAdmin(t *testing.T) {
 	suite.Run(t, new(AdminTest))
 }
-
 
 //mock erc20 service
 type MockErc20 struct {
@@ -110,4 +119,15 @@ func (MockErc20) Name(address string) (error, string) {
 
 func (MockErc20) TotalSupply(address string) (error, *big.Int) {
 	return nil, big.NewInt(10000)
+}
+
+func TestArray(t *testing.T) {
+
+	a := []string{"0", "1", "2", "3", "4", "5"}
+	spew.Dump(a[0:1])
+	spew.Dump(a[0:0])
+	spew.Dump(a[1:1])
+	spew.Dump(a[0:2])
+	spew.Dump(a[2:5])
+	spew.Dump(a[2:6])
 }

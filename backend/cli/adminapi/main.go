@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/HydroProtocol/hydro-box-dex/backend/admin/api"
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
+	_ "github.com/joho/godotenv/autoload"
 	"os"
 )
 

@@ -1,7 +1,6 @@
 package admincli
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
@@ -26,21 +25,22 @@ const (
 )
 
 type IAdminApi interface {
-	Status() error
+	Status() ([]byte, error)
 
-	NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) error
-	UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string) error
-	PublishMarket(marketID string) error
-	UnPublishMarket(marketID string) error
-	UpdateMarketFee(marketID, makerFee, takerFee string) error
+	NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) ([]byte, error)
+	ListMarkets() ([]byte, error)
+	UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string) ([]byte, error)
+	PublishMarket(marketID string) ([]byte, error)
+	UnPublishMarket(marketID string) ([]byte, error)
+	UpdateMarketFee(marketID, makerFee, takerFee string) ([]byte, error)
 
-	ListAccountOrders(address, limit, offset, status string) error
-	ListAccountBalances(address, limit, offset string) error
-	ListAccountTrades(address, limit, offset, status string) error
+	ListAccountOrders(marketID, address, limit, offset, status string) ([]byte, error)
+	ListAccountBalances(address, limit, offset string) ([]byte, error)
+	ListAccountTrades(marketID, address, limit, offset, status string) ([]byte, error)
 
-	CancelOrder(ID string) error
+	CancelOrder(ID string) ([]byte, error)
 
-	RestartEngine() error
+	RestartEngine() ([]byte, error)
 }
 
 type Admin struct {
@@ -91,23 +91,17 @@ func NewAdmin(adminApiUrl string, httpClient utils.IHttpClient, erc20 ethereum.I
 	return &a
 }
 
-func (a *Admin) Status() (err error) {
-	var statusResult struct{
-		Data map[string]string `json:"data"`
-	}
-
-	err, _, data := a.client.Get(a.StatusUrl, nil, nil, nil)
-
-	if err != nil {
-		utils.Debug("call status error: %v", err)
-		return
-	}
-
-	err = json.Unmarshal(data, &statusResult)
+func (a *Admin) Status() (ret []byte, err error) {
+	err, _, ret = a.client.Get(a.StatusUrl, nil, nil, nil)
 	return
 }
 
-func (a *Admin) NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) (err error) {
+func (a *Admin) ListMarkets() (ret []byte, err error) {
+	err, _, ret = a.client.Get(a.MarketUrl, nil, nil, nil)
+	return
+}
+
+func (a *Admin) NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) (ret []byte, err error) {
 	err, baseTokenSymbol := a.erc20.Name(baseTokenAddress)
 	if err != nil || len(baseTokenSymbol) == 0 {
 		return
@@ -160,96 +154,99 @@ func (a *Admin) NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrde
 		GasUsedEstimation: utils.ParseInt(gasUsedEstimation, DefaultGasUsedEstimation),
 	}
 
-	err, _, _ = a.client.Post(a.MarketUrl, nil, market, nil)
+	err, _, ret = a.client.Post(a.MarketUrl, nil, market, nil)
 	return
 }
 
-func (a *Admin) UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string) (err error) {
-	market := models.Market{
+func (a *Admin) UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string) (ret []byte, err error) {
+	fields := marketFields{
 		ID:                marketID,
-		MinOrderSize:      utils.StringToDecimal(DefaultIfNil(minOrderSize, DefaultMinOrderSize)),
-		PricePrecision:    utils.ParseInt(pricePrecision, DefaultPricePrecision),
-		PriceDecimals:     utils.ParseInt(priceDecimals, DefaultPriceDecimals),
-		AmountDecimals:    utils.ParseInt(amountDecimals, DefaultAmountDecimals),
-		MakerFeeRate:      utils.StringToDecimal(DefaultIfNil(makerFeeRate, DefaultMakerFeeRate)),
-		TakerFeeRate:      utils.StringToDecimal(DefaultIfNil(takerFeeRate, DefaultTakerFeeRate)),
-		GasUsedEstimation: utils.ParseInt(gasUsedEstimation, DefaultGasUsedEstimation),
+		MinOrderSize:      minOrderSize,
+		PricePrecision:    pricePrecision,
+		PriceDecimals:     priceDecimals,
+		AmountDecimals:    amountDecimals,
+		MakerFeeRate:      makerFeeRate,
+		TakerFeeRate:      takerFeeRate,
+		GasUsedEstimation: gasUsedEstimation,
+		IsPublished:       isPublish,
 	}
 
-	err, _, _ = a.client.Put(a.MarketUrl, nil, market, nil)
+	err, _, ret = a.client.Put(a.MarketUrl, nil, fields, nil)
 	return
 }
 
-func (a *Admin) PublishMarket(marketID string) (err error) {
-	market := models.Market{
-		ID: marketID,
-		//IsPublish:true
+func (a *Admin) PublishMarket(marketID string) (ret []byte, err error) {
+	market := marketFields{
+		ID:          marketID,
+		IsPublished: "true",
 	}
 
-	err, _, _ = a.client.Put(a.MarketUrl, nil, market, nil)
+	err, _, ret = a.client.Put(a.MarketUrl, nil, market, nil)
 	return
 }
 
-func (a *Admin) UnPublishMarket(marketID string) (err error) {
-	market := models.Market{
-		ID: marketID,
-		//IsPublish:false
+func (a *Admin) UnPublishMarket(marketID string) (ret []byte, err error) {
+	market := marketFields{
+		ID:          marketID,
+		IsPublished: "false",
 	}
 
-	err, _, _ = a.client.Put(a.MarketUrl, nil, market, nil)
+	err, _, ret = a.client.Put(a.MarketUrl, nil, market, nil)
 	return
 }
 
-func (a *Admin) UpdateMarketFee(marketID, makerFee, takerFee string) (err error) {
-	market := models.Market{
+func (a *Admin) UpdateMarketFee(marketID, makerFee, takerFee string) (ret []byte, err error) {
+	market := marketFields{
 		ID:           marketID,
-		MakerFeeRate: utils.StringToDecimal(makerFee),
-		TakerFeeRate: utils.StringToDecimal(takerFee),
+		MakerFeeRate: makerFee,
+		TakerFeeRate: takerFee,
 	}
 
-	err, _, _ = a.client.Put(a.MarketUrl, nil, market, nil)
+	err, _, ret = a.client.Put(a.MarketUrl, nil, market, nil)
 	return
 }
 
-func (a *Admin) ListAccountOrders(address, limit, offset, status string) (err error) {
+func (a *Admin) ListAccountOrders(marketID, address, limit, offset, status string) (ret []byte, err error) {
 	var params []utils.KeyValue
+	params = append(params, utils.KeyValue{Key: "market_id", Value: marketID})
 	params = append(params, utils.KeyValue{Key: "address", Value: address})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})
 	params = append(params, utils.KeyValue{Key: "status", Value: DefaultIfNil(status, DefaultStatus)})
 
-	err, _, _ = a.client.Get(a.ListOrderUrl, params, nil, nil)
+	err, _, ret = a.client.Get(a.ListOrderUrl, params, nil, nil)
 	return
 }
 
-func (a *Admin) ListAccountBalances(address, limit, offset string) (err error) {
+func (a *Admin) ListAccountBalances(address, limit, offset string) (ret []byte, err error) {
 	var params []utils.KeyValue
 	params = append(params, utils.KeyValue{Key: "address", Value: address})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})
 
-	err, _, _ = a.client.Get(a.ListBalanceUrl, params, nil, nil)
+	err, _, ret = a.client.Get(a.ListBalanceUrl, params, nil, nil)
 	return
 }
 
-func (a *Admin) ListAccountTrades(address, limit, offset, status string) (err error) {
+func (a *Admin) ListAccountTrades(marketID, address, limit, offset, status string) (ret []byte, err error) {
 	var params []utils.KeyValue
+	params = append(params, utils.KeyValue{Key: "market_id", Value: marketID})
 	params = append(params, utils.KeyValue{Key: "address", Value: address})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})
 	params = append(params, utils.KeyValue{Key: "status", Value: DefaultIfNil(status, DefaultStatus)})
 
-	err, _, _ = a.client.Get(a.ListTradeUrl, params, nil, nil)
+	err, _, ret = a.client.Get(a.ListTradeUrl, params, nil, nil)
 	return
 }
 
-func (a *Admin) CancelOrder(ID string) (err error) {
-	err, _, _ = a.client.Delete(fmt.Sprintf("%s/%s", a.CancelOrderUrl, ID), nil, nil, nil)
+func (a *Admin) CancelOrder(ID string) (ret []byte, err error) {
+	err, _, ret = a.client.Delete(fmt.Sprintf("%s/%s", a.CancelOrderUrl, ID), nil, nil, nil)
 	return
 }
 
-func (a *Admin) RestartEngine() (err error) {
-	err, _, _ = a.client.Get(a.RestartEngineUrl, nil, nil, nil)
+func (a *Admin) RestartEngine() (ret []byte, err error) {
+	err, _, ret = a.client.Get(a.RestartEngineUrl, nil, nil, nil)
 	return
 }
 
@@ -259,4 +256,16 @@ func DefaultIfNil(ori, dft string) string {
 	}
 
 	return ori
+}
+
+type marketFields struct {
+	ID                string `json:"market_id"`
+	MinOrderSize      string `json:"min_order_size"`
+	PricePrecision    string `json:"price_precision"`
+	PriceDecimals     string `json:"price_decimals"`
+	AmountDecimals    string `json:"amount_decimals"`
+	MakerFeeRate      string `json:"maker_fee_rate"`
+	TakerFeeRate      string `json:"taker_fee_rate"`
+	GasUsedEstimation string `json:"gas_used_estimation"`
+	IsPublished       string `json:"is_published"`
 }

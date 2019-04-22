@@ -45,6 +45,7 @@ func TestMarketDao_FindAndInsertMarket(t *testing.T) {
 
 	MarketDao.InsertMarket(&market)
 	dbMarket = MarketDao.FindMarketByID("HOT-WETH")
+
 	assert.EqualValues(t, market.ID, dbMarket.ID)
 	assert.EqualValues(t, market.BaseTokenDecimals, dbMarket.BaseTokenDecimals)
 	assert.EqualValues(t, market.BaseTokenSymbol, dbMarket.BaseTokenSymbol)
