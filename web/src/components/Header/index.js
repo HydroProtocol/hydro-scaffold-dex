@@ -67,7 +67,7 @@ class Header extends React.PureComponent {
             })}
           </div>
         </div>
-        {networkId !== 66 && (
+        {parseInt(networkId, 10) !== 66 && (
           <span className="btn text-danger" style={{ marginRight: 12 }}>
             Network Error: Switch Metamask's network to localhost:8545.
           </span>
