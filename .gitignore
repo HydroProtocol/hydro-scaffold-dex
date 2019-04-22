@@ -6,3 +6,4 @@ launcher
 dump.rdb
 .env
 build
+.DS_Store
