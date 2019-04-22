@@ -109,7 +109,6 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 
 			eventOrder.AvailableAmount = eventOrder.AvailableAmount.Sub(item.MatchedAmount)
 			eventOrder.PendingAmount = eventOrder.PendingAmount.Add(item.MatchedAmount)
-			//eventMemoryOrder.Amount = eventMemoryOrder.Amount.Sub(item.MatchedAmount)
 			_ = UpdateOrder(makerOrder)
 
 			utils.Debug("  [Take Liquidity] price: %s amount: %s (%s) ", item.MakerOrder.Price.StringFixed(5), item.MatchedAmount.StringFixed(5), item.MakerOrder.ID)

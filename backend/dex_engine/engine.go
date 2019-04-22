@@ -14,14 +14,6 @@ import (
 	"sync"
 )
 
-//type PgDBHandler struct {
-//}
-//
-//func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
-//	log.Info("testing PgDBHandler")
-//	return sync.WaitGroup{}
-//}
-
 type RedisOrderBookSnapshotHandler struct {
 	kvStore common.IKVStore
 }
