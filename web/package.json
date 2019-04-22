@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@gongddex/hydro-sdk-wallet": "^0.0.6",
-    "@wangleiddex/hydro-sdk-charts": "^0.1.3",
+    "@wangleiddex/hydro-sdk-charts": "^0.1.4",
     "axios": "^0.18.0",
     "bignumber.js": "^8.1.1",
     "immutable": "^4.0.0-rc.12",
