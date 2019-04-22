@@ -14,6 +14,7 @@ github.com/HydroProtocol/hydro-sdk-backend v0.0.6/go.mod h1:AH5bkS/TR8C1rl7EWj6Z
 github.com/HydroProtocol/hydro-sdk-backend v0.0.7/go.mod h1:17cEdzt2ttscbDg9j4tKNsSfcEHzzWjYO3T2Czy9jRU=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.9 h1:TzxEWW+elJU3BHbOFl9QIjev2Z14ClLzWk7824qinoY=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.9/go.mod h1:MKBr5wF4deJgg3CJ8tTPi9MP5VpV7JbjwWehXvNykvQ=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.10 h1:n0o9EHSe8UVd4aFl/tpRmcbpcRjJ/3tJRs1JjChlpXo=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.10/go.mod h1:MKBr5wF4deJgg3CJ8tTPi9MP5VpV7JbjwWehXvNykvQ=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.11/go.mod h1:MKBr5wF4deJgg3CJ8tTPi9MP5VpV7JbjwWehXvNykvQ=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
