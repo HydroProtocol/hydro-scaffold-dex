@@ -27,7 +27,7 @@ class Charts extends React.Component {
         </div>
 
         <div className="flex-column flex-1 ">
-          <div className="grid flex-1">
+          <div className="grid flex-2">
             <TradeChart
               theme="light"
               data={testData}

@@ -70,7 +70,7 @@ class App extends React.PureComponent {
             </div>
           </div>
           <div className="flex-column flex-1 border-right">
-            <div className="grid flex-1">
+            <div className="grid flex-2">
               <Charts />
             </div>
             <div className="grid flex-1 border-top">
