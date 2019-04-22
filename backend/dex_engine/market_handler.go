@@ -20,50 +20,25 @@ import (
 )
 
 type MarketHandler struct {
-	ctx    context.Context
-	market *models.Market
-	//orderbook *Orderbook
-	KVStore  common.IKVStore
-	queue    chan []byte
-	getEvent func() (interface{}, error)
-
+	ctx         context.Context
+	market      *models.Market
+	eventChan   chan []byte
 	hydroEngine *engine.Engine
 }
 
 // Run is synchronous, it will be improved in the later releases.
 func (m *MarketHandler) Run() {
-	for data := range m.queue {
+	for data := range m.eventChan {
 		_ = handleEvent(m, string(data))
 	}
-}
-
-func (m *MarketHandler) SaveSnapshotV2() {
-	// todo
-
-	//snapshot := m.orderbook.SnapshotV2()
-	//snapshot.Sequence = m.orderbook.Sequence
-	//
-	//bts, err := json.Marshal(snapshot)
-	//
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//_ = m.KVStore.Set(common.GetMarketOrderbookSnapshotV2Key(m.market.ID), string(bts), 0)
 }
 
 // handleEvent recover any panic which is caused by event.
 // It will log event and response as well.
 func handleEvent(marketHandler *MarketHandler, eventJSON string) (err error) {
-	//startTime := time.Now()
-	//trace := uuid.NewV4()
-
 	var event common.Event
 
 	defer func() {
-		//status := "success"
-		//cost := float64(time.Since(startTime)) / 1000000
-
 		if rcv := recover(); rcv != nil {
 			err = rcv.(error)
 		}
@@ -268,8 +243,6 @@ func (m *MarketHandler) handleCancelOrder(event *common.CancelOrderEvent) (inter
 
 	err := UpdateOrder(order)
 
-	m.SaveSnapshotV2()
-
 	return order, err
 }
 
@@ -310,14 +283,13 @@ func (m *MarketHandler) handleTransactionResult(event *common.ConfirmTransaction
 	takerOrder.AutoSetStatusByAmounts()
 	_ = UpdateOrder(takerOrder)
 
-	m.SaveSnapshotV2()
-
 	return nil, nil
 }
 
-func NewMarketHandler(ctx context.Context, kvStore common.IKVStore, market *models.Market, engine *engine.Engine) (*MarketHandler, error) {
+func NewMarketHandler(ctx context.Context, market *models.Market, engine *engine.Engine) (*MarketHandler, error) {
 	orders := models.OrderDao.FindMarketPendingOrders(market.ID)
 
+	// re-insert available orders into HydroEngine
 	for _, order := range orders {
 		if order.AvailableAmount.LessThanOrEqual(decimal.Zero) {
 			continue
@@ -335,28 +307,26 @@ func NewMarketHandler(ctx context.Context, kvStore common.IKVStore, market *mode
 	}
 
 	marketHandler := MarketHandler{
-		market:  market,
-		queue:   make(chan []byte),
-		KVStore: kvStore,
-		ctx:     ctx,
+		market:    market,
+		eventChan: make(chan []byte),
+		ctx:       ctx,
 
 		hydroEngine: engine,
 	}
 
-	// Load Snapshot
-	res, err := kvStore.Get(common.GetMarketOrderbookSnapshotV2Key(market.ID))
-
-	if err == common.KVStoreEmpty {
-		// do nothing
-	} else if err != nil {
-		panic(fmt.Errorf("get snapshot error %v", err))
-	}
-
-	var snapshot struct {
-		Sequence uint64 `json:"sequence"`
-	}
-
-	_ = json.Unmarshal([]byte(res), &snapshot)
+	//// todo if Load Snapshot is necessary
+	//res, err := kvStore.Get(common.GetMarketOrderbookSnapshotV2Key(market.ID))
+	//if err == common.KVStoreEmpty {
+	//	// do nothing
+	//} else if err != nil {
+	//	panic(fmt.Errorf("get snapshot error %v", err))
+	//}
+	//
+	//var snapshot struct {
+	//	Sequence uint64 `json:"sequence"`
+	//}
+	//
+	//_ = json.Unmarshal([]byte(res), &snapshot)
 
 	return &marketHandler, nil
 }

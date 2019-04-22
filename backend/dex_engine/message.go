@@ -8,7 +8,7 @@ import (
 )
 
 // This queue is used to send message to ws servers
-
+// todo a little weird global var
 var wsQueue common.IQueue = nil
 
 func InitWsQueue(queue common.IQueue) {
