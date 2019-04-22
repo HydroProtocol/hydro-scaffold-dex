@@ -4,6 +4,7 @@ github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419100138-7cb5678476f
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419114738-2395e8d3f273/go.mod h1:K0jLTqRhD3Mgs8z9c/SPS3ug/Zxy3jg00ddqqiS9RO8=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419124420-e3c58fa95308/go.mod h1:K0jLTqRhD3Mgs8z9c/SPS3ug/Zxy3jg00ddqqiS9RO8=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419141207-7007b6661326/go.mod h1:3GPcmLGOo0MQqj+hstOJS8/31eIlP7PiPk7+MRH5wy4=
+github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190420131950-ae35176c9a11/go.mod h1:IdIANSCB1rH4gqFLzcM3wxoGt1w2tINp+FSdpYoBm0o=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3 h1:GraWKEJwNDWHlO7eZjSj8PkIwwFsuNiBN4+DGh4WTY8=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3/go.mod h1:s6BzPp3Oed01zWubFguGismWzQhwekI6CXBA32XfDf0=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.5 h1:umztM/7Jc9eIuDZcMFWdSvU4U6e0bQW4a8SQ6SqoiW8=
