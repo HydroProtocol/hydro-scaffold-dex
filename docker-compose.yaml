@@ -30,7 +30,7 @@ services:
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
-      - REACT_APP_HYDRO_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
+      - REACT_APP_HYDRO_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
       - REACT_APP_HYDRO_PROXY_MODE=deposit
       - REACT_APP_NODE_URL=http://localhost:8545
     restart: on-failure:5
@@ -72,7 +72,7 @@ services:
       - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
       - HSK_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
       - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
-      - HSK_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
+      - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
       - HSK_PROXY_MODE=deposit
       - HSK_LOG_LEVEL=DEBUG
       - METRICS_PORT=4001
@@ -129,7 +129,7 @@ services:
       - HSK_DATABASE_URL=/data/sqlite3.db
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
-      - HSK_PROXY_ADDRESS=0x1aa25040dbf401b3fdf67dcec5bb2fe2e531a55b
+      - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
       - HSK_LOG_LEVEL=DEBUG
       - METRICS_PORT=4004
     volumes:
