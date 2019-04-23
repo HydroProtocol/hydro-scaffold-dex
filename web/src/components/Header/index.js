@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Wallet, WalletButton, getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 import './styles.scss';
 import { loadAccountHydroAuthentication } from '../../lib/session';
-import env from '../../lib/env';
+import getEnv from '../../lib/env';
 
 const mapStateToProps = state => {
   const selectedAccountID = state.WalletReducer.get('selectedAccountID');
@@ -81,7 +81,7 @@ class Header extends React.PureComponent {
           DOCUMENTATION
         </a>
         <WalletButton />
-        <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Browser Wallet" />
+        <Wallet title="Starter Kit Wallet" nodeUrl={getEnv().NODE_URL} defaultWalletType="Browser Wallet" />
         {this.renderAccount()}
       </div>
     );
