@@ -45,7 +45,7 @@ const createOrder = (side, price, amount, orderType, expires) => {
       const selectedAccount = getSelectedAccount(state);
       const address = selectedAccount ? selectedAccount.get('address') : null;
       const wallet = getSelectedAccountWallet(state);
-      const signature = await wallet.personalSignMessage(orderID, address);
+      const signature = await wallet.signPersonalMessage(orderID, address);
       const orderSignature = '0x' + signature.slice(130) + '0'.repeat(62) + signature.slice(2, 130);
       const placeOrderResponse = await api.post('/orders', {
         orderID,
