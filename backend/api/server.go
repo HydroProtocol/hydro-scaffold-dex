@@ -78,6 +78,7 @@ func errorHandler(err error, c echo.Context) {
 		desc = err.Error()
 	} else {
 		status = -1
+		fmt.Println("err:", err)
 		desc = "something wrong"
 	}
 
