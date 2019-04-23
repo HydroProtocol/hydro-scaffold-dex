@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-var tradeDao models.ITradeDao
-
 const MaxBarsCount = 200
 
 func GetAllTrades(p Param) (interface{}, error) {
@@ -52,7 +50,7 @@ func GetTradingView(p Param) (interface{}, error) {
 		from = to - granularity*MaxBarsCount
 	}
 
-	trades := tradeDao.FindTradesByMarket(pair, time.Unix(from, 0), time.Unix(to, 0))
+	trades := models.TradeDao.FindTradesByMarket(pair, time.Unix(from, 0), time.Unix(to, 0))
 
 	if len(trades) == 0 {
 		return map[string]interface{}{
