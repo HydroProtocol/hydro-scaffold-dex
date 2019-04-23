@@ -49,3 +49,17 @@ func (_ *balanceDao) GetByAccountAndSymbol(account, tokenSymbol string, decimals
 
 	return sellLockedBalance.value.Add(buyLockedBalance.value).Mul(decimal.New(1, int32(decimals)))
 }
+
+// pg
+//
+//
+//
+//
+//
+type balanceDaoPG struct {
+}
+
+func (balanceDaoPG) GetByAccountAndSymbol(account, tokenSymbol string, decimals int) decimal.Decimal {
+	panic("implement me")
+
+}
