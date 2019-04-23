@@ -77,7 +77,7 @@ func main() {
 	go cli.WaitExitSignal(stop)
 
 	// Init Database Client
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.ConnectDatabase("postgres", config.Getenv("HSK_DATABASE_URL"))
 
 	// Init Redis client
 	client := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))

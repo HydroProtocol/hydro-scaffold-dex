@@ -4,8 +4,8 @@ create table tokens(
  name text not null,
  address text not null,
  decimals integer not null,
- updated_at datetime,
- created_at datetime
+ updated_at timestamp,
+ created_at timestamp
 );
 create unique index idx_tokens_address on tokens (address);
 
@@ -30,8 +30,8 @@ create table markets(
  amount_decimals integer not null,
  gas_used_estimation integer not null,
  is_published boolean not null default true,
- updated_at datetime,
- created_at datetime
+ updated_at timestamp,
+ created_at timestamp
 );
 
 -- trades table
@@ -49,9 +49,9 @@ create table trades(
   maker_order_id  text not null,
   taker_order_id text not null,
   sequence int not null default 0,
-  executed_at datetime,
-  updated_at datetime,
-  created_at datetime
+  executed_at timestamp,
+  updated_at timestamp,
+  created_at timestamp
 );
 create index idx_trades_transaction_hash on trades (transaction_hash);
 create index idx_trades_taker on trades (taker,market_id);
@@ -78,8 +78,8 @@ create table orders(
   maker_rebate_rate  numeric(10,5) not null,
   gas_fee_amount  numeric(32,18) not null,
   json text not null,
-  updated_at  datetime,
-  created_at  datetime
+  updated_at  timestamp,
+  created_at  timestamp
 );
 create index idx_market_id_status on orders (market_id, status);
 create index idx_market_trader_address on orders (trader_address, market_id, status, created_at);
@@ -90,9 +90,9 @@ create table transactions(
   transaction_hash text,
   market_id text not null,
   status text not null,
-  executed_at datetime,
-  updated_at  datetime,
-  created_at datetime
+  executed_at timestamp,
+  updated_at  timestamp,
+  created_at timestamp
 );
 create unique index idx_transactions_transaction_hash on transactions (transaction_hash);
 
@@ -112,9 +112,9 @@ create table launch_logs(
   gas_price numeric(32,18),
   nonce integer,
   data text not null,
-  executed_at datetime,
-  updated_at  datetime,
-  created_at  datetime
+  executed_at timestamp,
+  updated_at  timestamp,
+  created_at  timestamp
 );
 create index idx_launch_logs_nonce on launch_logs (nonce);
 create index idx_created_at on launch_logs (created_at);

@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -21,7 +20,7 @@ func run() int {
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.ConnectDatabase("postgres", config.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
 	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))

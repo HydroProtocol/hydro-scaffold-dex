@@ -226,7 +226,7 @@ func Run(ctx context.Context, startMetrics func()) {
 	InitWsQueue(messageQueue)
 
 	//init database
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.ConnectDatabase("postgres", config.Getenv("HSK_DATABASE_URL"))
 
 	//start dex engine
 	dexEngine := NewDexEngine(ctx, redisClient)
