@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { watchToken } from '../actions/account';
 import abi from './abi';
-import env from './env';
+import getEnv from './env';
 import { getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
 export let web3, Contract;
 
@@ -24,7 +24,7 @@ export const getAllowance = (tokenAddress, accountAddress) => {
       return new BigNumber('0');
     }
     const contract = wallet.getContract(tokenAddress, abi);
-    const allowance = await wallet.contractCall(contract, 'allowance', accountAddress, env.HYDRO_PROXY_ADDRESS);
+    const allowance = await wallet.contractCall(contract, 'allowance', accountAddress, getEnv().HYDRO_PROXY_ADDRESS);
     return new BigNumber(allowance);
   };
 };
@@ -123,7 +123,7 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
   return async (dispatch, getState) => {
     const state = getState();
     const functionSelector = '095ea7b3';
-    let spender = get64BytesString(env.HYDRO_PROXY_ADDRESS);
+    let spender = get64BytesString(getEnv().HYDRO_PROXY_ADDRESS);
     if (spender.length !== 64) {
       return null;
     }
@@ -158,17 +158,17 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
 };
 
 const watchTransactionStatus = (wallet, txID, callback) => {
-  const getTransaction = async () => {
-    const tx = await wallet.getTransactionReceipt(txID);
+  const getTransactionReceipt = async () => {
+    const tx = await wallet.sendCustomRequest('eth_getTransactionReceipt', txID);
     if (!tx) {
-      window.setTimeout(() => getTransaction(txID), 3000);
+      window.setTimeout(() => getTransactionReceipt(txID), 3000);
     } else if (callback) {
       callback(Number(tx.status) === 1);
     } else {
       alert('success');
     }
   };
-  window.setTimeout(() => getTransaction(txID), 3000);
+  window.setTimeout(() => getTransactionReceipt(txID), 3000);
 };
 
 const get64BytesString = string => {

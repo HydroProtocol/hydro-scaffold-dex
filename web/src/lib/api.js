@@ -1,5 +1,5 @@
 import axios from 'axios';
-import env from './env';
+import getEnv from './env';
 import { store } from '../index';
 import { cleanLoginDate, loadAccountHydroAuthentication } from './session';
 import { logout } from '../actions/account';
@@ -36,7 +36,7 @@ const getAxiosInstance = () => {
 };
 
 const _request = (method, url, ...args) => {
-  return getAxiosInstance()[method](`${env.API_ADDRESS}${url}`, ...args);
+  return getAxiosInstance()[method](`${getEnv().API_ADDRESS}${url}`, ...args);
 };
 
 const api = {
