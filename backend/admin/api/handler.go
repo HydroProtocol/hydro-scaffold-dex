@@ -151,6 +151,13 @@ func EditMarketHandler(e echo.Context) (err error) {
 	}
 
 	dbMarket := models.MarketDao.FindMarketByID(fields.ID)
+	var publishType string
+	if dbMarket.IsPublished == false && fields.IsPublished == "true" {
+		publishType = "publish"
+	} else if dbMarket.IsPublished == true && fields.IsPublished == "false" {
+		publishType = "unPublish"
+	}
+
 	if dbMarket == nil {
 		err = fmt.Errorf("cannot find market by ID %s", fields.ID)
 	} else {
@@ -182,6 +189,25 @@ func EditMarketHandler(e echo.Context) (err error) {
 		}
 
 		err = models.MarketDao.UpdateMarket(dbMarket)
+		if err != nil {
+			if publishType == "publish" {
+				event := common.Event{
+					Type:     common.EventOpenMarket,
+					MarketID: dbMarket.ID,
+				}
+
+				err = queueService.Push([]byte(utils.ToJsonString(event)))
+			} else if publishType == "unPublish" {
+				event := common.CancelOrderEvent{
+					Event: common.Event{
+						Type:     common.EventCloseMarket,
+						MarketID: dbMarket.ID,
+					},
+				}
+
+				err = queueService.Push([]byte(utils.ToJsonString(event)))
+			}
+		}
 	}
 
 	return response(e, nil, err)

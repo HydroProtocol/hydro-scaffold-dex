@@ -35,6 +35,11 @@ func (m *MarketHandler) Run() {
 	for data := range m.queue {
 		_ = handleEvent(m, string(data))
 	}
+	utils.Info("market %s stopped", m.market.ID)
+}
+
+func (m *MarketHandler) Stop() {
+	close(m.queue)
 }
 
 func (m *MarketHandler) SaveSnapshotV2() {
