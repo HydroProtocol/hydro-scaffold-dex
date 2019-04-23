@@ -17,6 +17,8 @@ github.com/HydroProtocol/hydro-sdk-backend v0.0.9/go.mod h1:MKBr5wF4deJgg3CJ8tTP
 github.com/HydroProtocol/hydro-sdk-backend v0.0.10 h1:n0o9EHSe8UVd4aFl/tpRmcbpcRjJ/3tJRs1JjChlpXo=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.10/go.mod h1:MKBr5wF4deJgg3CJ8tTPi9MP5VpV7JbjwWehXvNykvQ=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.11/go.mod h1:MKBr5wF4deJgg3CJ8tTPi9MP5VpV7JbjwWehXvNykvQ=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.12 h1:8qjc2E8DK17zaMM5y6/r957rZPZFt21vH+a/4W5r6M0=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.12/go.mod h1:Z42XBqBcjxPSwL2obNkHq3S2N2OR5B+Ytf0ttRvWM2A=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d h1:xG8Pj6Y6J760xwETNmMzmlt38QSwz0BLp1cZ09g27uw=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d/go.mod h1:d3C0AkH6BRcvO8T0UEPu53cnw4IbV63x1bEjildYhO0=
@@ -47,6 +49,7 @@ github.com/go-sql-driver/mysql v1.4.0 h1:7LxgVwFb2hIQtMm87NdgAVfXjnt4OePseqT1tKx
 github.com/go-sql-driver/mysql v1.4.0/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+github.com/golang/sys v0.0.0-20190419153524-e8e3143a4f4a h1:5bYuhgnDII4NSAAw1wRU+pCovYhB/AqYVmsK2JDnK2k=
 github.com/golang/sys v0.0.0-20190419153524-e8e3143a4f4a/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 github.com/gorilla/websocket v1.4.0 h1:WDFjx/TMzVgy9VdMMQi2K2Emtwi2QcUQsztZ/zLaH/Q=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=

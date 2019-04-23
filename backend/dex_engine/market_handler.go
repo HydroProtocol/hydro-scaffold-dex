@@ -35,7 +35,7 @@ func (m *MarketHandler) Run() {
 }
 
 func (m *MarketHandler) Stop() {
-	close(m.queue)
+	close(m.eventChan)
 }
 
 // handleEvent recover any panic which is caused by event.
