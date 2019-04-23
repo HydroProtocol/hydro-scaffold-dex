@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { watchToken } from '../actions/account';
 import abi from './abi';
-import getEnv from './env';
+import env from './env';
 import { getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
 export let web3, Contract;
 
@@ -24,7 +24,7 @@ export const getAllowance = (tokenAddress, accountAddress) => {
       return new BigNumber('0');
     }
     const contract = wallet.getContract(tokenAddress, abi);
-    const allowance = await wallet.contractCall(contract, 'allowance', accountAddress, getEnv().HYDRO_PROXY_ADDRESS);
+    const allowance = await wallet.contractCall(contract, 'allowance', accountAddress, env.HYDRO_PROXY_ADDRESS);
     return new BigNumber(allowance);
   };
 };
@@ -123,7 +123,7 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
   return async (dispatch, getState) => {
     const state = getState();
     const functionSelector = '095ea7b3';
-    let spender = get64BytesString(getEnv().HYDRO_PROXY_ADDRESS);
+    let spender = get64BytesString(env.HYDRO_PROXY_ADDRESS);
     if (spender.length !== 64) {
       return null;
     }

@@ -1,6 +1,6 @@
 import { setConfigs } from './config';
 import { getTokenBalance } from '../lib/wallet';
-import getEnv from '../lib/env';
+import env from '../lib/env';
 
 export let hotDiscountRules = [];
 
@@ -10,7 +10,7 @@ export const loadHotDiscountRules = async () => {
 
 export const getHotTokenAmount = () => {
   return async (dispatch, getState) => {
-    const hotContract = getEnv().HYDRO_TOKEN_ADDRESS;
+    const hotContract = env.HYDRO_TOKEN_ADDRESS;
     if (!hotContract) {
       return;
     }

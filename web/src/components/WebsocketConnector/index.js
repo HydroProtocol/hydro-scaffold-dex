@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import { loadAccountHydroAuthentication } from '../../lib/session';
 import { initOrderbook, updateOrderbook } from '../../actions/orderbook';
-import getEnv from '../../lib/env';
+import env from '../../lib/env';
 import { setConfigs } from '../../actions/config';
 import { orderUpdate, watchToken, updateTokenLockedBalances } from '../../actions/account';
 import { tradeUpdate, marketTrade } from '../../actions/trade';
@@ -144,7 +144,7 @@ class WebsocketConnector extends React.PureComponent {
 
   connectWebsocket = () => {
     const { dispatch } = this.props;
-    this.socket = new window.ReconnectingWebSocket(`${getEnv().WS_ADDRESS}`);
+    this.socket = new window.ReconnectingWebSocket(`${env.WS_ADDRESS}`);
     this.socket.debug = false;
     this.socket.timeoutInterval = 5400;
     this.socket.onopen = async event => {
