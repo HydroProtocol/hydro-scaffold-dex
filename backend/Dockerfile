@@ -4,7 +4,7 @@ COPY . /app
 WORKDIR /app
 
 RUN go mod download
-RUN go build -o bin/hydor-dex-ctl -v -ldflags '-s -w' cli/admincli/main.go && \
+RUN go build -o bin/hydro-dex-ctl -v -ldflags '-s -w' cli/admincli/main.go && \
   go build -o bin/adminapi -v -ldflags '-s -w' cli/adminapi/main.go && \
   go build -o bin/api -v -ldflags '-s -w' cli/api/main.go && \
   go build -o bin/engine -v -ldflags '-s -w' cli/engine/main.go && \

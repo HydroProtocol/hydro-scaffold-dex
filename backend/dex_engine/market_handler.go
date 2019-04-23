@@ -31,6 +31,11 @@ func (m *MarketHandler) Run() {
 	for data := range m.eventChan {
 		_ = handleEvent(m, string(data))
 	}
+	utils.Info("market %s stopped", m.market.ID)
+}
+
+func (m *MarketHandler) Stop() {
+	close(m.queue)
 }
 
 // handleEvent recover any panic which is caused by event.
