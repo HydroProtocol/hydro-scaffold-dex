@@ -6,6 +6,7 @@ require (
 	github.com/HydroProtocol/hydro-sdk-backend v0.0.11
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-redis/redis v6.15.1+incompatible
+	github.com/jinzhu/gorm v1.9.4 // indirect
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo v3.3.10+incompatible
@@ -15,7 +16,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.10.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24
-	github.com/stretchr/testify v1.2.0
+	github.com/stretchr/testify v1.2.2
 	github.com/urfave/cli v1.20.0
 	github.com/valyala/fasttemplate v1.0.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.28.0

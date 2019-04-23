@@ -36,7 +36,7 @@ create table markets(
 
 -- trades table
 create table trades(
-  id integer primary key AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   transaction_id integer not null,
   transaction_hash text,
   status text not null,
@@ -86,7 +86,7 @@ create index idx_market_trader_address on orders (trader_address, market_id, sta
 
 -- transactions table
 create table transactions(
-  id integer primary key AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   transaction_hash text,
   market_id text not null,
   status text not null,
@@ -98,7 +98,7 @@ create unique index idx_transactions_transaction_hash on transactions (transacti
 
 -- launch_logs table
 create table launch_logs(
-  id integer primary key AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   item_type text not null,
   item_id integer not null,
   status text not null,
