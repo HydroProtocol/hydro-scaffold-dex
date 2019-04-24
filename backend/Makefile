@@ -14,6 +14,8 @@ test:
 api:
 	go run ./cli/api/main.go
 
+admin-api:
+	go run ./cli/adminapi
 ws:
 	go run ./cli/websocket/main.go
 

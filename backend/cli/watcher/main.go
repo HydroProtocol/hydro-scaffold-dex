@@ -40,7 +40,7 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 		txReceipt, _ := handler.w.Hydro.GetTransactionReceipt(tx.GetHash())
 		result := txReceipt.GetResult()
 		hash := tx.GetHash()
-		transaction := models.TransactionDaoSqlite.FindTransactionByID(launchLog.ItemID)
+		transaction := models.TransactionDao.FindTransactionByID(launchLog.ItemID)
 		utils.Info("Transaction %s result is %+v", tx.GetHash(), result)
 		//w.handleTransaction(launchLog.ItemID, result)
 
