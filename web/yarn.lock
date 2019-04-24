@@ -917,10 +917,10 @@
     "@types/unist" "*"
     "@types/vfile-message" "*"
 
-"@wangleiddex/hydro-sdk-charts@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@wangleiddex/hydro-sdk-charts/-/hydro-sdk-charts-0.1.5.tgz#352583243076d868cb9bf5b9db3e195045fe5228"
-  integrity sha512-5FDfinr+utMKi7YPBab1P1TH5jZLPSkGhI0uw8gmVCow6JUCaz3xidm+4giWIC657nSwo+xV1T1+McJ7puluHQ==
+"@wangleiddex/hydro-sdk-charts@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@wangleiddex/hydro-sdk-charts/-/hydro-sdk-charts-0.1.6.tgz#cee47fc225f797e452241e2bc3fc037c6b96b944"
+  integrity sha512-0iarM2PMI6CaJweuWWLzJYRC1sNZo27LrZMDIm4cwGdMiYEMRXbeJojdKLmFfujGmzlZN2cAyTC/CB34OGv/lQ==
   dependencies:
     bignumber.js "5"
     react-stockcharts "^0.7.8"
