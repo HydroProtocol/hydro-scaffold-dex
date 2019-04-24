@@ -917,10 +917,10 @@
     "@types/unist" "*"
     "@types/vfile-message" "*"
 
-"@wangleiddex/hydro-sdk-charts@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@wangleiddex/hydro-sdk-charts/-/hydro-sdk-charts-0.1.4.tgz#3f3052732e810a4e9b06aa8a705074be365399f4"
-  integrity sha512-ZO22QRbI6xvgGQWXhy5OGR9I9TgsTC5qqXKUUlyqc4PN5UMheBY8efy8uS9AGHYuw3pcqPcGIoJ4/RQTx7EcnQ==
+"@wangleiddex/hydro-sdk-charts@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@wangleiddex/hydro-sdk-charts/-/hydro-sdk-charts-0.1.5.tgz#352583243076d868cb9bf5b9db3e195045fe5228"
+  integrity sha512-5FDfinr+utMKi7YPBab1P1TH5jZLPSkGhI0uw8gmVCow6JUCaz3xidm+4giWIC657nSwo+xV1T1+McJ7puluHQ==
   dependencies:
     bignumber.js "5"
     react-stockcharts "^0.7.8"
@@ -7161,6 +7161,7 @@ prompts@^0.1.9:
 prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
+  integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
   dependencies:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
