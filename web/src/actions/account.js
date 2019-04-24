@@ -15,7 +15,7 @@ export const loginRequest = () => {
     if (!address || !wallet) {
       return;
     }
-    const signature = await wallet.personalSignMessage(message, address);
+    const signature = await wallet.signPersonalMessage(message, address);
     if (!signature) {
       return;
     }
