@@ -5,7 +5,7 @@ body {
     padding: 0;
     font-smoothing: antialiased;
     font-weight: 400;
-    font-family: TrebuchetMS, Rotobo, sans-serif;
+    font-family: Roboto, TrebuchetMS, 'Microsoft YaHei', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 14px;
@@ -106,9 +106,6 @@ table {
 }
 .flex-1 {
     flex: 1;
-}
-.flex-2 {
-    flex: 2;
 }
 .flex-column {
     display: flex;
