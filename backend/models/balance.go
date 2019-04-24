@@ -14,10 +14,12 @@ type balanceDao struct {
 	IBalanceDao
 }
 
-var BalanceDao IBalanceDao
+var BalanceDaoSqlite IBalanceDao
+var BalanceDaoPG IBalanceDao
 
 func init() {
-	BalanceDao = &balanceDao{}
+	BalanceDaoSqlite = &balanceDao{}
+	BalanceDaoPG = &balanceDaoPG{}
 }
 
 type nullDecimal struct {
@@ -37,12 +39,12 @@ func (_ *balanceDao) GetByAccountAndSymbol(account, tokenSymbol string, decimals
 	var sellLockedBalance nullDecimal
 	var buyLockedBalance nullDecimal
 
-	err := DB.QueryRow(`select sum(amount) from orders where status='pending' and trader_address= $1 and market_id like $2 and side = 'sell'`, account, tokenSymbol+"-%").Scan(&sellLockedBalance)
+	err := DBSqlite.QueryRow(`select sum(amount) from orders where status='pending' and trader_address= $1 and market_id like $2 and side = 'sell'`, account, tokenSymbol+"-%").Scan(&sellLockedBalance)
 	if err != nil {
 		panic(err)
 	}
 
-	err = DB.QueryRow(`select sum( (available_amount + pending_amount) * price) from orders where trader_address = $1 and status = 'pending' and market_id like $2 and side = 'buy'`, account, "%-"+tokenSymbol).Scan(&buyLockedBalance)
+	err = DBSqlite.QueryRow(`select sum( (available_amount + pending_amount) * price) from orders where trader_address = $1 and status = 'pending' and market_id like $2 and side = 'buy'`, account, "%-"+tokenSymbol).Scan(&buyLockedBalance)
 	if err != nil {
 		panic(err)
 	}
@@ -60,6 +62,26 @@ type balanceDaoPG struct {
 }
 
 func (balanceDaoPG) GetByAccountAndSymbol(account, tokenSymbol string, decimals int) decimal.Decimal {
-	panic("implement me")
+	var sellLockedBalance nullDecimal
+	var buyLockedBalance nullDecimal
 
+	sellRow := DBPG.Raw(`select sum(amount) as locked_balance from orders where status='pending' and trader_address= $1 and market_id like $2 and side = 'sell'`, account, tokenSymbol+"-%").Row()
+	if sellRow == nil {
+		sellLockedBalance.Scan(nil)
+	}
+	err := sellRow.Scan(&sellLockedBalance)
+	if err != nil {
+		panic(err)
+	}
+
+	buyRow := DBPG.Raw(`select sum( (available_amount + pending_amount) * price) as locked_balance from orders where trader_address = $1 and status = 'pending' and market_id like $2 and side = 'buy'`, account, "%-"+tokenSymbol).Row()
+	if buyRow == nil {
+		buyLockedBalance.Scan(nil)
+	}
+	err = buyRow.Scan(&buyLockedBalance)
+	if err != nil {
+		panic(err)
+	}
+
+	return sellLockedBalance.value.Add(buyLockedBalance.value).Mul(decimal.New(1, int32(decimals)))
 }

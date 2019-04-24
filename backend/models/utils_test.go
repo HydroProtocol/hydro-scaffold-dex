@@ -94,9 +94,9 @@ func (s *utilsTestSuite) TestTableName() {
 }
 
 func (s *utilsTestSuite) TestFindID() {
-	// fmt.Printf("%+v\n", OrderDAO.FindByID(DB, "a"))
-	// // fmt.Printf("%+v\n", OrderDAO.FindAllByID(DB, "a")[0])
-	// fmt.Printf("%+v\n", OrderDAO.FindMarketPending(DB, "LMM-WETH")[0])
+	// fmt.Printf("%+v\n", OrderDAO.FindByID(DBSqlite, "a"))
+	// // fmt.Printf("%+v\n", OrderDAO.FindAllByID(DBSqlite, "a")[0])
+	// fmt.Printf("%+v\n", OrderDAO.FindMarketPending(DBSqlite, "LMM-WETH")[0])
 }
 
 func TestUtilsTestSuite(t *testing.T) {

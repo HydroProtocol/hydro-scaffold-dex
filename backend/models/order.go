@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
+	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
 	"time"
 )
@@ -16,17 +17,19 @@ type IOrderDao interface {
 	Count() int
 }
 
-var OrderDao IOrderDao
+var OrderDaoSqlite IOrderDao
+var OrderDaoPG IOrderDao
 
 type orderDao struct {
 }
 
 func init() {
-	OrderDao = &orderDao{}
+	OrderDaoSqlite = &orderDao{}
+	OrderDaoPG = &orderDaoPG{}
 }
 
 type Order struct {
-	ID              string          `json:"id" db:"id" primaryKey:"true"`
+	ID              string          `json:"id" db:"id" primaryKey:"true" gorm:"primary_key"`
 	TraderAddress   string          `json:"traderAddress" db:"trader_address"`
 	MarketID        string          `json:"marketID" db:"market_id"`
 	Side            string          `json:"side" db:"side"`
@@ -87,7 +90,7 @@ func (o Order) GetOrderJson() *OrderJSON {
 func (*orderDao) Count() int {
 	sql := "select count(*) from orders"
 	var count int
-	err := DB.QueryRowx(sql).Scan(&count)
+	err := DBSqlite.QueryRowx(sql).Scan(&count)
 
 	if err != nil {
 		panic(err)
@@ -154,4 +157,49 @@ func (*orderDao) InsertOrder(order *Order) error {
 
 func (*orderDao) UpdateOrder(order *Order) error {
 	return update(order, "AvailableAmount", "ConfirmedAmount", "CanceledAmount", "PendingAmount", "Status")
+}
+
+//pg
+type orderDaoPG struct {
+}
+
+func (Order) TableName() string {
+	return "orders"
+}
+
+func (orderDaoPG) FindMarketPendingOrders(marketID string) (orders []*Order) {
+	DBPG.Where("status = 'pending' and market_id = ?", marketID).Order("created_at asc").Find(&orders)
+	return
+}
+
+func (orderDaoPG) FindByAccount(trader, marketID, status string, offset, limit int) (count int64, orders []*Order) {
+	DBPG.Where("trader_address = ? and market_id = ? and status = ?", trader, marketID, status).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders)
+	DBPG.Model(&Order{}).Where("trader_address = ? and market_id = ? and status = ?", trader, marketID, status).Count(&count)
+	return
+}
+
+func (orderDaoPG) FindByID(id string) *Order {
+	var order Order
+	DBPG.Where("id = ?", id).First(&order)
+	if order.ID == "" {
+		return nil
+	}
+	return &order
+}
+
+func (orderDaoPG) InsertOrder(order *Order) error {
+	return DBPG.Create(order).Error
+}
+
+func (orderDaoPG) UpdateOrder(order *Order) error {
+	return DBPG.Save(order).Error
+}
+
+func (o orderDaoPG) Count() (count int) {
+	err := DBPG.Model(&Order{}).Count(&count).Error
+	if err != nil {
+		utils.Error("count orders error: %v", err)
+	}
+
+	return
 }

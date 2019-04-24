@@ -7,7 +7,7 @@ import (
 )
 
 type ITradeDao interface {
-	FindTradesByMarket(pair string, startTime time.Time, endTime time.Time) []*Trade
+	FindTradesByMarket(marketID string, startTime time.Time, endTime time.Time) []*Trade
 	FindAllTrades(marketID string) (int64, []*Trade)
 	FindTradesByHash(hash string) []*Trade
 	FindTradeByID(id int64) *Trade
@@ -20,7 +20,7 @@ type ITradeDao interface {
 }
 
 type Trade struct {
-	ID              int64           `json:"id"               db:"id" primaryKey:"true" autoIncrement:"true"`
+	ID              int64           `json:"id"               db:"id" primaryKey:"true" autoIncrement:"true" gorm:"primary_key"`
 	TransactionID   int64           `json:"transactionID"    db:"transaction_id"`
 	TransactionHash string          `json:"transactionHash"  db:"transaction_hash"`
 	Status          string          `json:"status"           db:"status"`
@@ -38,16 +38,22 @@ type Trade struct {
 	UpdatedAt       time.Time       `json:"updatedAt"        db:"updated_at"`
 }
 
-var TradeDao ITradeDao
+func (Trade) TableName() string {
+	return "trades"
+}
+
+var TradeDaoSqlite ITradeDao
+var TradeDaoPG ITradeDao
 
 func init() {
-	TradeDao = &tradeDao{}
+	TradeDaoSqlite = &tradeDaoSqlite{}
+	TradeDaoPG = &tradeDaoPG{}
 }
 
-type tradeDao struct {
+type tradeDaoSqlite struct {
 }
 
-func (d *tradeDao) FindTradesByHash(hash string) []*Trade {
+func (d *tradeDaoSqlite) FindTradesByHash(hash string) []*Trade {
 	trades := []*Trade{}
 	findAllBy(
 		&trades,
@@ -62,7 +68,7 @@ func (d *tradeDao) FindTradesByHash(hash string) []*Trade {
 	return trades
 }
 
-func (d *tradeDao) FindTradesByMarket(marketID string, startTime time.Time, endTime time.Time) []*Trade {
+func (d *tradeDaoSqlite) FindTradesByMarket(marketID string, startTime time.Time, endTime time.Time) []*Trade {
 	trades := []*Trade{}
 
 	findAllBy(
@@ -81,7 +87,7 @@ func (d *tradeDao) FindTradesByMarket(marketID string, startTime time.Time, endT
 	return trades
 }
 
-func (d *tradeDao) FindAllTrades(marketID string) (int64, []*Trade) {
+func (d *tradeDaoSqlite) FindAllTrades(marketID string) (int64, []*Trade) {
 	trades := []*Trade{}
 	conditions := whereAnd(
 		&OpEq{"market_id", marketID},
@@ -99,7 +105,7 @@ func (d *tradeDao) FindAllTrades(marketID string) (int64, []*Trade) {
 	return int64(count), trades
 }
 
-func (d *tradeDao) FindAccountMarketTrades(account, marketID, status string, limit, offset int) (int64, []*Trade) {
+func (d *tradeDaoSqlite) FindAccountMarketTrades(account, marketID, status string, limit, offset int) (int64, []*Trade) {
 	trades := []*Trade{}
 	conditions := whereAnd(
 		&OpEq{"market_id", marketID},
@@ -121,7 +127,7 @@ func (d *tradeDao) FindAccountMarketTrades(account, marketID, status string, lim
 	return int64(count), trades
 }
 
-func (d *tradeDao) InsertTrade(trade *Trade) error {
+func (d *tradeDaoSqlite) InsertTrade(trade *Trade) error {
 	id, err := insert(trade)
 
 	if err != nil {
@@ -133,11 +139,11 @@ func (d *tradeDao) InsertTrade(trade *Trade) error {
 	return nil
 }
 
-func (*tradeDao) UpdateTrade(trade *Trade) error {
+func (*tradeDaoSqlite) UpdateTrade(trade *Trade) error {
 	return update(trade, "Status", "TransactionID", "TransactionHash", "ExecutedAt")
 }
 
-func (*tradeDao) FindTradeByID(id int64) *Trade {
+func (*tradeDaoSqlite) FindTradeByID(id int64) *Trade {
 	var trade Trade
 
 	findBy(&trade, &OpEq{"id", id}, nil)
@@ -150,7 +156,7 @@ func (*tradeDao) FindTradeByID(id int64) *Trade {
 	return &trade
 }
 
-func (*tradeDao) FindTradeByTransactionID(transactionID int64) []*Trade {
+func (*tradeDaoSqlite) FindTradeByTransactionID(transactionID int64) []*Trade {
 	trades := []*Trade{}
 
 	findAllBy(
@@ -164,14 +170,79 @@ func (*tradeDao) FindTradeByTransactionID(transactionID int64) []*Trade {
 	return trades
 }
 
-func (*tradeDao) Count() int {
+func (*tradeDaoSqlite) Count() int {
 	sql := "select count(*) from trades"
 	var count int
-	err := DB.QueryRowx(sql).Scan(&count)
+	err := DBSqlite.QueryRowx(sql).Scan(&count)
 
 	if err != nil {
 		panic(err)
 	}
 
 	return count
+}
+
+//pg
+type tradeDaoPG struct {
+}
+
+func (tradeDaoPG) FindTradesByMarket(marketID string, startTime time.Time, endTime time.Time) []*Trade {
+	var trades []*Trade
+
+	DBPG.Where("market_id = ? and status = ? and executed_at between ? and ? ", marketID, common.STATUS_SUCCESSFUL, startTime, endTime).Order("executed_at desc").Find(&trades)
+	return trades
+}
+
+func (tradeDaoPG) FindAllTrades(marketID string) (int64, []*Trade) {
+	var trades []*Trade
+	var count int64
+
+	DBPG.Where("market_id = ? and status = ?", marketID, common.STATUS_SUCCESSFUL).Order("created_at asc").Find(&trades).Count(&count)
+	return count, trades
+}
+
+func (tradeDaoPG) FindTradesByHash(hash string) []*Trade {
+	var trades []*Trade
+	DBPG.Where("transaction_hash = ?", hash).Order("created_at desc").Find(&trades)
+	return trades
+}
+
+func (tradeDaoPG) FindTradeByID(id int64) *Trade {
+	var trade Trade
+
+	DBPG.Where("id = ?", id).Find(&trade)
+	if trade.Status == "" {
+		return nil
+	}
+
+	return &trade
+}
+
+func (tradeDaoPG) FindAccountMarketTrades(account, marketID, status string, limit, offset int) (int64, []*Trade) {
+	var trades []*Trade
+	var count int64
+
+	DBPG.Where("market_id = ? and (taker = ? or maker = ?)", marketID, account, account).Order("created_at asc").Find(&trades).Count(&count)
+	return count, trades
+}
+
+func (tradeDaoPG) InsertTrade(trade *Trade) error {
+	return DBPG.Create(trade).Error
+}
+
+func (tradeDaoPG) UpdateTrade(trade *Trade) error {
+	return DBPG.Save(trade).Error
+}
+
+func (tradeDaoPG) Count() int {
+	var count int
+	DBPG.Model(&Trade{}).Count(&count)
+	return count
+}
+
+func (tradeDaoPG) FindTradeByTransactionID(transactionID int64) []*Trade {
+	var trades []*Trade
+
+	DBPG.Where("transaction_id = ? ", transactionID).Order("created_at asc").Find(&trades)
+	return trades
 }

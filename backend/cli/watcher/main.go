@@ -23,7 +23,7 @@ type DBTransactionHandler struct {
 }
 
 func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64) {
-	launchLog := models.LaunchLogDao.FindByHash(tx.GetHash())
+	launchLog := models.LaunchLogDaoSqlite.FindByHash(tx.GetHash())
 
 	if launchLog == nil {
 		utils.Debug("Skip useless transaction %s", tx.GetHash())
@@ -39,7 +39,7 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 		txReceipt, _ := handler.w.Hydro.GetTransactionReceipt(tx.GetHash())
 		result := txReceipt.GetResult()
 		hash := tx.GetHash()
-		transaction := models.TransactionDao.FindTransactionByID(launchLog.ItemID)
+		transaction := models.TransactionDaoSqlite.FindTransactionByID(launchLog.ItemID)
 		utils.Info("Transaction %s result is %+v", tx.GetHash(), result)
 		//w.handleTransaction(launchLog.ItemID, result)
 
@@ -77,7 +77,7 @@ func main() {
 	go cli.WaitExitSignal(stop)
 
 	// Init Database Client
-	models.ConnectDatabase("postgres", config.Getenv("HSK_DATABASE_URL"))
+	models.ConnectSqlite("postgres", config.Getenv("HSK_DATABASE_URL"))
 
 	// Init Redis client
 	client := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))

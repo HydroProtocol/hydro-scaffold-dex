@@ -12,7 +12,7 @@ func GetFees(p Param) (interface{}, error) {
 	price := utils.StringToDecimal(params.Price)
 	amount := utils.StringToDecimal(params.Amount)
 
-	market := models.MarketDao.FindMarketByID(params.MarketID)
+	market := models.MarketDaoSqlite.FindMarketByID(params.MarketID)
 
 	if market == nil {
 		return nil, MarketNotFoundError(params.MarketID)

@@ -15,13 +15,14 @@ services:
       - 8545:8545
     restart: on-failure:5
   db:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-sdk-pg
     build:
-      context: ./db
+      context: ./backend/db
       dockerfile: Dockerfile-postgres
       args:
         - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
     restart: always
     volumes:
       - datavolume:/data

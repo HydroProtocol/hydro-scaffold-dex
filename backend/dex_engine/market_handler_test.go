@@ -56,7 +56,7 @@ func (s *marketHandlerSuite) SetupTest() {
 		GasUsedEstimation:  250000,
 	}
 
-	err := models.MarketDao.InsertMarket(market)
+	err := models.MarketDaoSqlite.InsertMarket(market)
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +68,7 @@ func (s *marketHandlerSuite) SetupTest() {
 		Decimals: 18,
 	}
 
-	_ = models.TokenDao.InsertToken(token)
+	_ = models.TokenDaoSqlite.InsertToken(token)
 
 	wsQueue = &common.MockQueue{}
 	kvStore := &common.MockKVStore{}
@@ -106,7 +106,7 @@ func (s *marketHandlerSuite) TestHandleNewOrder() {
 	s.AssertChange(func() {
 		_, _ = s.marketHandler.handleNewOrder(sellOrderEvent)
 	}, func() int {
-		return models.OrderDao.Count()
+		return models.OrderDaoSqlite.Count()
 	}, 1)
 
 	//s.Equal("140", s.marketHandler.orderbook.MaxBid().String())
@@ -236,9 +236,9 @@ func (s *marketHandlerSuite) batchNewOrderTest(b *batchMatchOrdersTest) {
 
 func (s *marketHandlerSuite) assertExpectedResult(b *batchMatchOrdersTest, result *expectedResult) {
 	// reload orders
-	b.takerOrder = models.OrderDao.FindByID(b.takerOrder.ID)
+	b.takerOrder = models.OrderDaoSqlite.FindByID(b.takerOrder.ID)
 	for i := range b.makerOrders {
-		b.makerOrders[i] = models.OrderDao.FindByID(b.makerOrders[i].ID)
+		b.makerOrders[i] = models.OrderDaoSqlite.FindByID(b.makerOrders[i].ID)
 	}
 
 	for i, status := range result.expectedStatus {
@@ -300,8 +300,8 @@ func (s *marketHandlerSuite) assertExpectedResult(b *batchMatchOrdersTest, resul
 }
 
 func (s *marketHandlerSuite) batchNewOrderTestPendingPart(b *batchMatchOrdersTest) (*models.Transaction, *models.LaunchLog) {
-	oldTradesCount := models.TradeDao.Count()
-	oldTransactionsCount := models.TransactionDao.Count()
+	oldTradesCount := models.TradeDaoSqlite.Count()
+	oldTransactionsCount := models.TransactionDaoSqlite.Count()
 
 	for _, makerOrder := range b.makerOrders {
 		makerOrderEvent := common.NewOrderEvent{
@@ -319,8 +319,8 @@ func (s *marketHandlerSuite) batchNewOrderTestPendingPart(b *batchMatchOrdersTes
 
 	transaction, launchLog := s.marketHandler.handleNewOrder(&takerOrderEvent)
 
-	newTradesCount := models.TradeDao.Count()
-	newTransactionsCount := models.TransactionDao.Count()
+	newTradesCount := models.TradeDaoSqlite.Count()
+	newTransactionsCount := models.TransactionDaoSqlite.Count()
 
 	s.Equal(b.expectedTradesCount, newTradesCount-oldTradesCount)
 	s.Equal(b.expectedTransactionsCount, newTransactionsCount-oldTransactionsCount)
@@ -839,7 +839,7 @@ func (s *marketHandlerSuite) assertOrderAmounts(available, pending, confirmed, c
 
 func (s *marketHandlerSuite) TestCancelOrder() {
 	order1 := newModelOrder("buy", utils.StringToDecimal("0.02"), utils.StringToDecimal("10"))
-	_ = models.OrderDao.InsertOrder(order1)
+	_ = models.OrderDaoSqlite.InsertOrder(order1)
 
 	newOrderEvent := common.NewOrderEvent{
 		Event: common.Event{

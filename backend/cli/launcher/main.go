@@ -20,7 +20,7 @@ func run() int {
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	models.ConnectDatabase("postgres", config.Getenv("HSK_DATABASE_URL"))
+	models.ConnectSqlite("postgres", config.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
 	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
@@ -42,7 +42,7 @@ func Run(l *launcher.Launcher, startMetrics func()) {
 	go startMetrics()
 
 	for {
-		launchLogs := models.LaunchLogDao.FindAllCreated()
+		launchLogs := models.LaunchLogDaoSqlite.FindAllCreated()
 
 		if len(launchLogs) == 0 {
 			select {

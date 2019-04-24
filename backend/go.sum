@@ -12,6 +12,7 @@ github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419114738-2395e8d3f27
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419124420-e3c58fa95308/go.mod h1:K0jLTqRhD3Mgs8z9c/SPS3ug/Zxy3jg00ddqqiS9RO8=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419141207-7007b6661326/go.mod h1:3GPcmLGOo0MQqj+hstOJS8/31eIlP7PiPk7+MRH5wy4=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190420131950-ae35176c9a11/go.mod h1:IdIANSCB1rH4gqFLzcM3wxoGt1w2tINp+FSdpYoBm0o=
+github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190423091552-d8ff3bfae3fc/go.mod h1:etu9xbWNrmFnXKm0yyVjw8ZiNV5xFR2RWP8VAVy5+XY=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3 h1:GraWKEJwNDWHlO7eZjSj8PkIwwFsuNiBN4+DGh4WTY8=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3/go.mod h1:s6BzPp3Oed01zWubFguGismWzQhwekI6CXBA32XfDf0=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.5 h1:umztM/7Jc9eIuDZcMFWdSvU4U6e0bQW4a8SQ6SqoiW8=
@@ -183,6 +184,7 @@ github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24 h1:pntxY8Ary0t4
 github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24/go.mod h1:M+9NzErvs504Cn4c5DxATwIqPbtswREoFCre64PpcG4=
 github.com/sirupsen/logrus v1.0.6 h1:hcP1GmhGigz/O7h1WVUM5KklBp1JoNS9FggWKdj/j3s=
 github.com/sirupsen/logrus v1.0.6/go.mod h1:pMByvHTf9Beacp5x1UXfOR9xyW/9antXMhjMPG0dEzc=
+github.com/sirupsen/logrus v1.2.0 h1:juTguoYk5qI21pwyTXY3B3Y5cOTH3ZUyZCg1v/mihuo=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.3.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/stretchr/objx v0.1.0 h1:4G4v2dO3VZwixGIRoQ5Lfboy6nUhCyYzaqnIAPPhYs4=
@@ -193,6 +195,7 @@ github.com/stretchr/objx v0.2.0 h1:Hbg2NidpLE8veEBkEZTL3CvlkUIVzuU9jDplZO54c48=
 github.com/stretchr/objx v0.2.0/go.mod h1:qt09Ya8vawLte6SNmTgCsAVtYtaKzEcn8ATUoHMkEqE=
 github.com/stretchr/testify v1.2.0 h1:LThGCOvhuJic9Gyd1VBCkhyUXmO8vKaBFvBsJ2k03rg=
 github.com/stretchr/testify v1.2.0/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
+github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=

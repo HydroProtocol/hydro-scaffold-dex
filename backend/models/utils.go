@@ -23,7 +23,7 @@ const (
 
 func insert(model interface{}) (int64, error) {
 	sqlString, values := getInsertSQLAndValues(model)
-	ret, err := DB.Exec(sqlString, values...)
+	ret, err := DBSqlite.Exec(sqlString, values...)
 
 	if err != nil {
 		return 0, err
@@ -42,7 +42,7 @@ func insert(model interface{}) (int64, error) {
 
 func update(model interface{}, fields ...string) error {
 	sqlString, values := getUpdateSQLAndValues(model, fields...)
-	_, err := DB.Exec(sqlString, values...)
+	_, err := DBSqlite.Exec(sqlString, values...)
 	return err
 }
 
@@ -52,7 +52,7 @@ func insertAndReturnID(model interface{}) (int64, error) {
 	sqlString = sqlString + ` RETURNING id`
 
 	var id int64
-	err := DB.QueryRow(sqlString, values...).Scan(&id)
+	err := DBSqlite.QueryRow(sqlString, values...).Scan(&id)
 
 	return id, err
 }
@@ -279,7 +279,7 @@ func findBy(model interface{}, conditions Op, orderBy map[string]OrderByDirectio
 	sqlString = fmt.Sprintf("%s LIMIT 1", sqlString)
 
 	// logSQL(sqlString)
-	err := DB.QueryRowx(sqlString, values...).StructScan(model)
+	err := DBSqlite.QueryRowx(sqlString, values...).StructScan(model)
 
 	if err == sql.ErrNoRows {
 		return
@@ -312,7 +312,7 @@ func findAllBy(models interface{}, conditions Op, orderBy map[string]OrderByDire
 	}
 
 	//fmt.Println(sqlString)
-	err := DB.Select(models, sqlString, values...)
+	err := DBSqlite.Select(models, sqlString, values...)
 	if err != nil {
 		panic(err)
 	}
@@ -330,7 +330,7 @@ func findCountBy(model interface{}, conditions Op) uint64 {
 	}
 
 	var count uint64
-	err := DB.Get(&count, sqlString, values...)
+	err := DBSqlite.Get(&count, sqlString, values...)
 
 	if err != nil {
 		panic(err)

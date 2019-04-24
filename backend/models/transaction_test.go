@@ -15,20 +15,20 @@ func TestTransactionDao_UpdateTransaction(t *testing.T) {
 	InitTestDB()
 
 	transaction := newTransaction(common.STATUS_PENDING)
-	_ = TransactionDao.InsertTransaction(transaction)
-	TransactionDao.FindTransactionByHash(transaction.TransactionHash.String)
+	_ = TransactionDaoSqlite.InsertTransaction(transaction)
+	TransactionDaoSqlite.FindTransactionByHash(transaction.TransactionHash.String)
 
-	dbTransaction := TransactionDao.FindTransactionByID(transaction.ID)
+	dbTransaction := TransactionDaoSqlite.FindTransactionByID(transaction.ID)
 	dbTransaction.Status = common.STATUS_SUCCESSFUL
-	_ = TransactionDao.UpdateTransaction(dbTransaction)
+	_ = TransactionDaoSqlite.UpdateTransaction(dbTransaction)
 
-	dbTransaction2 := TransactionDao.FindTransactionByID(transaction.ID)
+	dbTransaction2 := TransactionDaoSqlite.FindTransactionByID(transaction.ID)
 
 	assert.EqualValues(t, transaction.TransactionHash, dbTransaction2.TransactionHash)
 	assert.EqualValues(t, common.STATUS_SUCCESSFUL, dbTransaction2.Status)
 
-	_ = TransactionDao.UpdateTransactionStatus(common.STATUS_FAILED, dbTransaction2.TransactionHash.String)
-	dbTransaction3 := TransactionDao.FindTransactionByID(transaction.ID)
+	_ = TransactionDaoSqlite.UpdateTransactionStatus(common.STATUS_FAILED, dbTransaction2.TransactionHash.String)
+	dbTransaction3 := TransactionDaoSqlite.FindTransactionByID(transaction.ID)
 	assert.EqualValues(t, transaction.TransactionHash, dbTransaction3.TransactionHash)
 	assert.EqualValues(t, common.STATUS_FAILED, dbTransaction3.Status)
 }
@@ -52,4 +52,28 @@ func RandomTransaction(success bool) *Transaction {
 		status = common.STATUS_FAILED
 	}
 	return newTransaction(status)
+}
+
+//pg
+func TestTransactionDao_PG_UpdateTransaction(t *testing.T) {
+	prepareTest()
+	InitTestDBPG()
+
+	transaction := newTransaction(common.STATUS_PENDING)
+	_ = TransactionDaoPG.InsertTransaction(transaction)
+	TransactionDaoPG.FindTransactionByHash(transaction.TransactionHash.String)
+
+	dbTransaction := TransactionDaoPG.FindTransactionByID(transaction.ID)
+	dbTransaction.Status = common.STATUS_SUCCESSFUL
+	_ = TransactionDaoPG.UpdateTransaction(dbTransaction)
+
+	dbTransaction2 := TransactionDaoPG.FindTransactionByID(transaction.ID)
+
+	assert.EqualValues(t, transaction.TransactionHash, dbTransaction2.TransactionHash)
+	assert.EqualValues(t, common.STATUS_SUCCESSFUL, dbTransaction2.Status)
+
+	_ = TransactionDaoPG.UpdateTransactionStatus(common.STATUS_FAILED, dbTransaction2.TransactionHash.String)
+	dbTransaction3 := TransactionDaoPG.FindTransactionByID(transaction.ID)
+	assert.EqualValues(t, transaction.TransactionHash, dbTransaction3.TransactionHash)
+	assert.EqualValues(t, common.STATUS_FAILED, dbTransaction3.Status)
 }

@@ -12,7 +12,7 @@ type IMarketDao interface {
 }
 
 type Market struct {
-	ID                string `json:"id"                db:"id" primaryKey:"true"`
+	ID                string `json:"id"                db:"id" primaryKey:"true" gorm:"primary_key"`
 	BaseTokenSymbol   string `json:"baseTokenSymbol"   db:"base_token_symbol"`
 	BaseTokenName     string `json:"BaseTokenName"     db:"base_token_name"`
 	BaseTokenAddress  string `json:"baseTokenAddress"  db:"base_token_address"`
@@ -33,22 +33,28 @@ type Market struct {
 	IsPublished       bool            `json:"isPublished"       db:"is_published"`
 }
 
-var MarketDao IMarketDao
+func (Market) TableName() string {
+	return "markets"
+}
+
+var MarketDaoSqlite IMarketDao
+var MarketDaoPG IMarketDao
 
 func init() {
-	MarketDao = &marketDao{}
+	MarketDaoSqlite = &marketDaoSqlite{}
+	MarketDaoPG = &marketDaoPG{}
 }
 
-type marketDao struct {
+type marketDaoSqlite struct {
 }
 
-func (marketDao) FindAllMarkets() []*Market {
+func (marketDaoSqlite) FindAllMarkets() []*Market {
 	markets := []*Market{}
 	findAllBy(&markets, nil, nil, -1, -1)
 	return markets
 }
 
-func (marketDao) FindMarketByID(marketID string) *Market {
+func (marketDaoSqlite) FindMarketByID(marketID string) *Market {
 	var market Market
 	findBy(&market, &OpEq{"id", marketID}, nil)
 	if market.ID == "" {
@@ -57,11 +63,38 @@ func (marketDao) FindMarketByID(marketID string) *Market {
 	return &market
 }
 
-func (marketDao) InsertMarket(market *Market) error {
+func (marketDaoSqlite) InsertMarket(market *Market) error {
 	_, err := insert(market)
 	return err
 }
 
-func (marketDao) UpdateMarket(market *Market) error {
+func (marketDaoSqlite) UpdateMarket(market *Market) error {
 	return update(market, "MinOrderSize", "PricePrecision", "PriceDecimals", "AmountDecimals", "MakerFeeRate", "TakerFeeRate", "GasUsedEstimation", "IsPublished")
+}
+
+//pg
+type marketDaoPG struct {
+}
+
+func (marketDaoPG) FindAllMarkets() []*Market {
+	var markets []*Market
+	DBPG.Find(&markets)
+	return markets
+}
+
+func (marketDaoPG) FindMarketByID(marketID string) *Market {
+	var market Market
+	DBPG.Where("id = ?", marketID).First(&market)
+	if market.ID == "" {
+		return nil
+	}
+	return &market
+}
+
+func (marketDaoPG) InsertMarket(market *Market) error {
+	return DBPG.Create(market).Error
+}
+
+func (marketDaoPG) UpdateMarket(market *Market) error {
+	return DBPG.Save(market).Error
 }

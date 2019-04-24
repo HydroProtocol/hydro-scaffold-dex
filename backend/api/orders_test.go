@@ -35,14 +35,14 @@ func (suite *BuildOrderTestSuit) SetupTest() {
 
 func mockLockedBlanceDao() {
 	balanceDao := models.MLockedBalanceDao{}
-	models.BalanceDao = &balanceDao
+	models.BalanceDaoSqlite = &balanceDao
 	balanceDao.On("GetByAccountAndSymbol", mock.Anything, mock.Anything, mock.Anything).Times(10).Return(decimal.Zero)
 }
 
 func mockMarketDao() {
 	marketDao := &models.MMarketDao{}
 
-	models.MarketDao = marketDao
+	models.MarketDaoSqlite = marketDao
 	var markets []*models.Market
 
 	marketWethDai := &models.Market{

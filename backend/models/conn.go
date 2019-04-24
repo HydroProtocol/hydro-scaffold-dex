@@ -8,27 +8,29 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var DB *sqlx.DB
+var DBSqlite *sqlx.DB
+var DBPG *gorm.DB
 
-func ConnectDatabase(driver, url string) *sqlx.DB {
+func ConnectSqlite(driver, url string) *sqlx.DB {
 	db, err := sqlx.Open(driver, url)
 
 	if err != nil {
 		panic(fmt.Errorf("connect database error: %v", err))
 	}
 
-	DB = db
+	DBSqlite = db
 
 	return db
 }
 
 // Use gOrm
-func Connect(url string) *gorm.DB {
+func ConnectPG(url string) *gorm.DB {
 	db, err := gorm.Open("postgres", url)
 
 	if err != nil {
 		panic(err)
 	}
 
+	DBPG = db
 	return db
 }

@@ -177,7 +177,7 @@ func MarketHotDai() *Market {
 func MockMarketDao() {
 	marketDao := &MMarketDao{}
 
-	MarketDao = marketDao
+	MarketDaoSqlite = marketDao
 	var markets []*Market
 
 	marketWethDai := &Market{
@@ -224,7 +224,7 @@ func MockMarketDao() {
 
 func MockTradeDao() {
 	tradeDao := &MTradeDao{}
-	TradeDao = tradeDao
+	TradeDaoSqlite = tradeDao
 	var tradesWethDai []*Trade
 	var tradesHotDai []*Trade
 
@@ -275,14 +275,42 @@ func getMockTradeWithTime(marketID string, success bool, time time.Time) *Trade 
 	return &trade
 }
 func InitTestDB() {
-	ConnectDatabase("sqlite3", os.Getenv("HSK_DATABASE_URL"))
+	ConnectSqlite("sqlite3", os.Getenv("HSK_DATABASE_URL"))
 	bts, err := ioutil.ReadFile("../db/migrations/0001-init.up.sql")
 
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = DB.Exec(string(bts))
+	_, err = DBSqlite.Exec(string(bts))
+	if err != nil {
+		panic(err)
+	}
+}
+
+func InitTestDBPG() {
+	if DBPG != nil {
+		err := DBPG.Close()
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	ConnectPG(os.Getenv("HSK_DATABASE_URL"))
+	DBPG.LogMode(true)
+	createSql, err := ioutil.ReadFile("../db/migrations/0001-init.up.sql")
+	cleanSql, err := ioutil.ReadFile("../db/migrations/0001-init.down.sql")
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = DBPG.Exec(string(cleanSql)).Error
+	if err != nil {
+		panic(err)
+	}
+
+	err = DBPG.Exec(string(createSql)).Error
 	if err != nil {
 		panic(err)
 	}

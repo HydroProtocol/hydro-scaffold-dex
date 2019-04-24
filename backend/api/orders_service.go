@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
@@ -16,12 +16,12 @@ import (
 
 func GetLockedBalance(p Param) (interface{}, error) {
 	req := p.(*LockedBalanceReq)
-	tokens := models.TokenDao.GetAllTokens()
+	tokens := models.TokenDaoSqlite.GetAllTokens()
 
 	var lockedBalances []LockedBalance
 
 	for _, token := range tokens {
-		lockedBalance := models.BalanceDao.GetByAccountAndSymbol(req.Address, token.Symbol, token.Decimals)
+		lockedBalance := models.BalanceDaoSqlite.GetByAccountAndSymbol(req.Address, token.Symbol, token.Decimals)
 		lockedBalances = append(lockedBalances, LockedBalance{
 			Symbol:        token.Symbol,
 			LockedBalance: lockedBalance,
@@ -48,7 +48,7 @@ func GetOrder(p Param) (interface{}, error) {
 	offset := req.PerPage * (req.Page - 1)
 	limit := req.PerPage
 
-	count, orders := models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, limit, offset)
+	count, orders := models.OrderDaoSqlite.FindByAccount(req.Address, req.MarketID, req.Status, limit, offset)
 
 	return &QueryOrderResp{
 		Count:  count,
@@ -58,7 +58,7 @@ func GetOrder(p Param) (interface{}, error) {
 
 func CancelOrder(p Param) (interface{}, error) {
 	req := p.(*CancelOrderReq)
-	order := models.OrderDao.FindByID(req.ID)
+	order := models.OrderDaoSqlite.FindByID(req.ID)
 	if order == nil {
 		return nil, NewApiError(-1, fmt.Sprintf("order %s not exist", req.ID))
 	}
@@ -167,7 +167,7 @@ func getCacheOrderByOrderID(orderID string) *CacheOrder {
 }
 
 func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
-	market := models.MarketDao.FindMarketByID(order.MarketID)
+	market := models.MarketDaoSqlite.FindMarketByID(order.MarketID)
 	if market == nil {
 		return MarketNotFoundError(order.MarketID)
 	}
@@ -196,11 +196,11 @@ func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
 		return NewApiError(-1, "invalid_amount_unit")
 	}
 
-	baseTokenLockedBalance := models.BalanceDao.GetByAccountAndSymbol(address, market.BaseTokenSymbol, market.BaseTokenDecimals)
+	baseTokenLockedBalance := models.BalanceDaoSqlite.GetByAccountAndSymbol(address, market.BaseTokenSymbol, market.BaseTokenDecimals)
 	baseTokenBalance := hydro.GetTokenBalance(market.BaseTokenAddress, address)
 	baseTokenAllowance := hydro.GetTokenAllowance(market.BaseTokenAddress, config.Getenv("HSK_PROXY_ADDRESS"), address)
 
-	quoteTokenLockedBalance := models.BalanceDao.GetByAccountAndSymbol(address, market.QuoteTokenSymbol, market.QuoteTokenDecimals)
+	quoteTokenLockedBalance := models.BalanceDaoSqlite.GetByAccountAndSymbol(address, market.QuoteTokenSymbol, market.QuoteTokenDecimals)
 	quoteTokenBalance := hydro.GetTokenBalance(market.QuoteTokenAddress, address)
 	quoteTokenAllowance := hydro.GetTokenAllowance(market.QuoteTokenAddress, config.Getenv("HSK_PROXY_ADDRESS"), address)
 
@@ -244,7 +244,7 @@ func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
 }
 
 func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, error) {
-	market := models.MarketDao.FindMarketByID(order.MarketID)
+	market := models.MarketDaoSqlite.FindMarketByID(order.MarketID)
 	amount := utils.StringToDecimal(order.Amount)
 	price := utils.StringToDecimal(order.Price)
 

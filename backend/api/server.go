@@ -134,7 +134,7 @@ func StartServer(ctx context.Context, startMetric func()) {
 	hydro = ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
 
 	//init database
-	models.ConnectDatabase("postgres", config.Getenv("HSK_DATABASE_URL"))
+	models.ConnectSqlite("postgres", config.Getenv("HSK_DATABASE_URL"))
 
 	CacheService, _ = common.InitKVStore(
 		&common.RedisKVStoreConfig{

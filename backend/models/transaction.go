@@ -17,7 +17,7 @@ type ITransactionDao interface {
 }
 
 type Transaction struct {
-	ID              int64           `json:"id"              db:"id" primaryKey:"true"  autoIncrement:"true"`
+	ID              int64           `json:"id"              db:"id" primaryKey:"true"  autoIncrement:"true" gorm:"primary_key"`
 	MarketID        string          `json:"marketID"        db:"market_id"`
 	TransactionHash *sql.NullString `json:"transactionHash" db:"transaction_hash"`
 	Status          string          `json:"status"          db:"status"`
@@ -26,19 +26,25 @@ type Transaction struct {
 	CreatedAt       time.Time       `json:"createdAt"       db:"created_at"`
 }
 
-var TransactionDao ITransactionDao
+func (Transaction) TableName() string {
+	return "transactions"
+}
+
+var TransactionDaoSqlite ITransactionDao
+var TransactionDaoPG ITransactionDao
 
 func init() {
-	TransactionDao = &transactionDao{}
+	TransactionDaoSqlite = &transactionDaoSqlite{}
+	TransactionDaoPG = &transactionDaoPG{}
 }
 
-type transactionDao struct {
+type transactionDaoSqlite struct {
 }
 
-func (d *transactionDao) Count() int {
+func (d *transactionDaoSqlite) Count() int {
 	sqlString := "select count(*) from transactions"
 	var count int
-	err := DB.QueryRowx(sqlString).Scan(&count)
+	err := DBSqlite.QueryRowx(sqlString).Scan(&count)
 
 	if err != nil {
 		utils.Error("GetNonce error: %v", err)
@@ -48,7 +54,7 @@ func (d *transactionDao) Count() int {
 	return count
 }
 
-func (d *transactionDao) FindTransactionByHash(transactionHash string) *Transaction {
+func (d *transactionDaoSqlite) FindTransactionByHash(transactionHash string) *Transaction {
 	var transaction Transaction
 
 	findBy(&transaction, &OpEq{"transaction_hash", transactionHash}, nil)
@@ -60,7 +66,7 @@ func (d *transactionDao) FindTransactionByHash(transactionHash string) *Transact
 	return &transaction
 }
 
-func (d *transactionDao) InsertTransaction(transaction *Transaction) error {
+func (d *transactionDaoSqlite) InsertTransaction(transaction *Transaction) error {
 	id, err := insert(transaction)
 
 	if err != nil {
@@ -72,7 +78,7 @@ func (d *transactionDao) InsertTransaction(transaction *Transaction) error {
 	return nil
 }
 
-func (d *transactionDao) FindTransactionByID(id int64) *Transaction {
+func (d *transactionDaoSqlite) FindTransactionByID(id int64) *Transaction {
 	var transaction Transaction
 
 	findBy(&transaction, &OpEq{"id", id}, nil)
@@ -85,14 +91,56 @@ func (d *transactionDao) FindTransactionByID(id int64) *Transaction {
 	return &transaction
 }
 
-func (*transactionDao) UpdateTransaction(transaction *Transaction) error {
+func (*transactionDaoSqlite) UpdateTransaction(transaction *Transaction) error {
 	return update(transaction, "Status", "TransactionHash", "ExecutedAt")
 }
 
-func (*transactionDao) UpdateTransactionStatus(status, hash string) error {
+func (*transactionDaoSqlite) UpdateTransactionStatus(status, hash string) error {
 	s := fmt.Sprintf(`update transactions set "status"=$1 where transaction_hash = $2`)
 
-	_, err := DB.Exec(s, status, hash)
+	_, err := DBSqlite.Exec(s, status, hash)
 
 	return err
+}
+
+type transactionDaoPG struct {
+}
+
+func (transactionDaoPG) FindTransactionByHash(transactionHash string) *Transaction {
+	var transaction Transaction
+	DBPG.Where("transaction_hash = ?", transactionHash).First(&transaction)
+	if !transaction.TransactionHash.Valid {
+		return nil
+	}
+
+	return &transaction
+}
+
+func (transactionDaoPG) InsertTransaction(transaction *Transaction) error {
+	return DBPG.Create(transaction).Error
+}
+
+func (transactionDaoPG) UpdateTransaction(transaction *Transaction) error {
+	return DBPG.Save(transaction).Error
+}
+
+func (transactionDaoPG) UpdateTransactionStatus(status, hash string) error {
+	return DBPG.Exec(`update transactions set "status"=$1 where transaction_hash = $2`, status, hash).Error
+}
+
+func (transactionDaoPG) Count() int {
+	var count int
+	DBPG.Model(&Transaction{}).Count(&count)
+	return count
+}
+
+func (transactionDaoPG) FindTransactionByID(id int64) *Transaction {
+	var transaction Transaction
+
+	DBPG.Where("id = ?", id).Find(&transaction)
+	if transaction.Status == "" {
+		return nil
+	}
+
+	return &transaction
 }

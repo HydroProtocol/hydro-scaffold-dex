@@ -6,6 +6,7 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"math/rand"
@@ -17,27 +18,27 @@ func TestLaunchLogDao_FindAllCreated(t *testing.T) {
 	test.PreTest()
 	InitTestDB()
 
-	launchLogs := LaunchLogDao.FindAllCreated()
+	launchLogs := LaunchLogDaoSqlite.FindAllCreated()
 	assert.EqualValues(t, len(launchLogs), 0)
 
 	launchLog1 := newLaunchLog()
 	launchLog2 := newLaunchLog()
 	launchLog3 := newLaunchLog()
 
-	_ = LaunchLogDao.InsertLaunchLog(launchLog1)
-	_ = LaunchLogDao.InsertLaunchLog(launchLog2)
-	_ = LaunchLogDao.InsertLaunchLog(launchLog3)
+	_ = LaunchLogDaoSqlite.InsertLaunchLog(launchLog1)
+	_ = LaunchLogDaoSqlite.InsertLaunchLog(launchLog2)
+	_ = LaunchLogDaoSqlite.InsertLaunchLog(launchLog3)
 
-	launchLogs = LaunchLogDao.FindAllCreated()
+	launchLogs = LaunchLogDaoSqlite.FindAllCreated()
 	assert.EqualValues(t, 3, len(launchLogs))
 
-	launchLog := LaunchLogDao.FindLaunchLogByID(1)
+	launchLog := LaunchLogDaoSqlite.FindLaunchLogByID(1)
 	assert.EqualValues(t, 1, launchLog.ID)
 	assert.EqualValues(t, "created", launchLog.Status)
 	launchLog.Status = common.STATUS_PENDING
-	_ = LaunchLogDao.UpdateLaunchLog(launchLog)
+	_ = LaunchLogDaoSqlite.UpdateLaunchLog(launchLog)
 
-	launchLog = LaunchLogDao.FindLaunchLogByID(1)
+	launchLog = LaunchLogDaoSqlite.FindLaunchLogByID(1)
 	assert.EqualValues(t, 1, launchLog.ID)
 	assert.EqualValues(t, common.STATUS_PENDING, launchLog.Status)
 }
@@ -45,7 +46,7 @@ func TestLaunchLogDao_FindAllCreated(t *testing.T) {
 func newLaunchLog() *LaunchLog {
 	launchLog := LaunchLog{
 		ItemType:    "hydro_trade",
-		ItemID:      rand.Int63(),
+		ItemID:      int64(rand.Int31()),
 		Status:      "created",
 		Hash:        sql.NullString{},
 		BlockNumber: sql.NullInt64{},
@@ -64,4 +65,36 @@ func newLaunchLog() *LaunchLog {
 	}
 
 	return &launchLog
+}
+
+//pg
+func TestLaunchLogDao_PG_FindAllCreated(t *testing.T) {
+	prepareTest()
+	InitTestDBPG()
+
+	launchLogs := LaunchLogDaoPG.FindAllCreated()
+	assert.EqualValues(t, len(launchLogs), 0)
+
+	launchLog1 := newLaunchLog()
+	launchLog2 := newLaunchLog()
+	launchLog3 := newLaunchLog()
+
+	spew.Dump(launchLog1)
+	spew.Dump(LaunchLogDaoPG.InsertLaunchLog(launchLog1))
+	//_ = LaunchLogDaoPG.InsertLaunchLog(launchLog1)
+	_ = LaunchLogDaoPG.InsertLaunchLog(launchLog2)
+	_ = LaunchLogDaoPG.InsertLaunchLog(launchLog3)
+
+	launchLogs = LaunchLogDaoPG.FindAllCreated()
+	assert.EqualValues(t, 3, len(launchLogs))
+
+	launchLog := LaunchLogDaoPG.FindLaunchLogByID(1)
+	assert.EqualValues(t, 1, launchLog.ID)
+	assert.EqualValues(t, "created", launchLog.Status)
+	launchLog.Status = common.STATUS_PENDING
+	_ = LaunchLogDaoPG.UpdateLaunchLog(launchLog)
+
+	launchLog = LaunchLogDaoPG.FindLaunchLogByID(1)
+	assert.EqualValues(t, 1, launchLog.ID)
+	assert.EqualValues(t, "created", launchLog.Status)
 }

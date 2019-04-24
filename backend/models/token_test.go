@@ -17,8 +17,26 @@ func TestTokenDao_GetAllTokens(t *testing.T) {
 		Decimals: 18,
 	}
 
-	TokenDao.InsertToken(&token)
-	tokens := TokenDao.GetAllTokens()
+	TokenDaoSqlite.InsertToken(&token)
+	tokens := TokenDaoSqlite.GetAllTokens()
+
+	assert.EqualValues(t, 1, len(tokens))
+}
+
+//pg
+func TestTokenDao_PG_GetAllTokens(t *testing.T) {
+	prepareTest()
+	InitTestDBPG()
+
+	token := Token{
+		Address:  "some address",
+		Name:     "HOT",
+		Symbol:   "HOT",
+		Decimals: 18,
+	}
+
+	TokenDaoPG.InsertToken(&token)
+	tokens := TokenDaoPG.GetAllTokens()
 
 	assert.EqualValues(t, 1, len(tokens))
 }
