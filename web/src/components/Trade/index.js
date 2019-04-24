@@ -61,9 +61,7 @@ const mapStateToProps = state => {
     side: selector(state, 'side'),
     orderType: selector(state, 'orderType'),
     bestBidPrice: bids.size > 0 ? bids.get(0)[0].toString() : null,
-    bestAskPrice: asks.size > 0 ? asks.get(asks.size - 1)[0].toString() : null,
-    tokensInfo: stateUtils.getTokensInfo(state, address),
-    lockedBalances: state.account.get('lockedBalances')
+    bestAskPrice: asks.size > 0 ? asks.get(asks.size - 1)[0].toString() : null
   };
 };
 
@@ -229,7 +227,7 @@ class Trade extends React.PureComponent {
 
 const validate = (values, props) => {
   const { price, amount, total } = values;
-  const { side, address, currentMarket, tokensInfo, lockedBalances, quoteTokenBalance, baseTokenBalance } = props;
+  const { side, address, currentMarket, quoteTokenBalance, baseTokenBalance } = props;
 
   let _price, _amount, _total;
 
