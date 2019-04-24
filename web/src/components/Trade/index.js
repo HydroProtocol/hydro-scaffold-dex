@@ -269,7 +269,6 @@ const validate = (values, props) => {
       }
     }
   }
-
   if (!errors.amount) {
     if (!amount) {
       errors.amount = 'Amount required';
@@ -277,9 +276,10 @@ const validate = (values, props) => {
       errors.amount = 'Amount must be a number';
     } else {
       _amount = new BigNumber(amount);
+
       if (_amount.lte('0')) {
         errors.amount = `Amount cannot be 0`;
-      } else if (_amount.lt(currentMarket.minOrderSize) && side === 'sell') {
+      } else if (_amount.lt(currentMarket.minOrderSize)) {
         errors.amount = `Amount must be at least ${Number(currentMarket.minOrderSize).toString()}`;
       }
     }
