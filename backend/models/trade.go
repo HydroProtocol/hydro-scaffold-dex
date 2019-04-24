@@ -90,7 +90,7 @@ func (d *tradeDao) FindAllTrades(marketID string) (int64, []*Trade) {
 	findAllBy(
 		&trades,
 		conditions,
-		map[string]OrderByDirection{"created_at": OrderByAsc},
+		map[string]OrderByDirection{"created_at": OrderByDesc},
 		-1,
 		-1,
 	)
@@ -112,7 +112,7 @@ func (d *tradeDao) FindAccountMarketTrades(account, marketID, status string, lim
 	findAllBy(
 		&trades,
 		conditions,
-		map[string]OrderByDirection{"created_at": OrderByAsc},
+		map[string]OrderByDirection{"created_at": OrderByDesc},
 		limit,
 		offset,
 	)

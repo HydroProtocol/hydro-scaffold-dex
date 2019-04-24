@@ -125,7 +125,7 @@ func (*orderDao) FindByAccount(trader, marketID, status string, limit, offset in
 	findAllBy(
 		&orders,
 		conditions,
-		map[string]OrderByDirection{"created_at": OrderByAsc},
+		map[string]OrderByDirection{"created_at": OrderByDesc},
 		limit,
 		offset,
 	)
