@@ -214,7 +214,7 @@ func newTradesByMatchResult(matchResult *MatchResultWithOrders, transactionID in
 			TakerOrderID:    takerOrder.ID,
 			Sequence:        i,
 			Amount:          item.MatchedAmount,
-			Price:           takerOrder.Price,
+			Price:           modelMakerOrder.Price,
 			CreatedAt:       time.Now(),
 		}
 		trades = append(trades, trade)
