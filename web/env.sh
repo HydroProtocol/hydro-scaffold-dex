@@ -1,5 +1,8 @@
 #!/bin/sh
 if [ $CONFIG_VARS ]; then
+  # clear
+  echo -n > ${CONFIG_FILE_PATH}/config.js
+
   SPLIT=$(echo $CONFIG_VARS | tr "," "\n")
   echo "window._env = {" >> ${CONFIG_FILE_PATH}/config.js
 
@@ -12,7 +15,7 @@ if [ $CONFIG_VARS ]; then
 fi
 
 # disable broswer cache
-sed -i "s/config.js/config.js?v=$(date +'%s')/g" /srv/http/index.html
+sed -i "s/config.js?v=/config.js?v=$(date +'%s')/g" /srv/http/index.html
 
 # exec CMD
 exec "$@"
