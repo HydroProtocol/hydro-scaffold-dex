@@ -15,7 +15,7 @@ if [ $CONFIG_VARS ]; then
 fi
 
 # disable broswer cache
-sed -i "s/config.js?v=/config.js?v=$(date +'%s')/g" /srv/http/index.html
+sed -i "s/config.js?v=[0-9]*/config.js?v=$(date +'%s')/g" /srv/http/index.html
 
 # exec CMD
 exec "$@"
