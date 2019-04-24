@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "github.com/joho/godotenv/autoload"
+	"os"
 )
 
 import (
@@ -23,7 +24,7 @@ type DBTransactionHandler struct {
 }
 
 func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64) {
-	launchLog := models.LaunchLogDaoSqlite.FindByHash(tx.GetHash())
+	launchLog := models.LaunchLogDao.FindByHash(tx.GetHash())
 
 	if launchLog == nil {
 		utils.Debug("Skip useless transaction %s", tx.GetHash())
@@ -77,13 +78,13 @@ func main() {
 	go cli.WaitExitSignal(stop)
 
 	// Init Database Client
-	models.ConnectSqlite("postgres", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	// Init Redis client
-	client := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
+	client := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))
 
 	// Init Blockchain Client
-	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
+	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 
 	// init Key/Value Store
 	kvStore, err := common.InitKVStore(&common.RedisKVStoreConfig{

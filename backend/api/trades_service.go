@@ -11,7 +11,7 @@ const MaxBarsCount = 200
 
 func GetAllTrades(p Param) (interface{}, error) {
 	req := p.(*QueryTradeReq)
-	count, trades := models.TradeDaoSqlite.FindAllTrades(req.MarketID)
+	count, trades := models.TradeDao.FindAllTrades(req.MarketID)
 
 	resp := QueryTradeResp{
 		Count:  count,
@@ -31,7 +31,7 @@ func GetAccountTrades(p Param) (interface{}, error) {
 	offset := req.PerPage * (req.Page - 1)
 	limit := req.PerPage
 
-	count, trades := models.TradeDaoSqlite.FindAccountMarketTrades(req.Address, req.MarketID, req.Status, limit, offset)
+	count, trades := models.TradeDao.FindAccountMarketTrades(req.Address, req.MarketID, req.Status, limit, offset)
 
 	return &QueryTradeResp{
 		Count:  count,
@@ -50,7 +50,7 @@ func GetTradingView(p Param) (interface{}, error) {
 		from = to - granularity*MaxBarsCount
 	}
 
-	trades := models.TradeDaoSqlite.FindTradesByMarket(pair, time.Unix(from, 0), time.Unix(to, 0))
+	trades := models.TradeDao.FindTradesByMarket(pair, time.Unix(from, 0), time.Unix(to, 0))
 
 	if len(trades) == 0 {
 		return map[string]interface{}{

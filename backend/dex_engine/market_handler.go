@@ -167,7 +167,7 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 	var hydroMakerOrders []*sdk.Order
 	var baseTokenFilledAmounts []*big.Int
 
-	market := models.MarketDaoSqlite.FindMarketByID(takerOrder.MarketID)
+	market := models.MarketDao.FindMarketByID(takerOrder.MarketID)
 
 	baseTokenDecimal := market.BaseTokenDecimals
 
@@ -181,7 +181,7 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		baseTokenFilledAmt := utils.DecimalToBigInt(baseTokenHugeAmt)
 		baseTokenFilledAmounts = append(baseTokenFilledAmounts, baseTokenFilledAmt)
 
-		_ = models.OrderDaoSqlite.InsertOrder(modelMakerOrder)
+		_ = models.OrderDao.InsertOrder(modelMakerOrder)
 	}
 
 	transaction := &models.Transaction{
@@ -213,7 +213,7 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		UpdatedAt: time.Now(),
 	}
 
-	err = models.LaunchLogDaoSqlite.InsertLaunchLog(launchLog)
+	err = models.LaunchLogDao.InsertLaunchLog(launchLog)
 
 	if err != nil {
 		panic(err)
@@ -250,7 +250,7 @@ func newTradesByMatchResult(matchResult *MatchResultWithOrders, transactionID in
 }
 
 func (m *MarketHandler) handleCancelOrder(event *common.CancelOrderEvent) (interface{}, error) {
-	order := models.OrderDaoSqlite.FindByID(event.ID)
+	order := models.OrderDao.FindByID(event.ID)
 	if order == nil {
 		return nil, errors.New(fmt.Sprintf("cannot find order with id %s", event.ID))
 	}
@@ -285,13 +285,13 @@ func (m *MarketHandler) handleTransactionResult(event *common.ConfirmTransaction
 	transaction.ExecutedAt = executedAt
 	_ = models.TransactionDaoSqlite.UpdateTransaction(transaction)
 
-	_ = models.LaunchLogDaoSqlite.UpdateLaunchLogsStatusByItemID(event.Status, transaction.ID)
+	_ = models.LaunchLogDao.UpdateLaunchLogsStatusByItemID(event.Status, transaction.ID)
 
-	trades := models.TradeDaoSqlite.FindTradesByHash(event.Hash)
-	takerOrder := models.OrderDaoSqlite.FindByID(trades[0].TakerOrderID)
+	trades := models.TradeDao.FindTradesByHash(event.Hash)
+	takerOrder := models.OrderDao.FindByID(trades[0].TakerOrderID)
 
 	for _, trade := range trades {
-		makerOrder := models.OrderDaoSqlite.FindByID(trade.MakerOrderID)
+		makerOrder := models.OrderDao.FindByID(trade.MakerOrderID)
 		takerOrder.PendingAmount = takerOrder.PendingAmount.Sub(trade.Amount)
 		makerOrder.PendingAmount = makerOrder.PendingAmount.Sub(trade.Amount)
 
@@ -321,7 +321,7 @@ func (m *MarketHandler) handleTransactionResult(event *common.ConfirmTransaction
 }
 
 func NewMarketHandler(ctx context.Context, kvStore common.IKVStore, market *models.Market, engine *engine.Engine) (*MarketHandler, error) {
-	orders := models.OrderDaoSqlite.FindMarketPendingOrders(market.ID)
+	orders := models.OrderDao.FindMarketPendingOrders(market.ID)
 
 	for _, order := range orders {
 		if order.AvailableAmount.LessThanOrEqual(decimal.Zero) {

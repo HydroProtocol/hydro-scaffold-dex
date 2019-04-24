@@ -80,8 +80,8 @@ func (a *AdminTest) TestUpdateMarketFee() {
 }
 
 func (a *AdminTest) TestListAccountOrders() {
-	var address, limit, offset, status string
-	_, err := a.admin.ListAccountOrders(address, limit, offset, status)
+	var marketID, address, limit, offset, status string
+	_, err := a.admin.ListAccountOrders(marketID, address, limit, offset, status)
 	assert.Nil(a.T(), err)
 }
 
@@ -92,8 +92,8 @@ func (a *AdminTest) TestListAccountBalances() {
 }
 
 func (a *AdminTest) TestListAccountTrades() {
-	var address, limit, offset, status string
-	_, err := a.admin.ListAccountTrades(address, limit, offset, status)
+	var marketID, address, limit, offset, status string
+	_, err := a.admin.ListAccountTrades(marketID, address, limit, offset, status)
 	assert.Nil(a.T(), err)
 }
 

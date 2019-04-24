@@ -14,6 +14,7 @@ import (
 	"github.com/labstack/echo/middleware"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
+	"os"
 	"runtime"
 	"time"
 )
@@ -131,10 +132,10 @@ func StartServer(ctx context.Context, startMetric func()) {
 	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
 
 	// init blockchain
-	hydro = ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
+	hydro = ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 
 	//init database
-	models.ConnectSqlite("postgres", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	CacheService, _ = common.InitKVStore(
 		&common.RedisKVStoreConfig{

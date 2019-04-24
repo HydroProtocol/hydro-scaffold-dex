@@ -13,6 +13,7 @@ github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419124420-e3c58fa9530
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190419141207-7007b6661326/go.mod h1:3GPcmLGOo0MQqj+hstOJS8/31eIlP7PiPk7+MRH5wy4=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190420131950-ae35176c9a11/go.mod h1:IdIANSCB1rH4gqFLzcM3wxoGt1w2tINp+FSdpYoBm0o=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190423091552-d8ff3bfae3fc/go.mod h1:etu9xbWNrmFnXKm0yyVjw8ZiNV5xFR2RWP8VAVy5+XY=
+github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190424052740-a7f06db52848/go.mod h1:NngyxKUmC4zxpeDboD8szVRuXPmEScbJ3fAARJJtd6w=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3 h1:GraWKEJwNDWHlO7eZjSj8PkIwwFsuNiBN4+DGh4WTY8=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.3/go.mod h1:s6BzPp3Oed01zWubFguGismWzQhwekI6CXBA32XfDf0=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.5 h1:umztM/7Jc9eIuDZcMFWdSvU4U6e0bQW4a8SQ6SqoiW8=
@@ -69,6 +70,7 @@ github.com/go-playground/locales v0.12.1 h1:2FITxuFt/xuCNP1Acdhv62OzaCiviiE4kotf
 github.com/go-playground/locales v0.12.1/go.mod h1:IUMDtCfWo/w/mtMfIE/IG2K+Ey3ygWanZIBtBW0W2TM=
 github.com/go-playground/universal-translator v0.16.0 h1:X++omBR/4cE2MNg91AoC3rmGrCjJ8eAeUP/K/EKx4DM=
 github.com/go-playground/universal-translator v0.16.0/go.mod h1:1AnU7NaIRDWWzGEKwgtJRd2xk99HeFyHw3yid4rvQIY=
+github.com/go-playground/validator v9.28.0+incompatible/go.mod h1:yrEkQXlcI+PugkyDjY2bRrL/UBU4f3rvrgkN3V8JEig=
 github.com/go-redis/redis v6.15.1+incompatible h1:BZ9s4/vHrIqwOb0OPtTQ5uABxETJ3NRuUNoSUurnkew=
 github.com/go-redis/redis v6.15.1+incompatible/go.mod h1:NAIEuMOZ/fxfXJIrKDQDz8wamY7mA7PouImQ2Jvg6kA=
 github.com/go-sql-driver/mysql v1.4.0 h1:7LxgVwFb2hIQtMm87NdgAVfXjnt4OePseqT1tKx+opk=

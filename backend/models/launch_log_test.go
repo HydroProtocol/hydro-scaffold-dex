@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/shopspring/decimal"
@@ -14,62 +13,8 @@ import (
 	"time"
 )
 
-func TestLaunchLogDao_FindAllCreated(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
-
-	launchLogs := LaunchLogDaoSqlite.FindAllCreated()
-	assert.EqualValues(t, len(launchLogs), 0)
-
-	launchLog1 := newLaunchLog()
-	launchLog2 := newLaunchLog()
-	launchLog3 := newLaunchLog()
-
-	_ = LaunchLogDaoSqlite.InsertLaunchLog(launchLog1)
-	_ = LaunchLogDaoSqlite.InsertLaunchLog(launchLog2)
-	_ = LaunchLogDaoSqlite.InsertLaunchLog(launchLog3)
-
-	launchLogs = LaunchLogDaoSqlite.FindAllCreated()
-	assert.EqualValues(t, 3, len(launchLogs))
-
-	launchLog := LaunchLogDaoSqlite.FindLaunchLogByID(1)
-	assert.EqualValues(t, 1, launchLog.ID)
-	assert.EqualValues(t, "created", launchLog.Status)
-	launchLog.Status = common.STATUS_PENDING
-	_ = LaunchLogDaoSqlite.UpdateLaunchLog(launchLog)
-
-	launchLog = LaunchLogDaoSqlite.FindLaunchLogByID(1)
-	assert.EqualValues(t, 1, launchLog.ID)
-	assert.EqualValues(t, common.STATUS_PENDING, launchLog.Status)
-}
-
-func newLaunchLog() *LaunchLog {
-	launchLog := LaunchLog{
-		ItemType:    "hydro_trade",
-		ItemID:      int64(rand.Int31()),
-		Status:      "created",
-		Hash:        sql.NullString{},
-		BlockNumber: sql.NullInt64{},
-
-		From:     config.User1,
-		To:       config.User2,
-		Value:    decimal.Zero,
-		GasLimit: 1000000,
-		GasPrice: decimal.NullDecimal{Decimal: utils.StringToDecimal("1000000000"), Valid: true},
-		Nonce:    sql.NullInt64{},
-		Data:     "some data",
-
-		ExecutedAt: time.Now(),
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-	}
-
-	return &launchLog
-}
-
-//pg
 func TestLaunchLogDao_PG_FindAllCreated(t *testing.T) {
-	prepareTest()
+	setEnvs()
 	InitTestDBPG()
 
 	launchLogs := LaunchLogDaoPG.FindAllCreated()
@@ -97,4 +42,28 @@ func TestLaunchLogDao_PG_FindAllCreated(t *testing.T) {
 	launchLog = LaunchLogDaoPG.FindLaunchLogByID(1)
 	assert.EqualValues(t, 1, launchLog.ID)
 	assert.EqualValues(t, "created", launchLog.Status)
+}
+
+func newLaunchLog() *LaunchLog {
+	launchLog := LaunchLog{
+		ItemType:    "hydro_trade",
+		ItemID:      int64(rand.Int31()),
+		Status:      "created",
+		Hash:        sql.NullString{},
+		BlockNumber: sql.NullInt64{},
+
+		From:     config.User1,
+		To:       config.User2,
+		Value:    decimal.Zero,
+		GasLimit: 1000000,
+		GasPrice: decimal.NullDecimal{Decimal: utils.StringToDecimal("1000000000"), Valid: true},
+		Nonce:    sql.NullInt64{},
+		Data:     "some data",
+
+		ExecutedAt: time.Now(),
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	return &launchLog
 }

@@ -17,15 +17,12 @@ type IOrderDao interface {
 	Count() int
 }
 
-var OrderDaoSqlite IOrderDao
+var OrderDao IOrderDao
 var OrderDaoPG IOrderDao
 
-type orderDao struct {
-}
-
 func init() {
-	OrderDaoSqlite = &orderDao{}
-	OrderDaoPG = &orderDaoPG{}
+	OrderDao = &orderDaoPG{}
+	OrderDaoPG = OrderDao
 }
 
 type Order struct {
@@ -87,79 +84,6 @@ func (o Order) GetOrderJson() *OrderJSON {
 	return &orderJson
 }
 
-func (*orderDao) Count() int {
-	sql := "select count(*) from orders"
-	var count int
-	err := DBSqlite.QueryRowx(sql).Scan(&count)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return count
-}
-
-func (*orderDao) FindMarketPendingOrders(marketID string) []*Order {
-	orders := []*Order{}
-
-	findAllBy(
-		&orders,
-		whereAnd(
-			&OpEq{"status", common.ORDER_PENDING},
-			&OpEq{"market_id", marketID},
-		),
-		map[string]OrderByDirection{"created_at": OrderByAsc},
-		-1,
-		-1,
-	)
-
-	return orders
-}
-
-func (*orderDao) FindByAccount(trader, marketID, status string, limit, offset int) (int64, []*Order) {
-	orders := []*Order{}
-
-	conditions := whereAnd(
-		&OpEq{"trader_address", trader},
-		&OpEq{"market_id", marketID},
-		&OpEq{"status", status},
-	)
-
-	findAllBy(
-		&orders,
-		conditions,
-		map[string]OrderByDirection{"created_at": OrderByAsc},
-		limit,
-		offset,
-	)
-
-	count := findCountBy(&Order{}, conditions)
-
-	return int64(count), orders
-}
-
-func (*orderDao) FindByID(id string) *Order {
-	var order Order
-
-	findBy(&order, &OpEq{"id", id}, nil)
-
-	if order.ID == "" {
-		return nil
-	}
-
-	return &order
-}
-
-func (*orderDao) InsertOrder(order *Order) error {
-	_, err := insert(order)
-	return err
-}
-
-func (*orderDao) UpdateOrder(order *Order) error {
-	return update(order, "AvailableAmount", "ConfirmedAmount", "CanceledAmount", "PendingAmount", "Status")
-}
-
-//pg
 type orderDaoPG struct {
 }
 
@@ -168,19 +92,19 @@ func (Order) TableName() string {
 }
 
 func (orderDaoPG) FindMarketPendingOrders(marketID string) (orders []*Order) {
-	DBPG.Where("status = 'pending' and market_id = ?", marketID).Order("created_at asc").Find(&orders)
+	DB.Where("status = 'pending' and market_id = ?", marketID).Order("created_at asc").Find(&orders)
 	return
 }
 
 func (orderDaoPG) FindByAccount(trader, marketID, status string, offset, limit int) (count int64, orders []*Order) {
-	DBPG.Where("trader_address = ? and market_id = ? and status = ?", trader, marketID, status).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders)
-	DBPG.Model(&Order{}).Where("trader_address = ? and market_id = ? and status = ?", trader, marketID, status).Count(&count)
+	DB.Where("trader_address = ? and market_id = ? and status = ?", trader, marketID, status).Order("created_at desc").Limit(limit).Offset(offset).Find(&orders)
+	DB.Model(&Order{}).Where("trader_address = ? and market_id = ? and status = ?", trader, marketID, status).Count(&count)
 	return
 }
 
 func (orderDaoPG) FindByID(id string) *Order {
 	var order Order
-	DBPG.Where("id = ?", id).First(&order)
+	DB.Where("id = ?", id).First(&order)
 	if order.ID == "" {
 		return nil
 	}
@@ -188,15 +112,15 @@ func (orderDaoPG) FindByID(id string) *Order {
 }
 
 func (orderDaoPG) InsertOrder(order *Order) error {
-	return DBPG.Create(order).Error
+	return DB.Create(order).Error
 }
 
 func (orderDaoPG) UpdateOrder(order *Order) error {
-	return DBPG.Save(order).Error
+	return DB.Save(order).Error
 }
 
 func (o orderDaoPG) Count() (count int) {
-	err := DBPG.Model(&Order{}).Count(&count).Error
+	err := DB.Model(&Order{}).Count(&count).Error
 	if err != nil {
 		utils.Error("count orders error: %v", err)
 	}

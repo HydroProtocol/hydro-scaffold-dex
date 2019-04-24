@@ -11,7 +11,6 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/mock"
@@ -36,8 +35,8 @@ func (s *marketHandlerSuite) TearDownSuite() {
 }
 
 func (s *marketHandlerSuite) SetupTest() {
-	test.PreTest()
-	models.InitTestDB()
+	setEnvs()
+	models.InitTestDBPG()
 	//models.MockMarketDao()
 	market := &models.Market{
 		ID:                 "HOT-DAI",
@@ -56,7 +55,7 @@ func (s *marketHandlerSuite) SetupTest() {
 		GasUsedEstimation:  250000,
 	}
 
-	err := models.MarketDaoSqlite.InsertMarket(market)
+	err := models.MarketDao.InsertMarket(market)
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +67,7 @@ func (s *marketHandlerSuite) SetupTest() {
 		Decimals: 18,
 	}
 
-	_ = models.TokenDaoSqlite.InsertToken(token)
+	_ = models.TokenDao.InsertToken(token)
 
 	wsQueue = &common.MockQueue{}
 	kvStore := &common.MockKVStore{}
@@ -106,7 +105,7 @@ func (s *marketHandlerSuite) TestHandleNewOrder() {
 	s.AssertChange(func() {
 		_, _ = s.marketHandler.handleNewOrder(sellOrderEvent)
 	}, func() int {
-		return models.OrderDaoSqlite.Count()
+		return models.OrderDao.Count()
 	}, 1)
 
 	//s.Equal("140", s.marketHandler.orderbook.MaxBid().String())
@@ -236,9 +235,9 @@ func (s *marketHandlerSuite) batchNewOrderTest(b *batchMatchOrdersTest) {
 
 func (s *marketHandlerSuite) assertExpectedResult(b *batchMatchOrdersTest, result *expectedResult) {
 	// reload orders
-	b.takerOrder = models.OrderDaoSqlite.FindByID(b.takerOrder.ID)
+	b.takerOrder = models.OrderDao.FindByID(b.takerOrder.ID)
 	for i := range b.makerOrders {
-		b.makerOrders[i] = models.OrderDaoSqlite.FindByID(b.makerOrders[i].ID)
+		b.makerOrders[i] = models.OrderDao.FindByID(b.makerOrders[i].ID)
 	}
 
 	for i, status := range result.expectedStatus {
@@ -300,8 +299,8 @@ func (s *marketHandlerSuite) assertExpectedResult(b *batchMatchOrdersTest, resul
 }
 
 func (s *marketHandlerSuite) batchNewOrderTestPendingPart(b *batchMatchOrdersTest) (*models.Transaction, *models.LaunchLog) {
-	oldTradesCount := models.TradeDaoSqlite.Count()
-	oldTransactionsCount := models.TransactionDaoSqlite.Count()
+	oldTradesCount := models.TradeDao.Count()
+	oldTransactionsCount := models.TransactionDao.Count()
 
 	for _, makerOrder := range b.makerOrders {
 		makerOrderEvent := common.NewOrderEvent{
@@ -319,8 +318,8 @@ func (s *marketHandlerSuite) batchNewOrderTestPendingPart(b *batchMatchOrdersTes
 
 	transaction, launchLog := s.marketHandler.handleNewOrder(&takerOrderEvent)
 
-	newTradesCount := models.TradeDaoSqlite.Count()
-	newTransactionsCount := models.TransactionDaoSqlite.Count()
+	newTradesCount := models.TradeDao.Count()
+	newTransactionsCount := models.TransactionDao.Count()
 
 	s.Equal(b.expectedTradesCount, newTradesCount-oldTradesCount)
 	s.Equal(b.expectedTransactionsCount, newTransactionsCount-oldTransactionsCount)
@@ -839,7 +838,7 @@ func (s *marketHandlerSuite) assertOrderAmounts(available, pending, confirmed, c
 
 func (s *marketHandlerSuite) TestCancelOrder() {
 	order1 := newModelOrder("buy", utils.StringToDecimal("0.02"), utils.StringToDecimal("10"))
-	_ = models.OrderDaoSqlite.InsertOrder(order1)
+	_ = models.OrderDao.InsertOrder(order1)
 
 	newOrderEvent := common.NewOrderEvent{
 		Event: common.Event{
@@ -890,7 +889,7 @@ func newModelOrder(side string, price, amount decimal.Decimal) *models.Order {
 	id := getHydroOrderHashHexFromOrderJson(&orderJson)
 	idBytes, _ := hex.DecodeString(id)
 
-	signature, _ := ethereum.PersonalSign(idBytes, test.User1PrivateKey)
+	signature, _ := ethereum.PersonalSign(idBytes, User1PrivateKey)
 
 	orderJson.Signature = "0x" + hex.EncodeToString(signature)
 

@@ -2,15 +2,14 @@ package api
 
 import (
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
 
 func TestCheckBalanceAndAllowance(t *testing.T) {
-	test.PreTest()
-	models.InitTestDB()
+	setEnvs()
+	models.InitTestDBPG()
 	//var marketDao models.IMarketDao
 	models.MockMarketDao()
 	order := BuildOrderReq{}

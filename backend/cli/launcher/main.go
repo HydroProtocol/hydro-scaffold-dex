@@ -20,10 +20,10 @@ func run() int {
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	models.ConnectSqlite("postgres", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
-	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
+	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 	signService := launcher.NewDefaultSignService(config.Getenv("HSK_RELAYER_PK"), hydro.GetTransactionCount)
 	gasService := func() decimal.Decimal { return utils.StringToDecimal("3000000000") } // default 10 Gwei
 
@@ -42,7 +42,7 @@ func Run(l *launcher.Launcher, startMetrics func()) {
 	go startMetrics()
 
 	for {
-		launchLogs := models.LaunchLogDaoSqlite.FindAllCreated()
+		launchLogs := models.LaunchLogDao.FindAllCreated()
 
 		if len(launchLogs) == 0 {
 			select {

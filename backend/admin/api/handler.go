@@ -44,10 +44,10 @@ func GetBalancesHandler(e echo.Context) (err error) {
 
 	err = e.Bind(&req)
 	if err == nil {
-		tokens := models.TokenDaoSqlite.GetAllTokens()
+		tokens := models.TokenDao.GetAllTokens()
 
 		for _, token := range tokens {
-			lockedBalance := models.BalanceDaoSqlite.GetByAccountAndSymbol(req.Address, token.Symbol, token.Decimals)
+			lockedBalance := models.BalanceDao.GetByAccountAndSymbol(req.Address, token.Symbol, token.Decimals)
 			resp = append(resp, struct {
 				Symbol        string          `json:"symbol"`
 				LockedBalance decimal.Decimal `json:"lockedBalance"`
@@ -84,7 +84,7 @@ func GetTradesHandler(e echo.Context) (err error) {
 	var count int64
 	err = e.Bind(&req)
 	if err == nil {
-		count, trades = models.TradeDaoSqlite.FindAccountMarketTrades(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
+		count, trades = models.TradeDao.FindAccountMarketTrades(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
 	}
 
 	return response(e, map[string]interface{}{"count": count, "trades": trades}, err)
@@ -104,7 +104,7 @@ func GetOrdersHandler(e echo.Context) (err error) {
 
 	err = e.Bind(&req)
 	if err == nil {
-		count, orders = models.OrderDaoSqlite.FindByAccount(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
+		count, orders = models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
 	}
 
 	return response(e, map[string]interface{}{"count": count, "orders": orders}, err)
@@ -116,7 +116,7 @@ func DeleteOrderHandler(e echo.Context) (err error) {
 	if orderID == "" {
 		err = fmt.Errorf("orderID is blank, check param")
 	} else {
-		order := models.OrderDaoSqlite.FindByID(orderID)
+		order := models.OrderDao.FindByID(orderID)
 		if order == nil {
 			err = fmt.Errorf("cannot find order by ID %s", orderID)
 		} else {
@@ -138,7 +138,7 @@ func DeleteOrderHandler(e echo.Context) (err error) {
 }
 
 func ListMarketsHandler(e echo.Context) (err error) {
-	markets := models.MarketDaoSqlite.FindAllMarkets()
+	markets := models.MarketDao.FindAllMarkets()
 	return response(e, markets, err)
 }
 
@@ -150,7 +150,7 @@ func EditMarketHandler(e echo.Context) (err error) {
 		return response(e, nil, err)
 	}
 
-	dbMarket := models.MarketDaoSqlite.FindMarketByID(fields.ID)
+	dbMarket := models.MarketDao.FindMarketByID(fields.ID)
 	var publishType string
 	if dbMarket.IsPublished == false && fields.IsPublished == "true" {
 		publishType = "publish"
@@ -188,7 +188,7 @@ func EditMarketHandler(e echo.Context) (err error) {
 			dbMarket.IsPublished = false
 		}
 
-		err = models.MarketDaoSqlite.UpdateMarket(dbMarket)
+		err = models.MarketDao.UpdateMarket(dbMarket)
 		if err != nil {
 			if publishType == "publish" {
 				event := common.Event{
@@ -221,7 +221,7 @@ func CreateMarketHandler(e echo.Context) (err error) {
 		return response(e, nil, err)
 	}
 
-	err = models.MarketDaoSqlite.InsertMarket(&market)
+	err = models.MarketDao.InsertMarket(&market)
 	return response(e, nil, err)
 }
 
@@ -229,14 +229,15 @@ func response(e echo.Context, data interface{}, err error) error {
 	ret := map[string]interface{}{}
 
 	if err == nil {
-		ret["status"] = "success"
+		ret["status"] = 0
+		ret["desc"] = "success"
 		ret["data"] = data
 	} else {
-		ret["status"] = "fail"
-		ret["error_message"] = err.Error()
+		ret["status"] = -1
+		ret["desc"] = err.Error()
 	}
 
-	return e.JSONPretty(http.StatusOK, ret, "\t")
+	return e.JSONPretty(http.StatusOK, ret, "  ")
 }
 
 type marketFields struct {

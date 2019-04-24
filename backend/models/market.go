@@ -37,54 +37,26 @@ func (Market) TableName() string {
 	return "markets"
 }
 
-var MarketDaoSqlite IMarketDao
+var MarketDao IMarketDao
 var MarketDaoPG IMarketDao
 
 func init() {
-	MarketDaoSqlite = &marketDaoSqlite{}
-	MarketDaoPG = &marketDaoPG{}
+	MarketDao = &marketDaoPG{}
+	MarketDaoPG = MarketDao
 }
 
-type marketDaoSqlite struct {
-}
-
-func (marketDaoSqlite) FindAllMarkets() []*Market {
-	markets := []*Market{}
-	findAllBy(&markets, nil, nil, -1, -1)
-	return markets
-}
-
-func (marketDaoSqlite) FindMarketByID(marketID string) *Market {
-	var market Market
-	findBy(&market, &OpEq{"id", marketID}, nil)
-	if market.ID == "" {
-		return nil
-	}
-	return &market
-}
-
-func (marketDaoSqlite) InsertMarket(market *Market) error {
-	_, err := insert(market)
-	return err
-}
-
-func (marketDaoSqlite) UpdateMarket(market *Market) error {
-	return update(market, "MinOrderSize", "PricePrecision", "PriceDecimals", "AmountDecimals", "MakerFeeRate", "TakerFeeRate", "GasUsedEstimation", "IsPublished")
-}
-
-//pg
 type marketDaoPG struct {
 }
 
 func (marketDaoPG) FindAllMarkets() []*Market {
 	var markets []*Market
-	DBPG.Find(&markets)
+	DB.Find(&markets)
 	return markets
 }
 
 func (marketDaoPG) FindMarketByID(marketID string) *Market {
 	var market Market
-	DBPG.Where("id = ?", marketID).First(&market)
+	DB.Where("id = ?", marketID).First(&market)
 	if market.ID == "" {
 		return nil
 	}
@@ -92,9 +64,9 @@ func (marketDaoPG) FindMarketByID(marketID string) *Market {
 }
 
 func (marketDaoPG) InsertMarket(market *Market) error {
-	return DBPG.Create(market).Error
+	return DB.Create(market).Error
 }
 
 func (marketDaoPG) UpdateMarket(market *Market) error {
-	return DBPG.Save(market).Error
+	return DB.Save(market).Error
 }

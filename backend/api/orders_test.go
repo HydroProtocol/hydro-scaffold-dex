@@ -7,7 +7,6 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
@@ -24,8 +23,8 @@ type BuildOrderTestSuit struct {
 }
 
 func (suite *BuildOrderTestSuit) SetupTest() {
-	test.PreTest()
-	models.InitTestDB()
+	setEnvs()
+	models.InitTestDBPG()
 
 	mockMarketDao()
 	mockErc20()
@@ -35,14 +34,14 @@ func (suite *BuildOrderTestSuit) SetupTest() {
 
 func mockLockedBlanceDao() {
 	balanceDao := models.MLockedBalanceDao{}
-	models.BalanceDaoSqlite = &balanceDao
+	models.BalanceDao = &balanceDao
 	balanceDao.On("GetByAccountAndSymbol", mock.Anything, mock.Anything, mock.Anything).Times(10).Return(decimal.Zero)
 }
 
 func mockMarketDao() {
 	marketDao := &models.MMarketDao{}
 
-	models.MarketDaoSqlite = marketDao
+	models.MarketDao = marketDao
 	var markets []*models.Market
 
 	marketWethDai := &models.Market{

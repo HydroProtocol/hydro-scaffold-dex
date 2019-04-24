@@ -102,7 +102,7 @@ func NewDexEngine(ctx context.Context, redis *redis.Client) *DexEngine {
 		kvStore:     kvStore,
 	}
 
-	markets := models.MarketDaoSqlite.FindAllMarkets()
+	markets := models.MarketDao.FindAllMarkets()
 
 	for _, market := range markets {
 		_, err := engine.newMarket(market.ID)
@@ -115,7 +115,7 @@ func NewDexEngine(ctx context.Context, redis *redis.Client) *DexEngine {
 }
 
 func (e *DexEngine) newMarket(marketId string) (marketHandler *MarketHandler, err error) {
-	market := models.MarketDaoSqlite.FindMarketByID(marketId)
+	market := models.MarketDao.FindMarketByID(marketId)
 	if market == nil {
 		err = fmt.Errorf("open market fail, market [%s] not found", marketId)
 		return
@@ -226,7 +226,7 @@ func Run(ctx context.Context, startMetrics func()) {
 	InitWsQueue(messageQueue)
 
 	//init database
-	models.ConnectSqlite("postgres", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	//start dex engine
 	dexEngine := NewDexEngine(ctx, redisClient)

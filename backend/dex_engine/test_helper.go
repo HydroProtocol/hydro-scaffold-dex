@@ -1,42 +1,8 @@
-package api
+package dex_engine
 
-import (
-	"encoding/json"
-	"github.com/labstack/echo"
-	"io"
-	"net/http/httptest"
-	"os"
-	"strings"
-)
+import "os"
 
-func request(url, method, auth string, body interface{}) *Response {
-	e := getEchoServer()
-	var reader io.Reader
-	if body == nil {
-		reader = nil
-	} else {
-		bts, _ := json.Marshal(body)
-		strings.NewReader(string(bts))
-	}
-
-	req := httptest.NewRequest(method, url, reader)
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-
-	if auth == "" {
-		address := "0x5409ed021d9299bf6814279a6a1411a7e866a631"
-		signature := "0xdcd19ecc53c51bc1c8c67183d9ed8a2c68bb3717b7bbbd39da969960feeb95d45f79ead1d476c5cb1f2ebf77b76a87abee2bf5643a235125a85428d3ef4926b700"
-		message := "HYDRO-AUTHENTICATION"
-		auth = address + "#" + message + "#" + signature
-	}
-
-	req.Header.Set("Hydro-Authentication", auth)
-	rec := httptest.NewRecorder()
-	e.ServeHTTP(rec, req)
-
-	var res Response
-	json.Unmarshal(rec.Body.Bytes(), &res)
-	return &res
-}
+var User1PrivateKey string
 
 func setEnvs() {
 	_ = os.Setenv("HSK_DATABASE_URL", "postgres://postgres:postgres@localhost:5433/postgres?sslmode=disable")
@@ -53,4 +19,6 @@ func setEnvs() {
 	_ = os.Setenv("HSK_RELAYER_PK", "95b0a982c0dfc5ab70bf915dcf9f4b790544d25bc5e6cff0f38a59d0bba58651")
 	_ = os.Setenv("HSK_CHAIN_ID", "50")
 	_ = os.Setenv("HSK_WEB3_URL", "http://127.0.0.1:8545")
+
+	User1PrivateKey = "b7a0c9d2786fc4dd080ea5d619d36771aeb0c8c26c290afd3451b92ba2b7bc2c"
 }

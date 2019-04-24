@@ -26,7 +26,7 @@ func NewMatchResultWithOrders(takerOrder *models.Order, result *common.MatchResu
 
 	for i := range result.MatchItems {
 		item := result.MatchItems[i]
-		r.modelMakerOrders[item.MakerOrder.ID] = models.OrderDaoSqlite.FindByID(item.MakerOrder.ID)
+		r.modelMakerOrders[item.MakerOrder.ID] = models.OrderDao.FindByID(item.MakerOrder.ID)
 	}
 
 	return r

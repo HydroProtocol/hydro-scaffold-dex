@@ -3,7 +3,6 @@ package models
 import (
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/davecgh/go-spew/spew"
 	uuid2 "github.com/satori/go.uuid"
@@ -14,11 +13,11 @@ import (
 	"time"
 )
 
-func TestGetAccountOrders(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_GetAccountOrders(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	orders := OrderDaoSqlite.FindMarketPendingOrders("WETH-DAI")
+	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 0, len(orders))
 
 	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
@@ -33,73 +32,75 @@ func TestGetAccountOrders(t *testing.T) {
 
 	order10 := NewOrder(config.User2, "WETH-DAI", "buy", false)
 
-	_ = OrderDaoSqlite.InsertOrder(order1)
-	_ = OrderDaoSqlite.InsertOrder(order2)
-	_ = OrderDaoSqlite.InsertOrder(order3)
-	_ = OrderDaoSqlite.InsertOrder(order4)
-	_ = OrderDaoSqlite.InsertOrder(order5)
-	_ = OrderDaoSqlite.InsertOrder(order6)
-	_ = OrderDaoSqlite.InsertOrder(order7)
-	_ = OrderDaoSqlite.InsertOrder(order8)
-	_ = OrderDaoSqlite.InsertOrder(order9)
-	_ = OrderDaoSqlite.InsertOrder(order10)
+	err := OrderDaoPG.InsertOrder(order1)
+	spew.Dump(err)
+
+	_ = OrderDaoPG.InsertOrder(order2)
+	_ = OrderDaoPG.InsertOrder(order3)
+	_ = OrderDaoPG.InsertOrder(order4)
+	_ = OrderDaoPG.InsertOrder(order5)
+	_ = OrderDaoPG.InsertOrder(order6)
+	_ = OrderDaoPG.InsertOrder(order7)
+	_ = OrderDaoPG.InsertOrder(order8)
+	_ = OrderDaoPG.InsertOrder(order9)
+	_ = OrderDaoPG.InsertOrder(order10)
 
 	var count int64
-	count, orders = OrderDaoSqlite.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 3, 9)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 3, 9)
 	assert.EqualValues(t, 6, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDaoSqlite.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 10)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 10)
 	assert.EqualValues(t, 9, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDaoSqlite.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 9)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 9)
 	assert.EqualValues(t, 9, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDaoSqlite.FindByAccount(config.User1, "WETH-DAI", common.ORDER_FULL_FILLED, 0, 9)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_FULL_FILLED, 0, 9)
 	assert.EqualValues(t, 0, len(orders))
 	assert.EqualValues(t, 0, count)
 }
 
-func TestGetMarketPendingOrders(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_GetMarketPendingOrders(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	orders := OrderDaoSqlite.FindMarketPendingOrders("WETH-DAI")
+	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 0, len(orders))
 
 	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
 	order2 := NewOrder(config.User1, "WETH-DAI", "buy", false)
 	order3 := NewOrder(config.User1, "WETH-DAI", "buy", false)
 
-	_ = OrderDaoSqlite.InsertOrder(order1)
-	_ = OrderDaoSqlite.InsertOrder(order2)
-	_ = OrderDaoSqlite.InsertOrder(order3)
+	_ = OrderDaoPG.InsertOrder(order1)
+	_ = OrderDaoPG.InsertOrder(order2)
+	_ = OrderDaoPG.InsertOrder(order3)
 
-	orders = OrderDaoSqlite.FindMarketPendingOrders("WETH-DAI")
+	orders = OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 3, len(orders))
 }
 
-func TestFindNotExistOrder(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_FindNotExistOrder(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	dbOrder := OrderDaoSqlite.FindByID("empty_id")
+	dbOrder := OrderDaoPG.FindByID("empty_id")
 	assert.Nil(t, dbOrder)
 
 }
 
-func TestInsertAndFindOneAndUpdateOrders(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_InsertAndFindOneAndUpdateOrders(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
 	order := RandomOrder()
 
-	err := OrderDaoSqlite.InsertOrder(order)
+	err := OrderDaoPG.InsertOrder(order)
 	assert.Nil(t, err)
 
-	dbOrder := OrderDaoSqlite.FindByID(order.ID)
+	dbOrder := OrderDaoPG.FindByID(order.ID)
 	assert.EqualValues(t, dbOrder.ID, order.ID)
 	assert.EqualValues(t, dbOrder.Status, order.Status)
 	assert.EqualValues(t, dbOrder.Amount.String(), order.Amount.String())
@@ -109,14 +110,14 @@ func TestInsertAndFindOneAndUpdateOrders(t *testing.T) {
 
 	dbOrder.PendingAmount.Add(dbOrder.AvailableAmount)
 	dbOrder.AvailableAmount = decimal.Zero
-	err = OrderDaoSqlite.UpdateOrder(dbOrder)
-	dbOrder2 := OrderDaoSqlite.FindByID(order.ID)
+	err = OrderDaoPG.UpdateOrder(dbOrder)
+	dbOrder2 := OrderDaoPG.FindByID(order.ID)
 
 	assert.EqualValues(t, dbOrder.AvailableAmount.String(), dbOrder2.AvailableAmount.String())
 	assert.EqualValues(t, dbOrder.PendingAmount.String(), dbOrder2.PendingAmount.String())
 }
 
-func TestOrder_GetOrderJson(t *testing.T) {
+func Test_PG_Order_GetOrderJson(t *testing.T) {
 	json := OrderJSON{
 		Trader:                  config.User1,
 		Relayer:                 config.Getenv("HSK_RELAYER_ADDRESS"),
@@ -239,133 +240,4 @@ func RandomOrder() *Order {
 	}
 
 	return order
-}
-
-//pg
-func Test_PG_GetAccountOrders(t *testing.T) {
-	prepareTest()
-	InitTestDBPG()
-
-	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
-	assert.EqualValues(t, 0, len(orders))
-
-	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order2 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order3 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order4 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order5 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order6 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order7 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order8 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order9 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-
-	order10 := NewOrder(config.User2, "WETH-DAI", "buy", false)
-
-	err := OrderDaoPG.InsertOrder(order1)
-	spew.Dump(err)
-
-	_ = OrderDaoPG.InsertOrder(order2)
-	_ = OrderDaoPG.InsertOrder(order3)
-	_ = OrderDaoPG.InsertOrder(order4)
-	_ = OrderDaoPG.InsertOrder(order5)
-	_ = OrderDaoPG.InsertOrder(order6)
-	_ = OrderDaoPG.InsertOrder(order7)
-	_ = OrderDaoPG.InsertOrder(order8)
-	_ = OrderDaoPG.InsertOrder(order9)
-	_ = OrderDaoPG.InsertOrder(order10)
-
-	var count int64
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 3, 9)
-	assert.EqualValues(t, 6, len(orders))
-	assert.EqualValues(t, 9, count)
-
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 10)
-	assert.EqualValues(t, 9, len(orders))
-	assert.EqualValues(t, 9, count)
-
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 9)
-	assert.EqualValues(t, 9, len(orders))
-	assert.EqualValues(t, 9, count)
-
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_FULL_FILLED, 0, 9)
-	assert.EqualValues(t, 0, len(orders))
-	assert.EqualValues(t, 0, count)
-}
-
-func Test_PG_GetMarketPendingOrders(t *testing.T) {
-	prepareTest()
-	InitTestDBPG()
-
-	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
-	assert.EqualValues(t, 0, len(orders))
-
-	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order2 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order3 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-
-	_ = OrderDaoPG.InsertOrder(order1)
-	_ = OrderDaoPG.InsertOrder(order2)
-	_ = OrderDaoPG.InsertOrder(order3)
-
-	orders = OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
-	assert.EqualValues(t, 3, len(orders))
-}
-
-func Test_PG_FindNotExistOrder(t *testing.T) {
-	prepareTest()
-	InitTestDBPG()
-
-	dbOrder := OrderDaoPG.FindByID("empty_id")
-	assert.Nil(t, dbOrder)
-
-}
-
-func Test_PG_InsertAndFindOneAndUpdateOrders(t *testing.T) {
-	prepareTest()
-	InitTestDBPG()
-
-	order := RandomOrder()
-
-	err := OrderDaoPG.InsertOrder(order)
-	assert.Nil(t, err)
-
-	dbOrder := OrderDaoPG.FindByID(order.ID)
-	assert.EqualValues(t, dbOrder.ID, order.ID)
-	assert.EqualValues(t, dbOrder.Status, order.Status)
-	assert.EqualValues(t, dbOrder.Amount.String(), order.Amount.String())
-	assert.EqualValues(t, dbOrder.Price.String(), order.Price.String())
-	assert.EqualValues(t, dbOrder.AvailableAmount.String(), order.AvailableAmount.String())
-	assert.EqualValues(t, dbOrder.PendingAmount.String(), order.PendingAmount.String())
-
-	dbOrder.PendingAmount.Add(dbOrder.AvailableAmount)
-	dbOrder.AvailableAmount = decimal.Zero
-	err = OrderDaoPG.UpdateOrder(dbOrder)
-	dbOrder2 := OrderDaoPG.FindByID(order.ID)
-
-	assert.EqualValues(t, dbOrder.AvailableAmount.String(), dbOrder2.AvailableAmount.String())
-	assert.EqualValues(t, dbOrder.PendingAmount.String(), dbOrder2.PendingAmount.String())
-}
-
-func Test_PG_Order_GetOrderJson(t *testing.T) {
-	json := OrderJSON{
-		Trader:                  config.User1,
-		Relayer:                 config.Getenv("HSK_RELAYER_ADDRESS"),
-		BaseCurrencyHugeAmount:  utils.StringToDecimal("100000000000000000000000000000000000"),
-		QuoteCurrencyHugeAmount: utils.StringToDecimal("200000000000000000000000000000000000"),
-		BaseCurrency:            config.Getenv("HSK_HYDRO_TOKEN_ADDRESS"),
-		QuoteCurrency:           config.Getenv("HSK_USD_TOKEN_ADDRESS"),
-		GasTokenHugeAmount:      utils.StringToDecimal("1000000000"),
-		Signature:               "0x15a85430057580a5a35125db098b686b3541a291b3fce69365dc47d502fa63395ce9f7100240e4558c6ad29b8aa9a2c01d2b5353babdffd6ac50babf0127fdd600",
-		Data:                    "something",
-	}
-	jsonStr := utils.ToJsonString(json)
-
-	order := RandomOrder()
-	order.JSON = jsonStr
-
-	assert.EqualValues(t, json.Trader, order.GetOrderJson().Trader)
-	assert.EqualValues(t, json.Relayer, order.GetOrderJson().Relayer)
-	assert.EqualValues(t, json.BaseCurrencyHugeAmount, order.GetOrderJson().BaseCurrencyHugeAmount)
-	assert.EqualValues(t, json.QuoteCurrencyHugeAmount, order.GetOrderJson().QuoteCurrencyHugeAmount)
-	assert.EqualValues(t, json.Signature, order.GetOrderJson().Signature)
 }

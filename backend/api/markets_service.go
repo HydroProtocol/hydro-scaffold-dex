@@ -45,7 +45,7 @@ func GetOrderBook(p Param) (interface{}, error) {
 
 func GetMarkets(_ Param) (interface{}, error) {
 	var markets []Market
-	dbMarkets := models.MarketDaoSqlite.FindAllMarkets()
+	dbMarkets := models.MarketDao.FindAllMarkets()
 
 	for _, dbMarket := range dbMarkets {
 		marketStatus := GetMarketStatus(dbMarket.ID)
@@ -78,7 +78,7 @@ func GetMarkets(_ Param) (interface{}, error) {
 
 func GetMarketStatus(marketID string) *MarketStatus {
 	yesterday := time.Now().Add(-time.Hour * 24)
-	trades := models.TradeDaoSqlite.FindTradesByMarket(marketID, yesterday, time.Now())
+	trades := models.TradeDao.FindTradesByMarket(marketID, yesterday, time.Now())
 
 	lastPrice := decimal.Zero
 	lastPriceIncrease := decimal.Zero

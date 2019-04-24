@@ -3,7 +3,7 @@ module github.com/HydroProtocol/hydro-box-dex/backend
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.11
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.13
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-redis/redis v6.15.1+incompatible
 	github.com/jinzhu/gorm v1.9.4
@@ -14,7 +14,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.10.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.3.0
 	github.com/urfave/cli v1.20.0
 	gopkg.in/go-playground/validator.v9 v9.28.0
 )
