@@ -19,7 +19,8 @@ services:
     container_name: hydro-box-dex-db
     volumes:
       - datavolume:/data
-    command: sh -c "cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3.db"
+      - ${PWD}/envs/localhost/seed.sql:/db/seed.sql
+    command: sh -c "[ ! -f /data/sqlite3-local.db ] && cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3-local.db"
   web:
     image: hydroprotocolio/hydro-box-dex-web:latest
     container_name: hydro-box-dex-web
@@ -35,7 +36,7 @@ services:
       - REACT_APP_NODE_URL=http://localhost:8545
     restart: on-failure:5
   admin:
-    image: box-dex-backend:latest
+    image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-box-dex-admin-api
     command: /bin/adminapi
     ports:

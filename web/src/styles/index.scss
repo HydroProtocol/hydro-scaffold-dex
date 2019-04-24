@@ -40,6 +40,8 @@ body {
 .btn-outline-danger {
     color: $red;
     border-color: $red;
+    height: 26px;
+    padding: 0 12px;
     &:hover {
         background-color: $red;
     }
@@ -92,7 +94,9 @@ table {
     td {
         font-weight: normal;
         margin: 0;
+        vertical-align: middle !important;
         border: none !important;
+        padding: 4px 0.75rem !important;
     }
 }
 .input-group-text {

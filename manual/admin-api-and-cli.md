@@ -1,16 +1,140 @@
 # Operate your hydro dex
 
-Admin api is used to change the states of hydro dex. You can use it to add markets, changes fees and so on.The admin api server should not be exposed and should be well protected. An easy way to keep it safe is never start the admin api server on `0.0.0.0`. Always run it on localhost and use admin cli to interative with it.
+After experiencing the basic box feature, you may have a question: How to add a trading market? How to change the fee rates or a market? Fortunately, we have prepared a suite of api and a command line tool for you to modify the state of hydro dex.
 
-## Admin cli
+Hydor dex Admin API provides a RESTful interface for administration and configuration of markets.
 
-### Step 0: Enter the admin docker container
+Because this API describes a control of Hydro dex, it is important to secure this API against unwanted access. 
+
+## Admin api
+
+### Supported Content Types
+
+The Admin API accepts `application/json` types on every endpoint
+
+### Information routes
+
+#### List all markets
 
 ```
-docker-compose exec admin sh
+GET /markets
 ```
 
-### Step 1: run commands
+##### Response
+
+```json
+{	
+	"status": "success",
+	"data": [
+		{
+			"id": "HOT-DAI",
+			"baseTokenSymbol": "HOT",
+			"BaseTokenName": "HOT",
+			"baseTokenAddress": "0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218",
+			"baseTokenDecimals": 18,
+			"quoteTokenSymbol": "DAI",
+			"QuoteTokenName": "DAI",
+			"quoteTokenAddress": "0xbc3524faa62d0763818636d5e400f112279d6cc0",
+			"quoteTokenDecimals": 18,
+			"minOrderSize": "0.001",
+			"pricePrecision": 5,
+			"priceDecimals": 5,
+			"amountDecimals": 5,
+			"makerFeeRate": "0.003",
+			"takerFeeRate": "0.001",
+			"gasUsedEstimation": 1,
+			"isPublished": true
+		}
+	]
+}
+```
+
+#### Create a market
+
+```
+POST /markets
+```
+
+##### Request body
+
+```json
+{
+	"id": "HOT-WETH",
+	"baseTokenSymbol": "HOT",
+	"BaseTokenName": "HOT",
+	"baseTokenAddress": "0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218",
+	"baseTokenDecimals": 18,
+	"quoteTokenSymbol": "WETH",
+	"QuoteTokenName": "Wrapped Ethereum",
+	"quoteTokenAddress": "0xbc3524faa62d0763818636d5e400f112279d6cc0",
+	"quoteTokenDecimals": 18,
+	"minOrderSize": "0.001",
+	"pricePrecision": 5,
+	"priceDecimals": 5,
+	"amountDecimals": 5,
+	"makerFeeRate": "0.003",
+	"takerFeeRate": "0.001",
+	"gasUsedEstimation": 1,
+	"isPublished": true
+}
+```
+
+##### Response on success
+
+```json
+{
+	"status": "success"
+}
+```
+
+##### Response on fail
+
+```json
+{
+	"status": "fail",
+	"error_message": "reason"
+}
+```
+
+#### Update a market
+
+```
+PUT /markets
+```
+
+##### Request body
+
+```json
+{
+	"id": "HOT-WETH",
+	"minOrderSize": "0.001",
+	"isPublished": true
+}
+```
+
+##### Response on success
+
+```json
+{
+	"status": "success"
+}
+```
+
+##### Response on fail
+
+```json
+{
+	"status": "fail",
+	"error_message": "reason"
+}
+```
+
+
+## hytdro-dex-ctl (admin-cli)
+
+If you are using docker-compose to run hydro dex. You can login into the admin service via `docker-compose exec admin sh`, the `hydro-dex-ctl` binary has already included in it.
+
+### Commands
 
 Show help
 
@@ -41,27 +165,3 @@ hydor-dex-ctl market unpublish $marketID
 
 hydor-dex-ctl market changeFees $marketID "asMakerFee" "asTakerFee"
 ```
-
-Get info about an address
-
-```
-hydor-dex-ctl address "address" --orders --balances --trades
-```
-
-Cancel a special order
-
-```
-hydor-dex-ctl order cancel "orderID"
-```
-
-Restart engine
-
-```
-hydor-dex-ctl engine restart
-```
-
-## Admin api
-
-Beside the hydor-dex-ctl command, you can also use rest api to manage your dex.
-
-See details at [here](./backend/admin/api/server.go).

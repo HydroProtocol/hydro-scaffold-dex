@@ -47,3 +47,25 @@ func InsertTrade(trade *models.Trade) error {
 	sendTradeUpdateMessage(trade)
 	return err
 }
+
+type MatchResultWithOrders struct {
+	Sequence uint64
+	*common.MatchResult
+	modelTakerOrder  *models.Order
+	modelMakerOrders map[string]*models.Order
+}
+
+func NewMatchResultWithOrders(takerOrder *models.Order, result *common.MatchResult) *MatchResultWithOrders {
+	r := &MatchResultWithOrders{}
+
+	r.MatchResult = result
+	r.modelTakerOrder = takerOrder
+	r.modelMakerOrders = make(map[string]*models.Order)
+
+	for i := range result.MatchItems {
+		item := result.MatchItems[i]
+		r.modelMakerOrders[item.MakerOrder.ID] = models.OrderDao.FindByID(item.MakerOrder.ID)
+	}
+
+	return r
+}
