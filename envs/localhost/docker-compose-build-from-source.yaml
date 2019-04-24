@@ -1,0 +1,129 @@
+version: "3"
+volumes:
+  datavolume: {}
+services:
+  redis:
+    container_name: hydro-sdk-redis
+    image: redis:5.0
+    ports:
+      - 6379:6379
+    restart: on-failure:5
+  ethereum-node:
+    container_name: hydro-sdk-ethereum-node
+    image: hydroprotocolio/ethereum-test-node:latest
+    logging:
+      driver: "none"
+    ports:
+      - 8545:8545
+    restart: on-failure:5
+  db:
+    build: ./backend
+    container_name: hydro-sdk-db
+    volumes:
+      - datavolume:/data
+      - ${PWD}/envs/localhost/seed.sql:/db/seed.sql
+    command:
+      # only init sqlite db if db file not exist
+      sh -c "[ ! -f /data/sqlite3-local.db ] && cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3-local.db"
+  web:
+    build: ./web
+    container_name: hydro-box-dex-web
+    ports:
+      - 3000:8043
+    environment:
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL
+      - REACT_APP_API_URL=http://localhost:3001
+      - REACT_APP_WS_URL=ws://localhost:3002
+      - REACT_APP_NODE_URL=http://localhost:8545
+      - REACT_APP_HYDRO_PROXY_ADDRESS=0x04f67E8b7C39A25e100847Cb167460D715215FEb
+      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
+    restart: on-failure:5
+  api:
+    build: ./backend
+    container_name: hydro-sdk-api
+    command: /bin/api
+    ports:
+      - 3001:3001
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x179fd00c328d4ecdb5043c8686d377a24ede9d11
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
+      - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+      - redis
+      - ethereum-node
+    restart: on-failure:5
+  ws:
+    build: ./backend
+    container_name: hydro-sdk-ws
+    command: /bin/websocket
+    ports:
+      - 3002:3002
+    environment:
+      - HSK_API_URL=http://api:3001
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - api
+    restart: on-failure:5
+  watcher:
+    build: ./backend
+    container_name: hydro-sdk-watcher
+    command: /bin/watcher
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_LOG_LEVEL=DEBUG
+    logging:
+      driver: "none"
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - ethereum-node
+      - db
+  engine:
+    build: ./backend
+    container_name: hydro-sdk-engine
+    command: /bin/engine
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x179fd00c328d4ecdb5043c8686d377a24ede9d11
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - db
+    restart: on-failure:5
+  launcher:
+    build: ./backend
+    container_name: hydro-sdk-launcher
+    command: /bin/launcher
+    environment:
+      - HSK_DATABASE_URL=/data/sqlite3.db
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x179fd00c328d4ecdb5043c8686d377a24ede9d11
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
+      - HSK_RELAYER_PK=95b0a982c0dfc5ab70bf915dcf9f4b790544d25bc5e6cff0f38a59d0bba58651
+      - HSK_LOG_LEVEL=DEBUG
+    logging:
+      driver: "none"
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - ethereum-node
+      - db
+    restart: on-failure:5

@@ -11,18 +11,9 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
-	"github.com/go-redis/redis"
 	"strings"
 	"sync"
 )
-
-//type PgDBHandler struct {
-//}
-//
-//func (pg PgDBHandler) Update(matchResult common.MatchResult) sync.WaitGroup {
-//	log.Info("testing PgDBHandler")
-//	return sync.WaitGroup{}
-//}
 
 type RedisOrderBookSnapshotHandler struct {
 	kvStore common.IKVStore
@@ -53,39 +44,45 @@ func (handler RedisOrderBookActivitiesHandler) Update(webSocketMessages []common
 }
 
 type DexEngine struct {
+	// global ctx, if this ctx is canceled, queue handlers should exit in a short time.
+	ctx context.Context
+
 	// all redis queues handlers
 	marketHandlerMap map[string]*MarketHandler
-	queue            common.IQueue
+	eventQueue       common.IQueue
 
 	// Wait for all queue handler exit gracefully
 	Wg sync.WaitGroup
 
-	// global ctx, if this ctx is canceled, queue handlers should exit in a short time.
-	ctx context.Context
-
 	HydroEngine *engine.Engine
-	kvStore     common.IKVStore
 }
 
-func NewDexEngine(ctx context.Context, redis *redis.Client) *DexEngine {
-	e := engine.NewEngine(context.Background())
+func NewDexEngine(ctx context.Context) *DexEngine {
+	// init redis
+	redis := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
 
-	//handler := PgDBHandler{}
-	//e.RegisterDBHandler(&handler)
-
-	queue, _ := common.InitQueue(&common.RedisQueueConfig{
-		Name:   common.HYDRO_ENGINE_EVENTS_QUEUE_KEY,
-		Client: redis,
-		Ctx:    ctx,
-	})
-
-	kvStore, _ := common.InitKVStore(
-		&common.RedisKVStoreConfig{
+	// init websocket queue
+	wsQueue, _ := common.InitQueue(
+		&common.RedisQueueConfig{
+			Name:   common.HYDRO_WEBSOCKET_MESSAGES_QUEUE_KEY,
 			Ctx:    ctx,
 			Client: redis,
 		},
 	)
+	InitWsQueue(wsQueue)
 
+	// init event queue
+	eventQueue, _ := common.InitQueue(
+		&common.RedisQueueConfig{
+			Name:   common.HYDRO_ENGINE_EVENTS_QUEUE_KEY,
+			Client: redis,
+			Ctx:    ctx,
+		})
+
+	e := engine.NewEngine(context.Background())
+
+	// setup handler for hydro engine
+	kvStore, _ := common.InitKVStore(&common.RedisKVStoreConfig{Ctx: ctx, Client: redis})
 	snapshotHandler := RedisOrderBookSnapshotHandler{kvStore: kvStore}
 	e.RegisterOrderBookSnapshotHandler(snapshotHandler)
 
@@ -93,17 +90,15 @@ func NewDexEngine(ctx context.Context, redis *redis.Client) *DexEngine {
 	e.RegisterOrderBookActivitiesHandler(activityHandler)
 
 	engine := &DexEngine{
-		queue:            queue,
 		ctx:              ctx,
+		eventQueue:       eventQueue,
 		marketHandlerMap: make(map[string]*MarketHandler),
 		Wg:               sync.WaitGroup{},
 
 		HydroEngine: e,
-		kvStore:     kvStore,
 	}
 
 	markets := models.MarketDao.FindAllMarkets()
-
 	for _, market := range markets {
 		_, err := engine.newMarket(market.ID)
 		if err != nil {
@@ -121,7 +116,7 @@ func (e *DexEngine) newMarket(marketId string) (marketHandler *MarketHandler, er
 		return
 	}
 
-	marketHandler, err = NewMarketHandler(e.ctx, e.kvStore, market, e.HydroEngine)
+	marketHandler, err = NewMarketHandler(e.ctx, market, e.HydroEngine)
 	if err != nil {
 		return
 	}
@@ -168,11 +163,11 @@ func (e *DexEngine) start() {
 			select {
 			case <-e.ctx.Done():
 				for _, handler := range e.marketHandlerMap {
-					close(handler.queue)
+					close(handler.eventChan)
 				}
 				return
 			default:
-				data, err := e.queue.Pop()
+				data, err := e.eventQueue.Pop()
 				if err != nil {
 					panic(err)
 				}
@@ -200,7 +195,7 @@ func (e *DexEngine) start() {
 					if !ok {
 						utils.Error("engine not support market [%s]", event.MarketID)
 					}
-					marketHandler.queue <- data
+					marketHandler.eventChan <- data
 				}
 			}
 		}
@@ -212,24 +207,11 @@ var hydroProtocol = &ethereum.EthereumHydroProtocol{}
 func Run(ctx context.Context, startMetrics func()) {
 	utils.Info("dex engine start...")
 
-	// init redis
-	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
-
-	// init message queue
-	messageQueue, _ := common.InitQueue(
-		&common.RedisQueueConfig{
-			Name:   common.HYDRO_WEBSOCKET_MESSAGES_QUEUE_KEY,
-			Ctx:    ctx,
-			Client: redisClient,
-		},
-	)
-	InitWsQueue(messageQueue)
-
 	//init database
 	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
 
 	//start dex engine
-	dexEngine := NewDexEngine(ctx, redisClient)
+	dexEngine := NewDexEngine(ctx)
 	dexEngine.start()
 	go startMetrics()
 

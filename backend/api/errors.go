@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"fmt"
-	"gopkg.in/go-playground/validator.v9"
+	"github.com/go-playground/validator"
 )
 
 type ApiError struct {

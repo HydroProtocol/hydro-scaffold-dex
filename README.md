@@ -110,7 +110,23 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 
 ## Run on other network
 
-        See [change network manual](./manual/change-network.md).
+See [change network manual](./manual/change-network.md).
+
+## How to build and run from source
+
+```shell
+# build
+docker-compose -f docker-compose-build-from-source.yaml build
+
+# run and visit http://localhost:3000/
+docker-compose -f docker-compose-build-from-source.yaml up
+
+# stop the service your wanna edit, e.g. engine
+docker-compose -f docker-compose-build-from-source.yaml stop engine
+
+# after finish editing the project, start it 
+docker-compose -f docker-compose-build-from-source.yaml start engine
+```
 
 ## License
 
