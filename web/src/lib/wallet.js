@@ -5,7 +5,7 @@ import env from './env';
 import { getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
 export let web3, Contract;
 
-export const getTokenBalance = (tokenAddress, accountAddress, getState) => {
+export const getTokenBalance = (tokenAddress, accountAddress) => {
   return async (dispatch, getState) => {
     const wallet = getSelectedAccountWallet(getState());
     if (!wallet) {

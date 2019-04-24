@@ -1,8 +1,8 @@
 import { Map, OrderedMap } from 'immutable';
+import { BigNumber } from 'bignumber.js';
 
 export const initState = Map({
   isLoggedIn: Map(),
-  lockedBalances: Map(),
   tokensInfo: Map(),
   approving: Map(),
   orders: OrderedMap(),
@@ -10,13 +10,28 @@ export const initState = Map({
   transactions: OrderedMap()
 });
 
+const initialTokenInfo = Map({
+  balance: new BigNumber('0'),
+  allowance: new BigNumber('0'),
+  address: '',
+  decimals: 0,
+  lockedBalance: new BigNumber('0')
+});
+
 export default (state = initState, action) => {
   switch (action.type) {
-    case 'UPDATE_TOKEN_LOCKED_BALANCES':
-      for (let k of Object.keys(action.payload)) {
-        state = state.setIn(['lockedBalances', k], action.payload[k]);
+    case 'UPDATE_TOKEN_LOCKED_BALANCES': {
+      const { lockedBalances, accountAddress } = action.payload;
+      for (let k of Object.keys(lockedBalances)) {
+        let tokenInfoState = state.getIn(['tokensInfo', accountAddress, k]);
+        if (!tokenInfoState) {
+          tokenInfoState = initialTokenInfo;
+        }
+        tokenInfoState = tokenInfoState.set('lockedBalance', lockedBalances[k]);
+        state = state.setIn(['tokensInfo', accountAddress, k], tokenInfoState);
       }
       return state;
+    }
     case 'LOGIN':
       state = state.setIn(['isLoggedIn', action.payload.address], true);
       return state;
@@ -56,15 +71,21 @@ export default (state = initState, action) => {
       let trade = action.payload.trade;
       state = state.setIn(['trades', trade.id], trade);
       return state;
-    case 'LOAD_TOKEN':
-      const { symbol, balance, allowance, decimals, address } = action.payload;
-      state = state.setIn(['tokensInfo', symbol, 'allowance'], allowance);
-      state = state.setIn(['tokensInfo', symbol, 'balance'], balance);
-      state = state.setIn(['tokensInfo', symbol, 'address'], address);
-      if (decimals) {
-        state = state.setIn(['tokensInfo', symbol, 'decimals'], decimals);
+    case 'UPDATE_TOKEN_INFO': {
+      const { symbol, balance, allowance, decimals, tokenAddress, accountAddress } = action.payload;
+      let tokenInfoState = state.getIn(['tokensInfo', accountAddress, symbol]);
+      if (!tokenInfoState) {
+        tokenInfoState = initialTokenInfo;
       }
+      tokenInfoState = tokenInfoState.set('allowance', allowance);
+      tokenInfoState = tokenInfoState.set('balance', balance);
+      tokenInfoState = tokenInfoState.set('address', tokenAddress);
+      if (decimals) {
+        tokenInfoState = tokenInfoState.set('decimals', decimals);
+      }
+      state = state.setIn(['tokensInfo', accountAddress, symbol], tokenInfoState);
       return state;
+    }
     default:
       return state;
   }

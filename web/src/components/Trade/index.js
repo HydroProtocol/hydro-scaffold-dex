@@ -12,6 +12,7 @@ import PerfectScrollbar from 'perfect-scrollbar';
 import './styles.scss';
 import { sleep, toUnitAmount } from '../../lib/utils';
 import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
+import { stateUtils } from '../../selectors/account';
 
 const mapStateToProps = state => {
   const selector = formValueSelector(TRADE_FORM_ID);
@@ -19,7 +20,7 @@ const mapStateToProps = state => {
   const asks = state.market.getIn(['orderbook', 'asks']);
   const selectedAccount = getSelectedAccount(state);
   const address = selectedAccount ? selectedAccount.get('address') : null;
-
+  const currentMarket = state.market.getIn(['markets', 'currentMarket']);
   return {
     initialValues: {
       side: 'buy',
@@ -38,7 +39,9 @@ const mapStateToProps = state => {
       marketOrderWorstTotalQuote: new BigNumber(0),
       marketOrderWorstTotalBase: new BigNumber(0)
     },
-    currentMarket: state.market.getIn(['markets', 'currentMarket']),
+    currentMarket,
+    quoteTokenBalance: stateUtils.getTokenAvailableBalance(state, address, currentMarket.quoteToken),
+    baseTokenBalance: stateUtils.getTokenAvailableBalance(state, address, currentMarket.baseToken),
     hotTokenAmount: state.config.get('hotTokenAmount'),
     address,
     isLoggedIn: state.account.getIn(['isLoggedIn', address]),
@@ -59,7 +62,7 @@ const mapStateToProps = state => {
     orderType: selector(state, 'orderType'),
     bestBidPrice: bids.size > 0 ? bids.get(0)[0].toString() : null,
     bestAskPrice: asks.size > 0 ? asks.get(asks.size - 1)[0].toString() : null,
-    tokensInfo: state.account.get('tokensInfo'),
+    tokensInfo: stateUtils.getTokensInfo(state, address),
     lockedBalances: state.account.get('lockedBalances')
   };
 };
@@ -226,7 +229,7 @@ class Trade extends React.PureComponent {
 
 const validate = (values, props) => {
   const { price, amount, total } = values;
-  const { side, address, currentMarket, tokensInfo, lockedBalances } = props;
+  const { side, address, currentMarket, tokensInfo, lockedBalances, quoteTokenBalance, baseTokenBalance } = props;
 
   let _price, _amount, _total;
 
@@ -234,23 +237,13 @@ const validate = (values, props) => {
 
   if (address) {
     if (side === 'buy') {
-      const quoteTokenAmount = toUnitAmount(
-        tokensInfo
-          .getIn([currentMarket.quoteToken, 'balance'], new BigNumber('0'))
-          .minus(lockedBalances.get(currentMarket.quoteToken, new BigNumber('0'))),
-        currentMarket.quoteTokenDecimals
-      );
+      const quoteTokenAmount = toUnitAmount(quoteTokenBalance, currentMarket.quoteTokenDecimals);
 
       if (quoteTokenAmount.eq(0)) {
         errors.amount = `Insufficient ${currentMarket.quoteToken} balance`;
       }
     } else {
-      const baseTokenAmount = toUnitAmount(
-        tokensInfo
-          .getIn([currentMarket.baseToken, 'balance'], new BigNumber('0'))
-          .minus(lockedBalances.get(currentMarket.baseToken, new BigNumber('0'))),
-        currentMarket.baseTokenDecimals
-      );
+      const baseTokenAmount = toUnitAmount(baseTokenBalance, currentMarket.baseTokenDecimals);
       if (baseTokenAmount.eq(0)) {
         errors.amount = `Insufficient ${currentMarket.baseToken} balance`;
       }
@@ -288,23 +281,13 @@ const validate = (values, props) => {
   if (!errors.amount && !errors.price && total && address) {
     _total = new BigNumber(total);
     if (side === 'buy') {
-      const quoteTokenAmount = toUnitAmount(
-        tokensInfo
-          .getIn([currentMarket.quoteToken, 'balance'], new BigNumber('0'))
-          .minus(lockedBalances.get(currentMarket.quoteToken, new BigNumber('0'))),
-        currentMarket.quoteTokenDecimals
-      );
+      const quoteTokenAmount = toUnitAmount(quoteTokenBalance, currentMarket.quoteTokenDecimals);
 
       if (_total.gt(quoteTokenAmount)) {
         errors.amount = `Insufficient ${currentMarket.quoteToken} balance`;
       }
     } else {
-      const baseTokenAmount = toUnitAmount(
-        tokensInfo
-          .getIn([currentMarket.baseToken, 'balance'], new BigNumber('0'))
-          .minus(lockedBalances.get(currentMarket.baseToken, new BigNumber('0'))),
-        currentMarket.baseTokenDecimals
-      );
+      const baseTokenAmount = toUnitAmount(baseTokenBalance, currentMarket.baseTokenDecimals);
 
       if (_amount.gt(baseTokenAmount)) {
         errors.amount = `Insufficient ${currentMarket.baseToken} balance`;

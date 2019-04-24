@@ -3,13 +3,18 @@ import { connect } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import { wrapETH, unwrapWETH } from '../../lib/wallet';
 import { toUnitAmount } from '../../lib/utils';
+import { stateUtils } from '../../selectors/account';
+import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
   const WETH = state.config.get('WETH');
-  const selectedAccountID = state.WalletReducer.get('selectedAccountID');
+  const selectedAccount = getSelectedAccount(state);
+  const ethBalance = selectedAccount ? selectedAccount.get('balance') : new BigNumber('0');
+  const address = selectedAccount ? selectedAccount.get('address') : null;
+  const wethBalance = stateUtils.getTokenAvailableBalance(state, address, 'WETH');
   return {
-    ethBalance: toUnitAmount(state.WalletReducer.getIn(['accounts', selectedAccountID, 'balance']), 18),
-    wethBalance: toUnitAmount(state.account.getIn(['tokensInfo', 'WETH', 'balance']) || new BigNumber(0), WETH.decimals)
+    ethBalance: toUnitAmount(ethBalance, 18),
+    wethBalance: toUnitAmount(wethBalance, WETH.decimals)
   };
 };
 
