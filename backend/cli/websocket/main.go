@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -13,7 +12,6 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/websocket"
 	"os"
-	"sync"
 )
 
 func main() {
@@ -28,28 +26,29 @@ func run() int {
 
 	go cli.WaitExitSignal(stop)
 
-	wg := sync.WaitGroup{}
+	// new a source queue
+	queue, err := common.InitQueue(&common.RedisQueueConfig{
+		Name:   common.HYDRO_WEBSOCKET_MESSAGES_QUEUE_KEY,
+		Ctx:    ctx,
+		Client: redisClient,
+	})
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	if err != nil {
+		panic(err)
+	}
 
-		websocket.StartConsumer(ctx, &common.RedisQueueConfig{
-			Name:   common.HYDRO_WEBSOCKET_MESSAGES_QUEUE_KEY,
-			Ctx:    ctx,
-			Client: redisClient,
-		})
-	}()
+	// new a websockert server
+	wsServer := websocket.NewWSServer(":3002", queue)
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	websocket.RegisterChannelCreator(
+		common.MarketChannelPrefix,
+		websocket.NewMarketChannelCreator(&websocket.DefaultHttpSnapshotFetcher{
+			ApiUrl: os.Getenv("HSK_API_URL"),
+		}),
+	)
 
-		websocket.StartSocketServer(ctx)
-	}()
-
-	go utils.StartMetrics()
-	wg.Wait()
-
+	// Start the server
+	// It will block the current process to listen on the `addr` your provided.
+	wsServer.Start(ctx)
 	return 0
 }
