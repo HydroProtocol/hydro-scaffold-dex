@@ -64,7 +64,7 @@ func (tradeDaoPG) FindAllTrades(marketID string) (int64, []*Trade) {
 	var trades []*Trade
 	var count int64
 
-	DB.Where("market_id = ? and status = ?", marketID, common.STATUS_SUCCESSFUL).Order("created_at asc").Find(&trades).Count(&count)
+	DB.Where("market_id = ? and status = ?", marketID, common.STATUS_SUCCESSFUL).Order("created_at desc").Find(&trades).Count(&count)
 	return count, trades
 }
 
@@ -89,7 +89,7 @@ func (tradeDaoPG) FindAccountMarketTrades(account, marketID, status string, limi
 	var trades []*Trade
 	var count int64
 
-	DB.Where("market_id = ? and (taker = ? or maker = ?)", marketID, account, account).Order("created_at asc").Find(&trades).Count(&count)
+	DB.Where("market_id = ? and (taker = ? or maker = ?)", marketID, account, account).Order("created_at desc").Find(&trades).Count(&count)
 	return count, trades
 }
 
