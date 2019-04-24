@@ -3,7 +3,9 @@ html,
 body {
     margin: 0;
     padding: 0;
-    font-family: Gill Sans, Gill Sans MT, Calibri, sans-serif;
+    font-smoothing: antialiased;
+    font-weight: 400;
+    font-family: TrebuchetMS, Rotobo, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 14px;
