@@ -10,9 +10,9 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"os"
 	"runtime"
@@ -79,6 +79,7 @@ func errorHandler(err error, c echo.Context) {
 		desc = err.Error()
 	} else {
 		status = -1
+		fmt.Println("err:", err)
 		desc = "something wrong"
 	}
 

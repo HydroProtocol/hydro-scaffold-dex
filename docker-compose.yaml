@@ -41,7 +41,7 @@ services:
       - REACT_APP_NODE_URL=http://localhost:8545
     restart: on-failure:5
   admin:
-    image: box-dex-backend:latest
+    image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-box-dex-admin-api
     command: /bin/adminapi
     ports:

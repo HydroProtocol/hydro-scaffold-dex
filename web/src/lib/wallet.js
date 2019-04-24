@@ -5,7 +5,7 @@ import env from './env';
 import { getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
 export let web3, Contract;
 
-export const getTokenBalance = (tokenAddress, accountAddress, getState) => {
+export const getTokenBalance = (tokenAddress, accountAddress) => {
   return async (dispatch, getState) => {
     const wallet = getSelectedAccountWallet(getState());
     if (!wallet) {
@@ -158,17 +158,17 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
 };
 
 const watchTransactionStatus = (wallet, txID, callback) => {
-  const getTransaction = async () => {
-    const tx = await wallet.getTransactionReceipt(txID);
+  const getTransactionReceipt = async () => {
+    const tx = await wallet.sendCustomRequest('eth_getTransactionReceipt', txID);
     if (!tx) {
-      window.setTimeout(() => getTransaction(txID), 3000);
+      window.setTimeout(() => getTransactionReceipt(txID), 3000);
     } else if (callback) {
       callback(Number(tx.status) === 1);
     } else {
       alert('success');
     }
   };
-  window.setTimeout(() => getTransaction(txID), 3000);
+  window.setTimeout(() => getTransactionReceipt(txID), 3000);
 };
 
 const get64BytesString = string => {

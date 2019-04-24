@@ -23,7 +23,7 @@ insert into markets (
   18,
   'HOT',
   'HOT',
-  ' 0xc778417e063141139fce010982780140aa0cd5ab',
+  '0x0a180a76e4466bf68a7f86fb029bed3cccfaaac5',
   18,
   'WETH',
   'WETH',
@@ -40,4 +40,4 @@ insert into markets (
 
 insert into tokens (address, symbol, name, decimals) values
 ('0x6829f329f8f0768ad62a65477514deEd90825564', 'HOT', 'HOT', 18),
-(' 0xc778417e063141139fce010982780140aa0cd5ab', 'WETH', 'WETH', 18);
+('0x0a180a76e4466bf68a7f86fb029bed3cccfaaac5', 'WETH', 'WETH', 18);

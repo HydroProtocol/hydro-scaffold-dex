@@ -2,18 +2,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { loadTokens } from '../../actions/account';
 import { toUnitAmount, isTokenApproved } from '../../lib/utils';
-import BigNumber from 'bignumber.js';
+import { stateUtils } from '../../selectors/account';
 import { enable, disable } from '../../lib/wallet';
 import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
+import { BigNumber } from 'bignumber.js';
 
 const mapStateToProps = state => {
   const selectedAccountID = state.WalletReducer.get('selectedAccountID');
   const selectedAccount = getSelectedAccount(state);
   const address = selectedAccount ? selectedAccount.get('address') : null;
   return {
-    tokensInfo: state.account.get('tokensInfo'),
+    tokensInfo: stateUtils.getTokensInfo(state, address),
     address,
-    lockedBalances: state.account.get('lockedBalances'),
     isLoggedIn: state.account.getIn(['isLoggedIn', address]),
     ethBalance: toUnitAmount(state.WalletReducer.getIn(['accounts', selectedAccountID, 'balance']), 18)
   };
@@ -37,7 +37,7 @@ class Tokens extends React.PureComponent {
   }
 
   render() {
-    const { dispatch, tokensInfo, lockedBalances, ethBalance } = this.props;
+    const { dispatch, tokensInfo, ethBalance } = this.props;
     return (
       <div className="flex-column">
         <div className="token flex flex-1">
@@ -45,12 +45,9 @@ class Tokens extends React.PureComponent {
           <div className="col-6 text-right">{ethBalance.toFixed(5)}</div>
         </div>
         {tokensInfo.toArray().map(([token, info]) => {
-          const { address, balance, allowance, decimals } = info.toJS();
-          const lockedBalance = lockedBalances.get(token, new BigNumber('0'));
-          const isApproved = isTokenApproved(allowance || new BigNumber('0'));
-          const availableBalance = toUnitAmount(balance.minus(lockedBalance) || new BigNumber('0'), decimals).toFixed(
-            5
-          );
+          const { address, balance, allowance, decimals, lockedBalance } = info.toJS();
+          const isApproved = isTokenApproved(allowance);
+          const availableBalance = toUnitAmount(BigNumber.max(balance.minus(lockedBalance), '0'), decimals).toFixed(5);
           const toolTipTitle = `<div>In-Order: ${toUnitAmount(lockedBalance, decimals).toFixed(
             5
           )}</div><div>Total: ${toUnitAmount(balance, decimals).toFixed(5)}</div>`;

@@ -15,7 +15,7 @@ export const loginRequest = () => {
     if (!address || !wallet) {
       return;
     }
-    const signature = await wallet.personalSignMessage(message, address);
+    const signature = await wallet.signPersonalMessage(message, address);
     if (!signature) {
       return;
     }
@@ -42,25 +42,32 @@ export const logout = address => {
 // 获取账号锁定余额(订单中的余额)
 export const loadAccountLockedBalance = () => {
   return async (dispatch, getState) => {
+    const state = getState();
+    const selectedAccount = getSelectedAccount(state);
+    const accountAddress = selectedAccount ? selectedAccount.get('address') : null;
+    if (!accountAddress) {
+      return;
+    }
+
     const res = await api.get('/account/lockedBalances');
     const lockedBalances = {};
     if (res.data.status === 0) {
       res.data.data.lockedBalances.forEach(x => {
         lockedBalances[x.symbol] = x.lockedBalance;
       });
-      dispatch(updateTokenLockedBalances(lockedBalances));
+      dispatch(updateTokenLockedBalances(lockedBalances, accountAddress));
     }
   };
 };
 
-export const updateTokenLockedBalances = lockedBalances => {
+export const updateTokenLockedBalances = (lockedBalances, accountAddress) => {
   Object.keys(lockedBalances).forEach((key, index) => {
     lockedBalances[key] = new BigNumber(lockedBalances[key]);
   });
 
   return {
     type: 'UPDATE_TOKEN_LOCKED_BALANCES',
-    payload: lockedBalances
+    payload: { lockedBalances, accountAddress }
   };
 };
 
@@ -127,9 +134,10 @@ export const loadToken = (tokenAddress, symbol, decimals) => {
     ]);
 
     return dispatch({
-      type: 'LOAD_TOKEN',
+      type: 'UPDATE_TOKEN_INFO',
       payload: {
-        address: tokenAddress,
+        tokenAddress,
+        accountAddress,
         symbol,
         balance,
         allowance,
