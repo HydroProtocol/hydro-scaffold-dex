@@ -1,7 +1,7 @@
 package main
 
-
 import (
+	"fmt"
 	_ "github.com/joho/godotenv/autoload"
 )
 import (
@@ -18,14 +18,17 @@ import (
 )
 
 func run() int {
+	utils.Error("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), config.Getenv("HSK_LOG_LEVEL"))
+	fmt.Println("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), config.Getenv("HSK_LOG_LEVEL"))
+
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.ConnectDatabase("sqlite3", os.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
-	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
-	signService := launcher.NewDefaultSignService(config.Getenv("HSK_RELAYER_PK"), hydro.GetTransactionCount)
+	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
+	signService := launcher.NewDefaultSignService(os.Getenv("HSK_RELAYER_PK"), hydro.GetTransactionCount)
 	gasService := func() decimal.Decimal { return utils.StringToDecimal("3000000000") } // default 10 Gwei
 
 	launcher := launcher.NewLauncher(ctx, signService, hydro, gasService)

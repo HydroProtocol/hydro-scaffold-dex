@@ -23,12 +23,14 @@ services:
     ports:
       - 3000:8043
     environment:
-      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL,REACT_APP_WETH_TOKEN_ADDRESS
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
-      - REACT_APP_NODE_URL=https://ropsten.infura.io
+      - REACT_APP_NODE_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - REACT_APP_HYDRO_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
+      - REACT_APP_WETH_TOKEN_ADDRESS=0x0a180a76e4466bf68a7f86fb029bed3cccfaaac5
+      - REACT_APP_NETWORK_ID=3
     restart: on-failure:5
   api:
     build: ./backend
@@ -40,7 +42,7 @@ services:
       - HSK_DATABASE_URL=/data/sqlite3-ropsten.db
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
-      - HSK_BLOCKCHAIN_RPC_URL=http://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
       - HSK_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
       - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
@@ -74,7 +76,7 @@ services:
     environment:
       - HSK_DATABASE_URL=/data/sqlite3-ropsten.db
       - HSK_REDIS_URL=redis://redis:6379/0
-      - HSK_BLOCKCHAIN_RPC_URL=http://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
     logging:
       driver: "none"
@@ -104,7 +106,7 @@ services:
     command: /bin/launcher
     environment:
       - HSK_DATABASE_URL=/data/sqlite3-ropsten.db
-      - HSK_BLOCKCHAIN_RPC_URL=http://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
       - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
       - HSK_RELAYER_PK=0x01d175f4cd5c8cbca1e9916934b59ef9804524db177762f25818ca270d2d0b50
