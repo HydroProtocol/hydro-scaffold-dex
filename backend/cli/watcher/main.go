@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "github.com/joho/godotenv/autoload"
+	"os"
 )
 
 import (
@@ -83,7 +84,7 @@ func main() {
 	client := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
 
 	// Init Blockchain Client
-	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
+	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 
 	// init Key/Value Store
 	kvStore, err := common.InitKVStore(&common.RedisKVStoreConfig{
