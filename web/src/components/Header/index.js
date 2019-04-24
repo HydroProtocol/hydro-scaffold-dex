@@ -39,7 +39,6 @@ class Header extends React.PureComponent {
   }
   render() {
     const { currentMarket, markets, dispatch, networkId, selectedAccountID } = this.props;
-    console.log(selectedAccountID, networkId, env.NETWORK_ID);
     return (
       <div className="navbar bg-blue navbar-expand-lg">
         <img className="navbar-brand" src={require('../../images/hydro.svg')} alt="hydro" />
