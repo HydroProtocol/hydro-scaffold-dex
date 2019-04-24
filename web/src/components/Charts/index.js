@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-// import { DeepChart, TradeChart } from 'hydro-sdk-charts';
 import { DeepChart, TradeChart } from '@wangleiddex/hydro-sdk-charts';
-import { testData } from './constants';
+// import { testData } from './constants'; # we can use testData to show what TradeChart looks like
 import api from '../../lib/api';
 
 class Charts extends React.Component {
