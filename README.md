@@ -110,7 +110,7 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 
 ## Run on other network
 
-        See [change network manual](./manual/change-network.md).
+See [change network manual](./manual/change-network.md).
 
 ## License
 
