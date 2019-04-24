@@ -8,6 +8,7 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190423091552-d8ff3bfae3fc/go.mod h1:etu9xbWNrmFnXKm0yyVjw8ZiNV5xFR2RWP8VAVy5+XY=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190424072731-c80b9cc30f0b/go.mod h1:NngyxKUmC4zxpeDboD8szVRuXPmEScbJ3fAARJJtd6w=
 github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190424084346-fed00803df8c/go.mod h1:MTdI15irRpjvPiQungfN8HX9m0UjrvBnTEVFpokOw40=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.23/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=

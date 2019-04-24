@@ -24,7 +24,7 @@ require (
 )
 
 // for local test only
-replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
+// replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
 
 replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190419153524-e8e3143a4f4a
 
