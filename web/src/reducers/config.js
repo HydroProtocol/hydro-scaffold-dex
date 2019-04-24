@@ -1,9 +1,10 @@
 import { Map } from 'immutable';
 import BigNumber from 'bignumber.js';
+import env from '../lib/env';
 
 const initialState = Map({
   WETH: {
-    address: '0x4a817489643A89a1428b2DD441c3fbe4DBf44789',
+    address: env.WETH_TOKEN_ADDRESS,
     symbol: 'WETH',
     decimals: 18
   },
