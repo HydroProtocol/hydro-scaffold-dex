@@ -68,6 +68,7 @@ class Header extends React.PureComponent {
             })}
           </div>
         </div>
+
         {selectedAccountID === 'EXTENSION' && parseInt(networkId, 10) !== parseInt(env.NETWORK_ID, 10) && (
           <span className="btn text-danger" style={{ marginRight: 12 }}>
             Network Error: Switch Metamask's network to {this.getNetworkName()}.
