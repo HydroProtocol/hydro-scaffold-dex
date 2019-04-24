@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { change, formValueSelector, Field } from 'redux-form';
+import { change, formValueSelector, Field, stopSubmit } from 'redux-form';
 import { TRADE_FORM_ID } from '../../actions/trade';
 import { reduxForm } from 'redux-form';
 import { trade } from '../../actions/trade';
@@ -10,7 +10,7 @@ import { calculateTrade } from '../../lib/tradeCalculator';
 import { loginRequest } from '../../actions/account';
 import PerfectScrollbar from 'perfect-scrollbar';
 import './styles.scss';
-import { sleep } from '../../lib/utils';
+import { sleep, toUnitAmount } from '../../lib/utils';
 import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
@@ -58,7 +58,9 @@ const mapStateToProps = state => {
     side: selector(state, 'side'),
     orderType: selector(state, 'orderType'),
     bestBidPrice: bids.size > 0 ? bids.get(0)[0].toString() : null,
-    bestAskPrice: asks.size > 0 ? asks.get(asks.size - 1)[0].toString() : null
+    bestAskPrice: asks.size > 0 ? asks.get(asks.size - 1)[0].toString() : null,
+    tokensInfo: state.account.get('tokensInfo'),
+    lockedBalances: state.account.get('lockedBalances')
   };
 };
 
@@ -114,20 +116,8 @@ class Trade extends React.PureComponent {
               className="form flex-column text-secondary flex-1 justify-content-between"
               onSubmit={handleSubmit(() => this.submit())}>
               <div>
-                <div className="form-group">
-                  <label>Price</label>
-                  <div className="input-group">
-                    <Field name="price" className="form-control" component={'input'} />
-                    <span className="text-secondary unit">{currentMarket.quoteToken}</span>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label>Amount</label>
-                  <div className="input-group">
-                    <Field name="amount" className="form-control" component={'input'} />
-                    <span className="text-secondary unit">{currentMarket.baseToken}</span>
-                  </div>
-                </div>
+                <Field name="price" unit={currentMarket.quoteToken} component={this.renderField} label="Price" />
+                <Field name="amount" unit={currentMarket.baseToken} component={this.renderField} label="Amount" />
                 <div className="form-group">
                   <div className="form-title">Order Summary</div>
                   <div className="list">
@@ -155,6 +145,21 @@ class Trade extends React.PureComponent {
       </>
     );
   }
+
+  renderField = ({ input, label, unit, meta, ...attrs }) => {
+    const { submitFailed, error } = meta;
+
+    return (
+      <div className="form-group">
+        <label>{label}</label>
+        <div className="input-group">
+          <input className="form-control" {...input} {...attrs} />
+          <span className="text-secondary unit">{unit}</span>
+        </div>
+        <span className="text-danger">{submitFailed && (error && <span>{error}</span>)}</span>
+      </div>
+    );
+  };
 
   async submit() {
     const { amount, price, side, orderType, dispatch, isLoggedIn, address } = this.props;
@@ -219,9 +224,109 @@ class Trade extends React.PureComponent {
   }
 }
 
+const validate = (values, props) => {
+  const { price, amount, total } = values;
+  const { side, address, currentMarket, tokensInfo, lockedBalances } = props;
+
+  let _price, _amount, _total;
+
+  const errors = {};
+
+  if (address) {
+    if (side === 'buy') {
+      const quoteTokenAmount = toUnitAmount(
+        tokensInfo
+          .getIn([currentMarket.quoteToken, 'balance'], new BigNumber('0'))
+          .minus(lockedBalances.get(currentMarket.quoteToken, new BigNumber('0'))),
+        currentMarket.quoteTokenDecimals
+      );
+
+      if (quoteTokenAmount.eq(0)) {
+        errors.amount = `Insufficient ${currentMarket.quoteToken} balance`;
+      }
+    } else {
+      const baseTokenAmount = toUnitAmount(
+        tokensInfo
+          .getIn([currentMarket.baseToken, 'balance'], new BigNumber('0'))
+          .minus(lockedBalances.get(currentMarket.baseToken, new BigNumber('0'))),
+        currentMarket.baseTokenDecimals
+      );
+      if (baseTokenAmount.eq(0)) {
+        errors.amount = `Insufficient ${currentMarket.baseToken} balance`;
+      }
+    }
+  }
+
+  if (!errors.price) {
+    if (!price) {
+      errors.price = 'Price required';
+    } else if (isNaN(Number(price))) {
+      errors.price = 'Price must be a number';
+    } else {
+      _price = new BigNumber(price);
+      if (_price.lte('0')) {
+        errors.price = `Price cannot be 0`;
+      }
+    }
+  }
+
+  if (!errors.amount) {
+    if (!amount) {
+      errors.amount = 'Amount required';
+    } else if (isNaN(Number(amount))) {
+      errors.amount = 'Amount must be a number';
+    } else {
+      _amount = new BigNumber(amount);
+      if (_amount.lte('0')) {
+        errors.amount = `Amount cannot be 0`;
+      } else if (_amount.lt(currentMarket.minOrderSize) && side === 'sell') {
+        errors.amount = `Amount must be at least ${Number(currentMarket.minOrderSize).toString()}`;
+      }
+    }
+  }
+
+  if (!errors.amount && !errors.price && total && address) {
+    _total = new BigNumber(total);
+    if (side === 'buy') {
+      const quoteTokenAmount = toUnitAmount(
+        tokensInfo
+          .getIn([currentMarket.quoteToken, 'balance'], new BigNumber('0'))
+          .minus(lockedBalances.get(currentMarket.quoteToken, new BigNumber('0'))),
+        currentMarket.quoteTokenDecimals
+      );
+
+      if (_total.gt(quoteTokenAmount)) {
+        errors.amount = `Insufficient ${currentMarket.quoteToken} balance`;
+      }
+    } else {
+      const baseTokenAmount = toUnitAmount(
+        tokensInfo
+          .getIn([currentMarket.baseToken, 'balance'], new BigNumber('0'))
+          .minus(lockedBalances.get(currentMarket.baseToken, new BigNumber('0'))),
+        currentMarket.baseTokenDecimals
+      );
+
+      if (_amount.gt(baseTokenAmount)) {
+        errors.amount = `Insufficient ${currentMarket.baseToken} balance`;
+      } else if (_total.lte('0')) {
+        errors.amount = `Amount too small: total sale price less than fee`;
+      }
+    }
+  }
+  return errors;
+};
+
+const onSubmitFail = (_, dispatch) => {
+  setTimeout(() => {
+    dispatch(stopSubmit(TRADE_FORM_ID));
+  }, 3000);
+};
+
 export default connect(mapStateToProps)(
   reduxForm({
     form: TRADE_FORM_ID,
-    destroyOnUnmount: false
+    destroyOnUnmount: false,
+    onSubmitFail,
+    validate
   })(Trade)
 );
