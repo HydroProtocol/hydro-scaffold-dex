@@ -127,7 +127,7 @@ func PlaceOrder(p Param) (interface{}, error) {
 		MakerRebateRate: cacheOrder.OrderResponse.MakerRebateRate,
 		GasFeeAmount:    cacheOrder.OrderResponse.GasFeeAmount,
 		JSON:            utils.ToJsonString(cacheOrder.OrderResponse.Json),
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	newOrderEvent, _ := json.Marshal(common.NewOrderEvent{

@@ -76,7 +76,7 @@ func (s *marketHandlerSuite) SetupTest() {
 	kvStore.On("Set", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	kvStore.On("Get", mock.Anything).Return("", common.KVStoreEmpty)
 	marketHotDai := models.MarketHotDai()
-	marketHandler, _ := NewMarketHandler(context.Background(), kvStore, marketHotDai, engine.NewEngine(context.Background()))
+	marketHandler, _ := NewMarketHandler(context.Background(), marketHotDai, engine.NewEngine(context.Background()))
 	s.marketHandler = marketHandler
 
 	s.marketHandler.hydroEngine.RegisterOrderBookActivitiesHandler(RedisOrderBookActivitiesHandler{})
@@ -127,7 +127,6 @@ type batchMatchOrdersTest struct {
 
 func (b *batchMatchOrdersTest) Reset() {
 	b.takerOrder = b.takerOrderParams.toModelOrder()
-
 	b.makerOrders = make([]*models.Order, 0, 10)
 
 	for i := range b.makerOrdersParams {
@@ -912,7 +911,7 @@ func newModelOrder(side string, price, amount decimal.Decimal) *models.Order {
 		MakerRebateRate: decimal.Zero,
 		GasFeeAmount:    decimal.Zero,
 		JSON:            utils.ToJsonString(&orderJson),
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 }
 

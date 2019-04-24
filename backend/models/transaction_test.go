@@ -38,8 +38,8 @@ func newTransaction(status string) *Transaction {
 		TransactionHash: &sql.NullString{uuid.NewV4().String(), true},
 		MarketID:        "fix-me",
 		Status:          status,
-		ExecutedAt:      time.Now(),
-		CreatedAt:       time.Now(),
+		ExecutedAt:      time.Now().UTC(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	return &transaction

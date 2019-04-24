@@ -39,7 +39,7 @@ func request(url, method, auth string, body interface{}) *Response {
 }
 
 func setEnvs() {
-	_ = os.Setenv("HSK_DATABASE_URL", "postgres://postgres:postgres@localhost:5433/postgres?sslmode=disable")
+	_ = os.Setenv("HSK_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
 	_ = os.Setenv("HSK_REDIS_URL", "redis://redis:6379/0")
 	_ = os.Setenv("HSK_BLOCKCHAIN_RPC_URL", "http://127.0.0.1:8545")
 	_ = os.Setenv("HSK_WETH_TOKEN_ADDRESS", "0x4a817489643a89a1428b2dd441c3fbe4dbf44789")

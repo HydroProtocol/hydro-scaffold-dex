@@ -170,8 +170,8 @@ func NewOrder(account, marketID, side string, withPending bool) *Order {
 		MakerRebateRate: utils.StringToDecimal("0"),
 		GasFeeAmount:    utils.StringToDecimal("1000000"),
 		JSON:            "something",
-		CreatedAt:       time.Now(),
-		UpdatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
+		UpdatedAt:       time.Now().UTC(),
 	}
 
 	return order
@@ -203,7 +203,7 @@ func RandomMatchOrder() (*Order, *Order) {
 		MakerRebateRate: utils.StringToDecimal("0"),
 		GasFeeAmount:    utils.StringToDecimal("1000000"),
 		JSON:            "something",
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	return makerOrder, takerOrder
@@ -236,7 +236,7 @@ func RandomOrder() *Order {
 		MakerRebateRate: utils.StringToDecimal("0"),
 		GasFeeAmount:    utils.StringToDecimal("1000000"),
 		JSON:            "something",
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	return order

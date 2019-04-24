@@ -114,7 +114,7 @@ func TestTradeDao_PG_FindTradesByMarket(t *testing.T) {
 	assert.EqualValues(t, 3, len(trades2))
 
 	trades3 := TradeDaoPG.FindTradesByMarket("WETH-DAI", time2, time5)
-	assert.EqualValues(t, 1, len(trades3))
+	assert.EqualValues(t, 2, len(trades3))
 }
 
 func NewTradeWithTime(marketID string, success bool, time time.Time) *Trade {

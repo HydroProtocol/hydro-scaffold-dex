@@ -41,7 +41,7 @@ func TestLaunchLogDao_PG_FindAllCreated(t *testing.T) {
 
 	launchLog = LaunchLogDaoPG.FindLaunchLogByID(1)
 	assert.EqualValues(t, 1, launchLog.ID)
-	assert.EqualValues(t, "created", launchLog.Status)
+	assert.EqualValues(t, common.STATUS_PENDING, launchLog.Status)
 }
 
 func newLaunchLog() *LaunchLog {
@@ -60,9 +60,9 @@ func newLaunchLog() *LaunchLog {
 		Nonce:    sql.NullInt64{},
 		Data:     "some data",
 
-		ExecutedAt: time.Now(),
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		ExecutedAt: time.Now().UTC(),
+		CreatedAt:  time.Now().UTC(),
+		UpdatedAt:  time.Now().UTC(),
 	}
 
 	return &launchLog
