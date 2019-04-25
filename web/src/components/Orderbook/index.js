@@ -48,7 +48,7 @@ class OrderBook extends React.Component {
         </div>
         <div className="orderbook flex-column flex-1">
           <div className="flex header text-secondary">
-            <div className="col-6">Amount</div>
+            <div className="col-6 text-right">Amount</div>
             <div className="col-6 text-right">Price</div>
           </div>
           <div className="flex-column flex-1">
@@ -60,7 +60,9 @@ class OrderBook extends React.Component {
                 .map(([price, amount]) => {
                   return (
                     <div className="ask flex align-items-center" key={price.toString()}>
-                      <div className="col-6 orderbook-amount">{amount.toFixed(currentMarket.amountDecimals)}</div>
+                      <div className="col-6 orderbook-amount text-right">
+                        {amount.toFixed(currentMarket.amountDecimals)}
+                      </div>
                       <div className="col-6 text-danger text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
                     </div>
                   );
@@ -84,7 +86,9 @@ class OrderBook extends React.Component {
                 .map(([price, amount]) => {
                   return (
                     <div className="bid flex align-items-center" key={price.toString()}>
-                      <div className="col-6 orderbook-amount">{amount.toFixed(currentMarket.amountDecimals)}</div>
+                      <div className="col-6 orderbook-amount text-right">
+                        {amount.toFixed(currentMarket.amountDecimals)}
+                      </div>
                       <div className="col-6 text-success text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
                     </div>
                   );

@@ -16,16 +16,16 @@ require (
 	github.com/mattn/go-sqlite3 v1.10.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.3.0
 	github.com/urfave/cli v1.20.0
 	gopkg.in/go-playground/validator.v9 v9.28.0
 )
-
-// for local test only
-// replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
 
 // replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190419153524-e8e3143a4f4a
 
 // replace gopkg.in/go-playground/validator.v9 => github.com/go-playground/validator v9.28.0+incompatible
 
 // replace gopkg.in/fsnotify.v1 => github.com/fsnotify/fsnotify v1.4.7
+
+// for local test only
+//replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend

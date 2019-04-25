@@ -85,6 +85,9 @@ func main() {
 
 	// Init Blockchain Client
 	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
+	if os.Getenv("HSK_LOG_LEVEL") == "DEBUG" {
+		hydro.EnableDebug(true)
+	}
 
 	// init Key/Value Store
 	kvStore, err := common.InitKVStore(&common.RedisKVStoreConfig{

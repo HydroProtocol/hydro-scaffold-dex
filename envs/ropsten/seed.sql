@@ -33,7 +33,7 @@ insert into markets (
   5,
   5,
   5,
-  1,
+  250000,
   1,
   datetime('now')
 );

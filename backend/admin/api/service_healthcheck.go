@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	ServiceOK    = "ok"
-	ServiceNotOK = "not ok"
+	ServiceOnline  = "online"
+	ServiceOffline = "offline"
 )
 
 //return status of services
@@ -94,8 +94,8 @@ func (h *HealthCheckService) CheckWebSocket() string {
 
 func ToStatus(httpCode int) string {
 	if http.StatusOK == httpCode {
-		return ServiceOK
+		return ServiceOnline
 	}
 
-	return ServiceNotOK
+	return ServiceOffline
 }
