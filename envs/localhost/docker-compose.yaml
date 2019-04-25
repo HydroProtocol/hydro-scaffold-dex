@@ -15,7 +15,7 @@ services:
       - 8545:8545
     restart: on-failure:5
   db:
-    container_name: hydro-sdk-pg
+    container_name: hydro-box-dex-pg
     image: postgres
     ports:
       - 5432:5432
@@ -33,13 +33,15 @@ services:
       - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
-      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
-      - REACT_APP_HYDRO_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
-      - REACT_APP_HYDRO_PROXY_MODE=deposit
       - REACT_APP_NODE_URL=http://localhost:8545
+      - REACT_APP_HYDRO_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
+      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
+      - REACT_APP_WETH_TOKEN_ADDRESS=0x4a817489643A89a1428b2DD441c3fbe4DBf44789
+      - REACT_APP_NETWORK_ID=66
+      - REACT_APP_HYDRO_PROXY_MODE=deposit
     restart: on-failure:5
   admin:
-    image: box-dex-backend:latest
+    image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-box-dex-admin-api
     command: /bin/adminapi
     ports:
@@ -75,11 +77,11 @@ services:
       - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
       - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
       - HSK_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
-      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
       - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
-      - HSK_PROXY_MODE=deposit
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
       - HSK_LOG_LEVEL=DEBUG
       - METRICS_PORT=4001
+      - HSK_PROXY_MODE=deposit
     volumes:
       - datavolume:/data
     depends_on:
@@ -116,6 +118,7 @@ services:
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
       - HSK_LOG_LEVEL=DEBUG
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
       - METRICS_PORT=4003
     volumes:
       - datavolume:/data
@@ -123,6 +126,7 @@ services:
       - redis
       - ethereum-node
       - db
+    restart: on-failure:5
   engine:
     image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-box-dex-engine

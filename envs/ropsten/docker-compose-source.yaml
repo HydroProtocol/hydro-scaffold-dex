@@ -3,14 +3,14 @@ volumes:
   datavolume: {}
 services:
   redis:
-    container_name: hydro-sdk-redis
+    container_name: hydro-box-dex-redis
     image: redis:5.0
     ports:
       - 6379:6379
     restart: on-failure:5
   db:
+    container_name: hydro-box-dex-pg
     image: postgres
-    container_name: hydro-sdk-db
     ports:
       - 5432:5432
     restart: always
@@ -34,10 +34,8 @@ services:
       - REACT_APP_NETWORK_ID=3
     restart: on-failure:5
   api:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile-vendor
-    container_name: hydro-sdk-api
+    build: ./backend
+    container_name: hydro-box-dex-api
     command: /bin/api
     ports:
       - 3001:3001
@@ -57,10 +55,8 @@ services:
       - redis
     restart: on-failure:5
   ws:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile-vendor
-    container_name: hydro-sdk-ws
+    build: ./backend
+    container_name: hydro-box-dex-ws
     command: /bin/websocket
     ports:
       - 3002:3002
@@ -75,10 +71,8 @@ services:
       - api
     restart: on-failure:5
   watcher:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile-vendor
-    container_name: hydro-sdk-watcher
+    build: ./backend
+    container_name: hydro-box-dex-watcher
     command: /bin/watcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -86,16 +80,17 @@ services:
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+    logging:
+      driver: "none"
     volumes:
       - datavolume:/data
     depends_on:
       - redis
       - db
+    restart: on-failure:5
   engine:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile-vendor
-    container_name: hydro-sdk-engine
+    build: ./backend
+    container_name: hydro-box-dex-engine
     command: /bin/engine
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -109,10 +104,8 @@ services:
       - db
     restart: on-failure:5
   launcher:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile-vendor
-    container_name: hydro-sdk-launcher
+    build: ./backend
+    container_name: hydro-box-dex-launcher
     command: /bin/launcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -121,6 +114,8 @@ services:
       - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
       - HSK_RELAYER_PK=0x01d175f4cd5c8cbca1e9916934b59ef9804524db177762f25818ca270d2d0b50
       - HSK_LOG_LEVEL=DEBUG
+    logging:
+      driver: "none"
     volumes:
       - datavolume:/data
     depends_on:
