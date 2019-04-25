@@ -16,16 +16,14 @@ services:
     restart: on-failure:5
   db:
     container_name: hydro-sdk-pg
-    build:
-      context: ./backend/db
-      dockerfile: Dockerfile-postgres
-      args:
-        - POSTGRES_PASSWORD=postgres
+    image: postgres
     ports:
       - 5432:5432
     restart: always
     volumes:
-      - datavolume:/data
+      - datavolume:/var/lib/postgresql/data
+      - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
+      - ./backend/db/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     image: hydroprotocolio/hydro-box-dex-web:latest
     container_name: hydro-box-dex-web
