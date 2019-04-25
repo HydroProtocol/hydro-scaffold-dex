@@ -94,6 +94,7 @@ services:
       - redis
       - ethereum-node
       - db
+    restart: on-failure:5
   engine:
     build: ./backend
     container_name: hydro-sdk-engine
