@@ -1,11 +1,11 @@
 rmdb:
-    psql -hlocalhost -dpostgres -Upostgres < db/migrations/0001-init.down.sql
+	psql postgres://postgres:postgres@localhost:5432/hydro?sslmode=disable < db/migrations/0001-init.down.sql
 
 initdb: rmdb
-	psql -hlocalhost -dpostgres -Upostgres < db/migrations/0001-init.up.sql
+	psql postgres://postgres:postgres@localhost:5432/hydro?sslmode=disable < db/migrations/0001-init.up.sql
 
 seed: initdb
-	psql -hlocalhost -dpostgres -Upostgres < db/seed.sql
+	psql postgres://postgres:postgres@localhost:5432/hydro?sslmode=disable < db/seed.sql
 
 test:
 	go test ./... --count=1 --cover
