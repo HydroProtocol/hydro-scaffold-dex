@@ -1,0 +1,128 @@
+version: "3"
+volumes:
+  datavolume: {}
+services:
+  redis:
+    container_name: hydro-sdk-redis
+    image: redis:5.0
+    ports:
+      - 6379:6379
+    restart: on-failure:5
+  db:
+    image: postgres
+    container_name: hydro-sdk-db
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - datavolume:/var/lib/postgresql/data
+      - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
+      - ./envs/ropsten/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
+  web:
+    build: ./web
+    container_name: hydro-box-dex-web
+    ports:
+      - 3000:8043
+    environment:
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL,REACT_APP_WETH_TOKEN_ADDRESS
+      - REACT_APP_API_URL=http://localhost:3001
+      - REACT_APP_WS_URL=ws://localhost:3002
+      - REACT_APP_NODE_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - REACT_APP_HYDRO_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
+      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
+      - REACT_APP_WETH_TOKEN_ADDRESS=0x0a180a76e4466bf68a7f86fb029bed3cccfaaac5
+      - REACT_APP_NETWORK_ID=3
+    restart: on-failure:5
+  api:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
+    container_name: hydro-sdk-api
+    command: /bin/api
+    ports:
+      - 3001:3001
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
+      - HSK_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
+      - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+      - redis
+    restart: on-failure:5
+  ws:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
+    container_name: hydro-sdk-ws
+    command: /bin/websocket
+    ports:
+      - 3002:3002
+    environment:
+      - HSK_API_URL=http://api:3001
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - api
+    restart: on-failure:5
+  watcher:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
+    container_name: hydro-sdk-watcher
+    command: /bin/watcher
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_LOG_LEVEL=DEBUG
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - db
+  engine:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
+    container_name: hydro-sdk-engine
+    command: /bin/engine
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - db
+    restart: on-failure:5
+  launcher:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
+    container_name: hydro-sdk-launcher
+    command: /bin/launcher
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
+      - HSK_RELAYER_PK=0x01d175f4cd5c8cbca1e9916934b59ef9804524db177762f25818ca270d2d0b50
+      - HSK_LOG_LEVEL=DEBUG
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+    restart: on-failure:5

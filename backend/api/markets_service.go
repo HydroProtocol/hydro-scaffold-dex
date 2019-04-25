@@ -49,6 +49,9 @@ func GetMarkets(_ Param) (interface{}, error) {
 
 	for _, dbMarket := range dbMarkets {
 		marketStatus := GetMarketStatus(dbMarket.ID)
+
+		gasFeeAmount := getGasFeeAmount(dbMarket)
+
 		markets = append(markets, Market{
 			ID:                     dbMarket.ID,
 			BaseToken:              dbMarket.BaseTokenSymbol,
@@ -64,7 +67,7 @@ func GetMarkets(_ Param) (interface{}, error) {
 			AmountDecimals:         dbMarket.AmountDecimals,
 			AsMakerFeeRate:         dbMarket.MakerFeeRate,
 			AsTakerFeeRate:         dbMarket.TakerFeeRate,
-			GasFeeAmount:           dbMarket.GasUsedEstimation,
+			GasFeeAmount:           gasFeeAmount,
 			SupportedOrderTypes:    []string{"limit", "market"},
 			MarketOrderMaxSlippage: utils.StringToDecimal("0.1"),
 			MarketStatus:           *marketStatus,

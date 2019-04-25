@@ -77,6 +77,8 @@ func CancelOrder(p Param) (interface{}, error) {
 }
 
 func BuildOrder(p Param) (interface{}, error) {
+	utils.Debug("BuildOrder param %v", p)
+
 	req := p.(*BuildOrderReq)
 	err := checkBalanceAndAllowance(req, req.Address)
 	if err != nil {
