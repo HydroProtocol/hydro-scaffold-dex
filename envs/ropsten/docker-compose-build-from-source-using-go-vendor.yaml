@@ -9,16 +9,15 @@ services:
       - 6379:6379
     restart: on-failure:5
   db:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile-vendor
+    image: postgres
     container_name: hydro-sdk-db
+    ports:
+      - 5432:5432
+    restart: always
     volumes:
-      - datavolume:/data
-      - ${PWD}/envs/ropsten/seed.sql:/db/seed.sql
-    command:
-      # only init sqlite db if db file not exist
-      sh -c "[ ! -f /data/sqlite3-ropsten.db ] && cat /db/migrations/0001-init.up.sql /db/seed.sql | sqlite3 /data/sqlite3-ropsten.db"
+      - datavolume:/var/lib/postgresql/data
+      - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
+      - ./envs/ropsten/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     build: ./web
     container_name: hydro-box-dex-web
@@ -43,7 +42,7 @@ services:
     ports:
       - 3001:3001
     environment:
-      - HSK_DATABASE_URL=/data/sqlite3-ropsten.db
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
@@ -82,7 +81,7 @@ services:
     container_name: hydro-sdk-watcher
     command: /bin/watcher
     environment:
-      - HSK_DATABASE_URL=/data/sqlite3-ropsten.db
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
@@ -99,7 +98,7 @@ services:
     container_name: hydro-sdk-engine
     command: /bin/engine
     environment:
-      - HSK_DATABASE_URL=/data/sqlite3-ropsten.db
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
       - HSK_LOG_LEVEL=DEBUG
@@ -116,7 +115,7 @@ services:
     container_name: hydro-sdk-launcher
     command: /bin/launcher
     environment:
-      - HSK_DATABASE_URL=/data/sqlite3-ropsten.db
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
       - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
