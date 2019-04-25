@@ -8,35 +8,30 @@ services:
     ports:
       - 6379:6379
     restart: on-failure:5
-  ethereum-node:
-    container_name: hydro-box-dex-ethereum-node
-    image: hydroprotocolio/ethereum-test-node:latest
-    ports:
-      - 8545:8545
-    restart: on-failure:5
   db:
-    container_name: hydro-sdk-pg
     image: postgres
+    container_name: hydro-box-dex-pg
     ports:
       - 5432:5432
     restart: always
     volumes:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
-      - ./envs/ropsten/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
+      - ./envs/ropsten/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     image: hydroprotocolio/hydro-box-dex-web:latest
     container_name: hydro-box-dex-web
     ports:
       - 3000:8043
     environment:
-      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL,REACT_APP_WETH_TOKEN_ADDRESS
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
-      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deEd90825564
-      - REACT_APP_HYDRO_PROXY_ADDRESS=0x1b9540F50b3B9DDE35CEA9A403026a78965234aC
-      - REACT_APP_HYDRO_PROXY_MODE=deposit
-      - REACT_APP_NODE_URL=https://ropsten.infura.io
+      - REACT_APP_NODE_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - REACT_APP_HYDRO_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
+      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
+      - REACT_APP_WETH_TOKEN_ADDRESS=0x0a180a76e4466bf68a7f86fb029bed3cccfaaac5
+      - REACT_APP_NETWORK_ID=3
     restart: on-failure:5
   api:
     image: hydroprotocolio/hydro-box-dex-backend:latest
@@ -48,18 +43,16 @@ services:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
-      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
-      - HSK_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deEd90825564
-      - HSK_RELAYER_ADDRESS=___CHANGE_ME___
-      - HSK_PROXY_ADDRESS=0x1b9540F50b3B9DDE35CEA9A403026a78965234aC
-      - HSK_PROXY_MODE=deposit
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
+      - HSK_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
+      - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
       - HSK_LOG_LEVEL=DEBUG
     volumes:
       - datavolume:/data
     depends_on:
       - db
       - redis
-      - ethereum-node
     restart: on-failure:5
   ws:
     image: hydroprotocolio/hydro-box-dex-backend:latest
@@ -84,14 +77,15 @@ services:
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
-      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
     volumes:
       - datavolume:/data
     depends_on:
       - redis
-      - ethereum-node
       - db
+    restart: on-failure:5
   engine:
     image: hydroprotocolio/hydro-box-dex-backend:latest
     container_name: hydro-box-dex-engine
@@ -100,7 +94,6 @@ services:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
-      - HSK_PROXY_ADDRESS=0x1b9540F50b3B9DDE35CEA9A403026a78965234aC
       - HSK_LOG_LEVEL=DEBUG
     volumes:
       - datavolume:/data
@@ -114,14 +107,13 @@ services:
     command: /bin/launcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
-      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
-      - HSK_RELAYER_ADDRESS=___CHANGE_ME___
-      - HSK_RELAYER_PK=___CHANGE_ME___
+      - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
+      - HSK_RELAYER_PK=0x01d175f4cd5c8cbca1e9916934b59ef9804524db177762f25818ca270d2d0b50
       - HSK_LOG_LEVEL=DEBUG
     volumes:
       - datavolume:/data
     depends_on:
-      - ethereum-node
       - db
     restart: on-failure:5
