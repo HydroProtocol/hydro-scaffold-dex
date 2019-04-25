@@ -3,10 +3,10 @@ rmdb:
 	rm -f db/test.db
 
 initdb: rmdb
-	sqlite3 db/development.db < db/migrations/0001-init.up.sql
+	psql -hlocalhost -dpostgres -upostgres < db/migrations/0001-init.up.sql
 
 seed: initdb
-	sqlite3 db/development.db < db/seed.sql
+	psql -hlocalhost -dpostgres -upostgres < db/seed.sql
 
 test:
 	go test ./... --count=1 --cover
