@@ -1,12 +1,11 @@
 rmdb:
-	rm -f db/development.db
-	rm -f db/test.db
+	psql postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable < db/migrations/0001-init.down.sql
 
 initdb: rmdb
-	sqlite3 db/development.db < db/migrations/0001-init.up.sql
+	psql postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable < db/migrations/0001-init.up.sql
 
 seed: initdb
-	sqlite3 db/development.db < db/seed.sql
+	psql postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable < db/seed.sql
 
 test:
 	go test ./... --count=1 --cover
