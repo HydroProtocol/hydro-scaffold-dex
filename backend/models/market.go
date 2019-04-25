@@ -43,7 +43,7 @@ type marketDao struct {
 }
 
 func (marketDao) FindAllMarkets() []*Market {
-	markets := []*Market{}
+	var markets []*Market
 	findAllBy(&markets, nil, nil, -1, -1)
 	return markets
 }

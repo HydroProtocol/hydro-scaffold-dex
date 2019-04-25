@@ -27,7 +27,9 @@ func run() int {
 	models.ConnectDatabase("sqlite3", os.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
-	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
+	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), config.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
+	hydro.EnableDebug(true)
+
 	signService := launcher.NewDefaultSignService(os.Getenv("HSK_RELAYER_PK"), hydro.GetTransactionCount)
 	gasService := func() decimal.Decimal { return utils.StringToDecimal("3000000000") } // default 10 Gwei
 
@@ -55,6 +57,7 @@ func Run(l *launcher.Launcher, startMetrics func()) {
 				return
 			default:
 				utils.Info("no logs need to be sent. sleep %ds", pollingIntervalSeconds)
+
 				time.Sleep(pollingIntervalSeconds * time.Second)
 				continue
 			}

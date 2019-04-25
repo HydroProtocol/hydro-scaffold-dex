@@ -83,7 +83,8 @@ func main() {
 	client := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
 
 	// Init Blockchain Client
-	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"))
+	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"), config.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
+	hydro.EnableDebug(true)
 
 	// init Key/Value Store
 	kvStore, err := common.InitKVStore(&common.RedisKVStoreConfig{

@@ -1,5 +1,16 @@
+github.com/HydroProtocol/hydro-box-dex/backend v0.0.0-20190424084346-fed00803df8c/go.mod h1:MTdI15irRpjvPiQungfN8HX9m0UjrvBnTEVFpokOw40=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.13 h1:fbAbm1jSUECVwksq1b3GACw65TD5qZfxbSl82EKicLE=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.13/go.mod h1:h2mrZNPr/XAihSBGNaV6upvD3b9gv8rBGb9W6Hvz8pc=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.16 h1:/m9tmdWbdjfHldqwiuEF7dJgKMMALc3EWsTkLyjPqcw=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.16/go.mod h1:Jiy0OubmP6BAzRiZtW6IIcKZG4plNQ3SDmwbNztQoxk=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.17 h1:aUW/Kk2VGxw5mvELJQ5HI6/nrNkE2aArqDhnvSPJouY=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.17/go.mod h1:Z42XBqBcjxPSwL2obNkHq3S2N2OR5B+Ytf0ttRvWM2A=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.18 h1:EaInnfJX5HNkZYRkK72a5jWIS9KfSbgnsfkDOVlhEn8=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.18/go.mod h1:Z42XBqBcjxPSwL2obNkHq3S2N2OR5B+Ytf0ttRvWM2A=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.20 h1:rP3MoMqAK0GhRJj0d8/NbwbGy8YYV11HLZaxd26BoU8=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.20/go.mod h1:7aYPlTY+A9ZSDVOemHQacm83lSWj8oRf/uV84mBLy4c=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.24 h1:VJTfJvUOURjvrZLFOSBKeJJDSJFItM03LUm81Cy6dYE=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.24/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d h1:xG8Pj6Y6J760xwETNmMzmlt38QSwz0BLp1cZ09g27uw=
 github.com/btcsuite/btcd v0.0.0-20190115013929-ed77733ec07d/go.mod h1:d3C0AkH6BRcvO8T0UEPu53cnw4IbV63x1bEjildYhO0=

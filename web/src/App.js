@@ -7,6 +7,7 @@ import OrderBook from './components/Orderbook';
 import Trade from './components/Trade';
 import Wallet from './components/Wallet';
 import Orders from './components/Orders';
+import Charts from './components/Charts';
 import TradeHistory from './components/TradeHistory';
 import { HydroWallet } from '@gongddex/hydro-sdk-wallet/build/wallets';
 import { loadHydroWallet } from '@gongddex/hydro-sdk-wallet/build/actions/wallet';
@@ -55,16 +56,22 @@ class App extends React.PureComponent {
         <Header />
         <div className="flex flex-1 overflow-hidden">
           <div className="flex">
-            <div className="grid border-right">
-              <Trade />
+            <div className="flex-column flex-1 border-right">
+              <div className="grid flex-1">
+                <Trade />
+              </div>
+              <div className="grid flex-1 border-top">
+                <Wallet />
+              </div>
             </div>
+
             <div className="grid border-right flex-column">
               <OrderBook />
             </div>
           </div>
           <div className="flex-column flex-1 border-right">
-            <div className="grid flex-1">
-              <Wallet />
+            <div className="grid flex-2">
+              <Charts />
             </div>
             <div className="grid flex-1 border-top">
               <Orders />
