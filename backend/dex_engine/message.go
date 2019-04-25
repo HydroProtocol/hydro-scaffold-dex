@@ -76,7 +76,7 @@ func pushAccountMessage(address string, payload interface{}) error {
 }
 
 func pushMessage(message interface{}) error {
-	utils.Debug("sending pushMessage:", message)
+	utils.Debug("sending pushMessage: %v", message)
 
 	msgBytes, err := json.Marshal(message)
 
