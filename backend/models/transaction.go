@@ -2,8 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
-	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"time"
 )
 
@@ -17,7 +15,7 @@ type ITransactionDao interface {
 }
 
 type Transaction struct {
-	ID              int64           `json:"id"              db:"id" primaryKey:"true"  autoIncrement:"true"`
+	ID              int64           `json:"id"              db:"id" primaryKey:"true"  autoIncrement:"true" gorm:"primary_key"`
 	MarketID        string          `json:"marketID"        db:"market_id"`
 	TransactionHash *sql.NullString `json:"transactionHash" db:"transaction_hash"`
 	Status          string          `json:"status"          db:"status"`
@@ -26,33 +24,24 @@ type Transaction struct {
 	CreatedAt       time.Time       `json:"createdAt"       db:"created_at"`
 }
 
+func (Transaction) TableName() string {
+	return "transactions"
+}
+
 var TransactionDao ITransactionDao
+var TransactionDaoPG ITransactionDao
 
 func init() {
-	TransactionDao = &transactionDao{}
+	TransactionDao = &transactionDaoPG{}
+	TransactionDaoPG = TransactionDao
 }
 
-type transactionDao struct {
+type transactionDaoPG struct {
 }
 
-func (d *transactionDao) Count() int {
-	sqlString := "select count(*) from transactions"
-	var count int
-	err := DB.QueryRowx(sqlString).Scan(&count)
-
-	if err != nil {
-		utils.Error("GetNonce error: %v", err)
-		panic(err)
-	}
-
-	return count
-}
-
-func (d *transactionDao) FindTransactionByHash(transactionHash string) *Transaction {
+func (transactionDaoPG) FindTransactionByHash(transactionHash string) *Transaction {
 	var transaction Transaction
-
-	findBy(&transaction, &OpEq{"transaction_hash", transactionHash}, nil)
-
+	DB.Where("transaction_hash = ?", transactionHash).First(&transaction)
 	if !transaction.TransactionHash.Valid {
 		return nil
 	}
@@ -60,39 +49,31 @@ func (d *transactionDao) FindTransactionByHash(transactionHash string) *Transact
 	return &transaction
 }
 
-func (d *transactionDao) InsertTransaction(transaction *Transaction) error {
-	id, err := insert(transaction)
-
-	if err != nil {
-		return err
-	}
-
-	transaction.ID = id
-
-	return nil
+func (transactionDaoPG) InsertTransaction(transaction *Transaction) error {
+	return DB.Create(transaction).Error
 }
 
-func (d *transactionDao) FindTransactionByID(id int64) *Transaction {
+func (transactionDaoPG) UpdateTransaction(transaction *Transaction) error {
+	return DB.Save(transaction).Error
+}
+
+func (transactionDaoPG) UpdateTransactionStatus(status, hash string) error {
+	return DB.Exec(`update transactions set "status"=$1 where transaction_hash = $2`, status, hash).Error
+}
+
+func (transactionDaoPG) Count() int {
+	var count int
+	DB.Model(&Transaction{}).Count(&count)
+	return count
+}
+
+func (transactionDaoPG) FindTransactionByID(id int64) *Transaction {
 	var transaction Transaction
 
-	findBy(&transaction, &OpEq{"id", id}, nil)
-
-	empty := Transaction{}
-	if transaction == empty {
+	DB.Where("id = ?", id).Find(&transaction)
+	if transaction.Status == "" {
 		return nil
 	}
 
 	return &transaction
-}
-
-func (*transactionDao) UpdateTransaction(transaction *Transaction) error {
-	return update(transaction, "Status", "TransactionHash", "ExecutedAt")
-}
-
-func (*transactionDao) UpdateTransactionStatus(status, hash string) error {
-	s := fmt.Sprintf(`update transactions set "status"=$1 where transaction_hash = $2`)
-
-	_, err := DB.Exec(s, status, hash)
-
-	return err
 }

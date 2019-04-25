@@ -2,26 +2,24 @@ package models
 
 import (
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestGetDefaultMarketDao(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_GetDefaultMarketDao(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	marketDao := MarketDao
-	markets := marketDao.FindAllMarkets()
+	markets := MarketDaoPG.FindAllMarkets()
 	assert.EqualValues(t, 0, len(markets))
 }
 
-func TestMarketDao_FindAndInsertMarket(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_MarketDao_FindAndInsertMarket(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	dbMarket := MarketDao.FindMarketByID("HOT-WETH")
+	dbMarket := MarketDaoPG.FindMarketByID("HOT-WETH")
 	assert.Nil(t, dbMarket)
 
 	market := Market{
@@ -43,8 +41,8 @@ func TestMarketDao_FindAndInsertMarket(t *testing.T) {
 		GasUsedEstimation:  250000,
 	}
 
-	MarketDao.InsertMarket(&market)
-	dbMarket = MarketDao.FindMarketByID("HOT-WETH")
+	assert.Nil(t, MarketDaoPG.InsertMarket(&market))
+	dbMarket = MarketDaoPG.FindMarketByID("HOT-WETH")
 
 	assert.EqualValues(t, market.ID, dbMarket.ID)
 	assert.EqualValues(t, market.BaseTokenDecimals, dbMarket.BaseTokenDecimals)

@@ -3,8 +3,8 @@ package models
 import (
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"github.com/davecgh/go-spew/spew"
 	uuid2 "github.com/satori/go.uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
@@ -13,11 +13,11 @@ import (
 	"time"
 )
 
-func TestGetAccountOrders(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_GetAccountOrders(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	orders := OrderDao.FindMarketPendingOrders("WETH-DAI")
+	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 0, len(orders))
 
 	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
@@ -32,73 +32,75 @@ func TestGetAccountOrders(t *testing.T) {
 
 	order10 := NewOrder(config.User2, "WETH-DAI", "buy", false)
 
-	_ = OrderDao.InsertOrder(order1)
-	_ = OrderDao.InsertOrder(order2)
-	_ = OrderDao.InsertOrder(order3)
-	_ = OrderDao.InsertOrder(order4)
-	_ = OrderDao.InsertOrder(order5)
-	_ = OrderDao.InsertOrder(order6)
-	_ = OrderDao.InsertOrder(order7)
-	_ = OrderDao.InsertOrder(order8)
-	_ = OrderDao.InsertOrder(order9)
-	_ = OrderDao.InsertOrder(order10)
+	err := OrderDaoPG.InsertOrder(order1)
+	spew.Dump(err)
+
+	_ = OrderDaoPG.InsertOrder(order2)
+	_ = OrderDaoPG.InsertOrder(order3)
+	_ = OrderDaoPG.InsertOrder(order4)
+	_ = OrderDaoPG.InsertOrder(order5)
+	_ = OrderDaoPG.InsertOrder(order6)
+	_ = OrderDaoPG.InsertOrder(order7)
+	_ = OrderDaoPG.InsertOrder(order8)
+	_ = OrderDaoPG.InsertOrder(order9)
+	_ = OrderDaoPG.InsertOrder(order10)
 
 	var count int64
-	count, orders = OrderDao.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 9, 3)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 3, 9)
 	assert.EqualValues(t, 6, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDao.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 10, 0)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 10)
 	assert.EqualValues(t, 9, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDao.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 9, 0)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 9)
 	assert.EqualValues(t, 9, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDao.FindByAccount(config.User1, "WETH-DAI", common.ORDER_FULL_FILLED, 9, 0)
+	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_FULL_FILLED, 0, 9)
 	assert.EqualValues(t, 0, len(orders))
 	assert.EqualValues(t, 0, count)
 }
 
-func TestGetMarketPendingOrders(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_GetMarketPendingOrders(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	orders := OrderDao.FindMarketPendingOrders("WETH-DAI")
+	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 0, len(orders))
 
 	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
 	order2 := NewOrder(config.User1, "WETH-DAI", "buy", false)
 	order3 := NewOrder(config.User1, "WETH-DAI", "buy", false)
 
-	_ = OrderDao.InsertOrder(order1)
-	_ = OrderDao.InsertOrder(order2)
-	_ = OrderDao.InsertOrder(order3)
+	_ = OrderDaoPG.InsertOrder(order1)
+	_ = OrderDaoPG.InsertOrder(order2)
+	_ = OrderDaoPG.InsertOrder(order3)
 
-	orders = OrderDao.FindMarketPendingOrders("WETH-DAI")
+	orders = OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 3, len(orders))
 }
 
-func TestFindNotExistOrder(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_FindNotExistOrder(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	dbOrder := OrderDao.FindByID("empty_id")
+	dbOrder := OrderDaoPG.FindByID("empty_id")
 	assert.Nil(t, dbOrder)
 
 }
 
-func TestInsertAndFindOneAndUpdateOrders(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func Test_PG_InsertAndFindOneAndUpdateOrders(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
 	order := RandomOrder()
 
-	err := OrderDao.InsertOrder(order)
+	err := OrderDaoPG.InsertOrder(order)
 	assert.Nil(t, err)
 
-	dbOrder := OrderDao.FindByID(order.ID)
+	dbOrder := OrderDaoPG.FindByID(order.ID)
 	assert.EqualValues(t, dbOrder.ID, order.ID)
 	assert.EqualValues(t, dbOrder.Status, order.Status)
 	assert.EqualValues(t, dbOrder.Amount.String(), order.Amount.String())
@@ -108,14 +110,14 @@ func TestInsertAndFindOneAndUpdateOrders(t *testing.T) {
 
 	dbOrder.PendingAmount.Add(dbOrder.AvailableAmount)
 	dbOrder.AvailableAmount = decimal.Zero
-	err = OrderDao.UpdateOrder(dbOrder)
-	dbOrder2 := OrderDao.FindByID(order.ID)
+	err = OrderDaoPG.UpdateOrder(dbOrder)
+	dbOrder2 := OrderDaoPG.FindByID(order.ID)
 
 	assert.EqualValues(t, dbOrder.AvailableAmount.String(), dbOrder2.AvailableAmount.String())
 	assert.EqualValues(t, dbOrder.PendingAmount.String(), dbOrder2.PendingAmount.String())
 }
 
-func TestOrder_GetOrderJson(t *testing.T) {
+func Test_PG_Order_GetOrderJson(t *testing.T) {
 	json := OrderJSON{
 		Trader:                  config.User1,
 		Relayer:                 config.Getenv("HSK_RELAYER_ADDRESS"),
@@ -168,8 +170,8 @@ func NewOrder(account, marketID, side string, withPending bool) *Order {
 		MakerRebateRate: utils.StringToDecimal("0"),
 		GasFeeAmount:    utils.StringToDecimal("1000000"),
 		JSON:            "something",
-		CreatedAt:       time.Now(),
-		UpdatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
+		UpdatedAt:       time.Now().UTC(),
 	}
 
 	return order
@@ -201,7 +203,7 @@ func RandomMatchOrder() (*Order, *Order) {
 		MakerRebateRate: utils.StringToDecimal("0"),
 		GasFeeAmount:    utils.StringToDecimal("1000000"),
 		JSON:            "something",
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	return makerOrder, takerOrder
@@ -234,7 +236,7 @@ func RandomOrder() *Order {
 		MakerRebateRate: utils.StringToDecimal("0"),
 		GasFeeAmount:    utils.StringToDecimal("1000000"),
 		JSON:            "something",
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	return order

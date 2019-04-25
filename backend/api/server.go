@@ -133,10 +133,10 @@ func StartServer(ctx context.Context, startMetric func()) {
 	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
 
 	// init blockchain
-	hydro = ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
+	hydro = ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 
 	//init database
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	CacheService, _ = common.InitKVStore(
 		&common.RedisKVStoreConfig{

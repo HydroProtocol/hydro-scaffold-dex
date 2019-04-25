@@ -97,6 +97,7 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 	eventOrderString := event.Order
 	var eventOrder models.Order
 	_ = json.Unmarshal([]byte(eventOrderString), &eventOrder)
+
 	eventMemoryOrder := &common.MemoryOrder{ID: eventOrder.ID, MarketID: eventOrder.MarketID, Price: eventOrder.Price, Amount: eventOrder.Amount, Side: eventOrder.Side}
 
 	utils.Debug("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
@@ -165,8 +166,8 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 			String: "",
 		},
 		MarketID:   takerOrder.MarketID,
-		ExecutedAt: time.Now(),
-		CreatedAt:  time.Now(),
+		ExecutedAt: time.Now().UTC(),
+		CreatedAt:  time.Now().UTC(),
 	}
 	err := models.TransactionDao.InsertTransaction(transaction)
 
@@ -183,8 +184,8 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		Value:     decimal.Zero,
 		GasLimit:  int64(len(matchResult.MatchItems) * 250000),
 		Data:      utils.Bytes2HexP(hydroProtocol.GetMatchOrderCallData(hydroTakerOrder, hydroMakerOrders, baseTokenFilledAmounts)),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 	}
 
 	err = models.LaunchLogDao.InsertLaunchLog(launchLog)
@@ -214,8 +215,8 @@ func newTradesByMatchResult(matchResult *MatchResultWithOrders, transactionID in
 			TakerOrderID:    takerOrder.ID,
 			Sequence:        i,
 			Amount:          item.MatchedAmount,
-			Price:           takerOrder.Price,
-			CreatedAt:       time.Now(),
+			Price:           modelMakerOrder.Price,
+			CreatedAt:       time.Now().UTC(),
 		}
 		trades = append(trades, trade)
 	}

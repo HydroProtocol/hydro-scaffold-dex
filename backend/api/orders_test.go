@@ -7,7 +7,6 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
@@ -24,8 +23,8 @@ type BuildOrderTestSuit struct {
 }
 
 func (suite *BuildOrderTestSuit) SetupTest() {
-	test.PreTest()
-	models.InitTestDB()
+	setEnvs()
+	models.InitTestDBPG()
 
 	mockMarketDao()
 	mockErc20()

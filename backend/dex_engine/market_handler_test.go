@@ -11,7 +11,6 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/mock"
@@ -36,8 +35,8 @@ func (s *marketHandlerSuite) TearDownSuite() {
 }
 
 func (s *marketHandlerSuite) SetupTest() {
-	test.PreTest()
-	models.InitTestDB()
+	setEnvs()
+	models.InitTestDBPG()
 	//models.MockMarketDao()
 	market := &models.Market{
 		ID:                 "HOT-DAI",
@@ -77,7 +76,7 @@ func (s *marketHandlerSuite) SetupTest() {
 	kvStore.On("Set", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	kvStore.On("Get", mock.Anything).Return("", common.KVStoreEmpty)
 	marketHotDai := models.MarketHotDai()
-	marketHandler, _ := NewMarketHandler(context.Background(), kvStore, marketHotDai, engine.NewEngine(context.Background()))
+	marketHandler, _ := NewMarketHandler(context.Background(), marketHotDai, engine.NewEngine(context.Background()))
 	s.marketHandler = marketHandler
 
 	s.marketHandler.hydroEngine.RegisterOrderBookActivitiesHandler(RedisOrderBookActivitiesHandler{})
@@ -128,7 +127,6 @@ type batchMatchOrdersTest struct {
 
 func (b *batchMatchOrdersTest) Reset() {
 	b.takerOrder = b.takerOrderParams.toModelOrder()
-
 	b.makerOrders = make([]*models.Order, 0, 10)
 
 	for i := range b.makerOrdersParams {
@@ -890,7 +888,7 @@ func newModelOrder(side string, price, amount decimal.Decimal) *models.Order {
 	id := getHydroOrderHashHexFromOrderJson(&orderJson)
 	idBytes, _ := hex.DecodeString(id)
 
-	signature, _ := ethereum.PersonalSign(idBytes, test.User1PrivateKey)
+	signature, _ := ethereum.PersonalSign(idBytes, User1PrivateKey)
 
 	orderJson.Signature = "0x" + hex.EncodeToString(signature)
 
@@ -913,7 +911,7 @@ func newModelOrder(side string, price, amount decimal.Decimal) *models.Order {
 		MakerRebateRate: decimal.Zero,
 		GasFeeAmount:    decimal.Zero,
 		JSON:            utils.ToJsonString(&orderJson),
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 }
 

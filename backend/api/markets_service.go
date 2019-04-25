@@ -77,7 +77,7 @@ func GetMarkets(_ Param) (interface{}, error) {
 }
 
 func GetMarketStatus(marketID string) *MarketStatus {
-	yesterday := time.Now().Add(-time.Hour * 24)
+	yesterday := time.Now().UTC().Add(-time.Hour * 24)
 	trades := models.TradeDao.FindTradesByMarket(marketID, yesterday, time.Now())
 
 	lastPrice := decimal.Zero

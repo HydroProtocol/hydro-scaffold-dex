@@ -45,7 +45,7 @@ func newEchoServer() *echo.Echo {
 
 func StartServer(ctx context.Context) {
 	//init database
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	//init health check service
 	healthCheckService = NewHealthCheckService(nil)

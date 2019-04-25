@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
@@ -127,7 +127,7 @@ func PlaceOrder(p Param) (interface{}, error) {
 		MakerRebateRate: cacheOrder.OrderResponse.MakerRebateRate,
 		GasFeeAmount:    cacheOrder.OrderResponse.GasFeeAmount,
 		JSON:            utils.ToJsonString(cacheOrder.OrderResponse.Json),
-		CreatedAt:       time.Now(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	newOrderEvent, _ := json.Marshal(common.NewOrderEvent{

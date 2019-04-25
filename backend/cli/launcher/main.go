@@ -1,17 +1,15 @@
 package main
 
 import (
-	"fmt"
-	_ "github.com/joho/godotenv/autoload"
-)
-import (
 	"context"
+	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/launcher"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/shopspring/decimal"
 	"os"
 	"time"
@@ -24,7 +22,7 @@ func run() int {
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	models.ConnectDatabase("sqlite3", os.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
 	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))

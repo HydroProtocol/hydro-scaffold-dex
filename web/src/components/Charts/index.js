@@ -14,8 +14,10 @@ class Charts extends React.Component {
       loading: false,
       noData: false,
       data: [],
+      // from and to are timestamp range for fetching API
       from: null,
       to: null,
+      // start and end are indexes range of data to show in the screen
       start: null,
       end: null,
       lastUpdatedAt: new Date().getTime() // for loadRight
@@ -226,6 +228,8 @@ class Charts extends React.Component {
                 this.loadData(result.value);
                 window.localStorage.setItem('granularityStr', result.value);
               }}
+              start={this.state.start}
+              end={this.state.end}
             />
           </div>
           <div className="grid flex-1 border-top">

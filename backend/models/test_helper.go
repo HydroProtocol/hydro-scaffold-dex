@@ -228,13 +228,13 @@ func MockTradeDao() {
 	var tradesWethDai []*Trade
 	var tradesHotDai []*Trade
 
-	trade1 := getMockTradeWithTime("WETH-DAI", true, time.Now().Add(-time.Hour*1))
-	trade2 := getMockTradeWithTime("WETH-DAI", true, time.Now().Add(-time.Hour*2))
-	trade3 := getMockTradeWithTime("WETH-DAI", false, time.Now().Add(-time.Hour*3))
+	trade1 := getMockTradeWithTime("WETH-DAI", true, time.Now().UTC().Add(-time.Hour*1))
+	trade2 := getMockTradeWithTime("WETH-DAI", true, time.Now().UTC().Add(-time.Hour*2))
+	trade3 := getMockTradeWithTime("WETH-DAI", false, time.Now().UTC().Add(-time.Hour*3))
 
 	trade4 := getMockTradeWithTime("HOT-DAI", true, time.Now().Add(-time.Hour*1))
 	trade5 := getMockTradeWithTime("HOT-DAI", true, time.Now().Add(-time.Hour*2))
-	trade6 := getMockTradeWithTime("HOT-DAI", false, time.Now().Add(-time.Hour*3))
+	trade6 := getMockTradeWithTime("HOT-DAI", false, time.Now().UTC().Add(-time.Hour*3))
 
 	tradesWethDai = append(tradesWethDai, trade1)
 	tradesWethDai = append(tradesWethDai, trade2)
@@ -274,16 +274,46 @@ func getMockTradeWithTime(marketID string, success bool, time time.Time) *Trade 
 
 	return &trade
 }
-func InitTestDB() {
-	ConnectDatabase("sqlite3", os.Getenv("HSK_DATABASE_URL"))
-	bts, err := ioutil.ReadFile("../db/migrations/0001-init.up.sql")
+
+func InitTestDBPG() {
+	if DB != nil {
+		err := DB.Close()
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	Connect(os.Getenv("HSK_DATABASE_URL"))
+	DB.LogMode(true)
+	createSql, err := ioutil.ReadFile("../db/migrations/0001-init.up.sql")
+	cleanSql, err := ioutil.ReadFile("../db/migrations/0001-init.down.sql")
 
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = DB.Exec(string(bts))
+	err = DB.Exec(string(cleanSql)).Error
 	if err != nil {
 		panic(err)
 	}
+
+	err = DB.Exec(string(createSql)).Error
+	if err != nil {
+		panic(err)
+	}
+}
+
+func setEnvs() {
+	_ = os.Setenv("HSK_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+	_ = os.Setenv("HSK_REDIS_URL", "redis://redis:6379/0")
+	_ = os.Setenv("HSK_BLOCKCHAIN_RPC_URL", "http://127.0.0.1:8545")
+	_ = os.Setenv("HSK_WETH_TOKEN_ADDRESS", "0x4a817489643a89a1428b2dd441c3fbe4dbf44789")
+	_ = os.Setenv("HSK_USD_TOKEN_ADDRESS", "0xbc3524faa62d0763818636d5e400f112279d6cc0")
+	_ = os.Setenv("HSK_HYDRO_TOKEN_ADDRESS", "0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218")
+	_ = os.Setenv("HSK_PROXY_ADDRESS", "0x04f67e8b7c39a25e100847cb167460d715215feb")
+	_ = os.Setenv("HSK_HYBRID_EXCHANGE_ADDRESS", "0x179fd00c328d4ecdb5043c8686d377a24ede9d11")
+	_ = os.Setenv("HSK_RELAYER_ADDRESS", "0x93388b4efe13b9b18ed480783c05462409851547")
+	_ = os.Setenv("HSK_RELAYER_PK", "95b0a982c0dfc5ab70bf915dcf9f4b790544d25bc5e6cff0f38a59d0bba58651")
+	_ = os.Setenv("HSK_CHAIN_ID", "50")
+	_ = os.Setenv("HSK_WEB3_URL", "http://127.0.0.1:8545")
 }

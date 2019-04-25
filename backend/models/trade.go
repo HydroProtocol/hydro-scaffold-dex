@@ -7,7 +7,7 @@ import (
 )
 
 type ITradeDao interface {
-	FindTradesByMarket(pair string, startTime time.Time, endTime time.Time) []*Trade
+	FindTradesByMarket(marketID string, startTime time.Time, endTime time.Time) []*Trade
 	FindAllTrades(marketID string) (int64, []*Trade)
 	FindTradesByHash(hash string) []*Trade
 	FindTradeByID(id int64) *Trade
@@ -20,7 +20,7 @@ type ITradeDao interface {
 }
 
 type Trade struct {
-	ID              int64           `json:"id"               db:"id" primaryKey:"true" autoIncrement:"true"`
+	ID              int64           `json:"id"               db:"id" primaryKey:"true" autoIncrement:"true" gorm:"primary_key"`
 	TransactionID   int64           `json:"transactionID"    db:"transaction_id"`
 	TransactionHash string          `json:"transactionHash"  db:"transaction_hash"`
 	Status          string          `json:"status"           db:"status"`
@@ -38,140 +38,78 @@ type Trade struct {
 	UpdatedAt       time.Time       `json:"updatedAt"        db:"updated_at"`
 }
 
+func (Trade) TableName() string {
+	return "trades"
+}
+
 var TradeDao ITradeDao
+var TradeDaoPG ITradeDao
 
 func init() {
-	TradeDao = &tradeDao{}
+	TradeDao = &tradeDaoPG{}
+	TradeDaoPG = TradeDao
 }
 
-type tradeDao struct {
+type tradeDaoPG struct {
 }
 
-func (d *tradeDao) FindTradesByHash(hash string) []*Trade {
-	trades := []*Trade{}
-	findAllBy(
-		&trades,
-		&OpEq{
-			"transaction_hash", hash,
-		},
-		map[string]OrderByDirection{"created_at": OrderByAsc},
-		-1,
-		-1,
-	)
+func (tradeDaoPG) FindTradesByMarket(marketID string, startTime time.Time, endTime time.Time) []*Trade {
+	var trades []*Trade
 
+	DB.Where("market_id = ? and status = ? and executed_at between ? and ? ", marketID, common.STATUS_SUCCESSFUL, startTime, endTime).Order("executed_at desc").Find(&trades)
 	return trades
 }
 
-func (d *tradeDao) FindTradesByMarket(marketID string, startTime time.Time, endTime time.Time) []*Trade {
-	trades := []*Trade{}
+func (tradeDaoPG) FindAllTrades(marketID string) (int64, []*Trade) {
+	var trades []*Trade
+	var count int64
 
-	findAllBy(
-		&trades,
-		whereAnd(
-			&OpEq{"market_id", marketID},
-			&OpEq{"status", common.STATUS_SUCCESSFUL},
-			&OpGt{"executed_at", startTime},
-			&OpLt{"executed_at", endTime},
-		),
-		map[string]OrderByDirection{"executed_at": OrderByDesc},
-		-1,
-		-1,
-	)
+	DB.Where("market_id = ? and status = ?", marketID, common.STATUS_SUCCESSFUL).Order("created_at desc").Find(&trades).Count(&count)
+	return count, trades
+}
 
+func (tradeDaoPG) FindTradesByHash(hash string) []*Trade {
+	var trades []*Trade
+	DB.Where("transaction_hash = ?", hash).Order("created_at desc").Find(&trades)
 	return trades
 }
 
-func (d *tradeDao) FindAllTrades(marketID string) (int64, []*Trade) {
-	trades := []*Trade{}
-	conditions := whereAnd(
-		&OpEq{"market_id", marketID},
-		&OpEq{"status", common.STATUS_SUCCESSFUL},
-	)
-	findAllBy(
-		&trades,
-		conditions,
-		map[string]OrderByDirection{"created_at": OrderByAsc},
-		-1,
-		-1,
-	)
-
-	count := findCountBy(&Trade{}, conditions)
-	return int64(count), trades
-}
-
-func (d *tradeDao) FindAccountMarketTrades(account, marketID, status string, limit, offset int) (int64, []*Trade) {
-	trades := []*Trade{}
-	conditions := whereAnd(
-		&OpEq{"market_id", marketID},
-		whereOr(
-			&OpEq{"taker", account},
-			&OpEq{"maker", account},
-		),
-	)
-
-	findAllBy(
-		&trades,
-		conditions,
-		map[string]OrderByDirection{"created_at": OrderByAsc},
-		limit,
-		offset,
-	)
-
-	count := findCountBy(&Trade{}, conditions)
-	return int64(count), trades
-}
-
-func (d *tradeDao) InsertTrade(trade *Trade) error {
-	id, err := insert(trade)
-
-	if err != nil {
-		return err
-	}
-
-	trade.ID = id
-
-	return nil
-}
-
-func (*tradeDao) UpdateTrade(trade *Trade) error {
-	return update(trade, "Status", "TransactionID", "TransactionHash", "ExecutedAt")
-}
-
-func (*tradeDao) FindTradeByID(id int64) *Trade {
+func (tradeDaoPG) FindTradeByID(id int64) *Trade {
 	var trade Trade
 
-	findBy(&trade, &OpEq{"id", id}, nil)
-
-	empty := Trade{}
-	if trade == empty {
+	DB.Where("id = ?", id).Find(&trade)
+	if trade.Status == "" {
 		return nil
 	}
 
 	return &trade
 }
 
-func (*tradeDao) FindTradeByTransactionID(transactionID int64) []*Trade {
-	trades := []*Trade{}
+func (tradeDaoPG) FindAccountMarketTrades(account, marketID, status string, limit, offset int) (int64, []*Trade) {
+	var trades []*Trade
+	var count int64
 
-	findAllBy(
-		&trades,
-		&OpEq{"transaction_id", transactionID},
-		map[string]OrderByDirection{"created_at": OrderByAsc},
-		-1,
-		-1,
-	)
-
-	return trades
+	DB.Where("market_id = ? and (taker = ? or maker = ?)", marketID, account, account).Order("created_at desc").Find(&trades).Count(&count)
+	return count, trades
 }
 
-func (*tradeDao) Count() int {
-	sql := "select count(*) from trades"
+func (tradeDaoPG) InsertTrade(trade *Trade) error {
+	return DB.Create(trade).Error
+}
+
+func (tradeDaoPG) UpdateTrade(trade *Trade) error {
+	return DB.Save(trade).Error
+}
+
+func (tradeDaoPG) Count() int {
 	var count int
-	err := DB.QueryRowx(sql).Scan(&count)
-
-	if err != nil {
-		panic(err)
-	}
-
+	DB.Model(&Trade{}).Count(&count)
 	return count
+}
+
+func (tradeDaoPG) FindTradeByTransactionID(transactionID int64) []*Trade {
+	var trades []*Trade
+
+	DB.Where("transaction_id = ? ", transactionID).Order("created_at asc").Find(&trades)
+	return trades
 }
