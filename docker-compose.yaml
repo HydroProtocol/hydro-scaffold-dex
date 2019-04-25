@@ -117,6 +117,7 @@ services:
       - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
       - HSK_LOG_LEVEL=DEBUG
       - METRICS_PORT=4003
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
     volumes:
       - datavolume:/data
     depends_on:
