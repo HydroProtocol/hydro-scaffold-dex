@@ -1,21 +1,25 @@
 package models
 
 import (
-	"fmt"
-	"github.com/jmoiron/sqlx"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/mattn/go-sqlite3"
+	"time"
 )
 
-var DB *sqlx.DB
+var DB *gorm.DB
 
-func ConnectDatabase(driver, url string) *sqlx.DB {
-	db, err := sqlx.Open(driver, url)
+func Connect(url string) *gorm.DB {
+	db, err := gorm.Open("postgres", url)
 
 	if err != nil {
-		panic(fmt.Errorf("connect database error: %v", err))
+		panic(err)
+	}
+
+	gorm.NowFunc = func() time.Time {
+		return time.Now().UTC()
 	}
 
 	DB = db
-
 	return db
 }

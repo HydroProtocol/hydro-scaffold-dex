@@ -12,7 +12,7 @@ type IMarketDao interface {
 }
 
 type Market struct {
-	ID                string `json:"id"                db:"id" primaryKey:"true"`
+	ID                string `json:"id"                db:"id" primaryKey:"true" gorm:"primary_key"`
 	BaseTokenSymbol   string `json:"baseTokenSymbol"   db:"base_token_symbol"`
 	BaseTokenName     string `json:"BaseTokenName"     db:"base_token_name"`
 	BaseTokenAddress  string `json:"baseTokenAddress"  db:"base_token_address"`
@@ -33,35 +33,40 @@ type Market struct {
 	IsPublished       bool            `json:"isPublished"       db:"is_published"`
 }
 
+func (Market) TableName() string {
+	return "markets"
+}
+
 var MarketDao IMarketDao
+var MarketDaoPG IMarketDao
 
 func init() {
-	MarketDao = &marketDao{}
+	MarketDao = &marketDaoPG{}
+	MarketDaoPG = MarketDao
 }
 
-type marketDao struct {
+type marketDaoPG struct {
 }
 
-func (marketDao) FindAllMarkets() []*Market {
+func (marketDaoPG) FindAllMarkets() []*Market {
 	var markets []*Market
-	findAllBy(&markets, nil, nil, -1, -1)
+	DB.Find(&markets)
 	return markets
 }
 
-func (marketDao) FindMarketByID(marketID string) *Market {
+func (marketDaoPG) FindMarketByID(marketID string) *Market {
 	var market Market
-	findBy(&market, &OpEq{"id", marketID}, nil)
+	DB.Where("id = ?", marketID).First(&market)
 	if market.ID == "" {
 		return nil
 	}
 	return &market
 }
 
-func (marketDao) InsertMarket(market *Market) error {
-	_, err := insert(market)
-	return err
+func (marketDaoPG) InsertMarket(market *Market) error {
+	return DB.Create(market).Error
 }
 
-func (marketDao) UpdateMarket(market *Market) error {
-	return update(market, "MinOrderSize", "PricePrecision", "PriceDecimals", "AmountDecimals", "MakerFeeRate", "TakerFeeRate", "GasUsedEstimation", "IsPublished")
+func (marketDaoPG) UpdateMarket(market *Market) error {
+	return DB.Save(market).Error
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "github.com/joho/godotenv/autoload"
+	"os"
 )
 
 import (
@@ -77,14 +78,16 @@ func main() {
 	go cli.WaitExitSignal(stop)
 
 	// Init Database Client
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	// Init Redis client
-	client := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
+	client := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))
 
 	// Init Blockchain Client
-	hydro := ethereum.NewEthereumHydro(config.Getenv("HSK_BLOCKCHAIN_RPC_URL"), config.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
-	hydro.EnableDebug(true)
+	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
+	if os.Getenv("HSK_LOG_LEVEL") == "DEBUG" {
+		hydro.EnableDebug(true)
+	}
 
 	// init Key/Value Store
 	kvStore, err := common.InitKVStore(&common.RedisKVStoreConfig{

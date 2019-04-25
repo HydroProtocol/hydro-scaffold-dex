@@ -3,32 +3,31 @@ package models
 import (
 	"database/sql"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
 
-func TestTransactionDao_UpdateTransaction(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func TestTransactionDao_PG_UpdateTransaction(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
 	transaction := newTransaction(common.STATUS_PENDING)
-	_ = TransactionDao.InsertTransaction(transaction)
-	TransactionDao.FindTransactionByHash(transaction.TransactionHash.String)
+	_ = TransactionDaoPG.InsertTransaction(transaction)
+	TransactionDaoPG.FindTransactionByHash(transaction.TransactionHash.String)
 
-	dbTransaction := TransactionDao.FindTransactionByID(transaction.ID)
+	dbTransaction := TransactionDaoPG.FindTransactionByID(transaction.ID)
 	dbTransaction.Status = common.STATUS_SUCCESSFUL
-	_ = TransactionDao.UpdateTransaction(dbTransaction)
+	_ = TransactionDaoPG.UpdateTransaction(dbTransaction)
 
-	dbTransaction2 := TransactionDao.FindTransactionByID(transaction.ID)
+	dbTransaction2 := TransactionDaoPG.FindTransactionByID(transaction.ID)
 
 	assert.EqualValues(t, transaction.TransactionHash, dbTransaction2.TransactionHash)
 	assert.EqualValues(t, common.STATUS_SUCCESSFUL, dbTransaction2.Status)
 
-	_ = TransactionDao.UpdateTransactionStatus(common.STATUS_FAILED, dbTransaction2.TransactionHash.String)
-	dbTransaction3 := TransactionDao.FindTransactionByID(transaction.ID)
+	_ = TransactionDaoPG.UpdateTransactionStatus(common.STATUS_FAILED, dbTransaction2.TransactionHash.String)
+	dbTransaction3 := TransactionDaoPG.FindTransactionByID(transaction.ID)
 	assert.EqualValues(t, transaction.TransactionHash, dbTransaction3.TransactionHash)
 	assert.EqualValues(t, common.STATUS_FAILED, dbTransaction3.Status)
 }
@@ -39,8 +38,8 @@ func newTransaction(status string) *Transaction {
 		TransactionHash: &sql.NullString{uuid.NewV4().String(), true},
 		MarketID:        "fix-me",
 		Status:          status,
-		ExecutedAt:      time.Now(),
-		CreatedAt:       time.Now(),
+		ExecutedAt:      time.Now().UTC(),
+		CreatedAt:       time.Now().UTC(),
 	}
 
 	return &transaction

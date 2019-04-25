@@ -1,14 +1,13 @@
 package models
 
 import (
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestTokenDao_GetAllTokens(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func TestTokenDao_PG_GetAllTokens(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
 	token := Token{
 		Address:  "some address",
@@ -17,8 +16,8 @@ func TestTokenDao_GetAllTokens(t *testing.T) {
 		Decimals: 18,
 	}
 
-	TokenDao.InsertToken(&token)
-	tokens := TokenDao.GetAllTokens()
+	TokenDaoPG.InsertToken(&token)
+	tokens := TokenDaoPG.GetAllTokens()
 
 	assert.EqualValues(t, 1, len(tokens))
 }

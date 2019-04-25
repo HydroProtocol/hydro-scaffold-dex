@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/test"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"math/rand"
@@ -13,31 +13,33 @@ import (
 	"time"
 )
 
-func TestLaunchLogDao_FindAllCreated(t *testing.T) {
-	test.PreTest()
-	InitTestDB()
+func TestLaunchLogDao_PG_FindAllCreated(t *testing.T) {
+	setEnvs()
+	InitTestDBPG()
 
-	launchLogs := LaunchLogDao.FindAllCreated()
+	launchLogs := LaunchLogDaoPG.FindAllCreated()
 	assert.EqualValues(t, len(launchLogs), 0)
 
 	launchLog1 := newLaunchLog()
 	launchLog2 := newLaunchLog()
 	launchLog3 := newLaunchLog()
 
-	_ = LaunchLogDao.InsertLaunchLog(launchLog1)
-	_ = LaunchLogDao.InsertLaunchLog(launchLog2)
-	_ = LaunchLogDao.InsertLaunchLog(launchLog3)
+	spew.Dump(launchLog1)
+	spew.Dump(LaunchLogDaoPG.InsertLaunchLog(launchLog1))
+	//_ = LaunchLogDaoPG.InsertLaunchLog(launchLog1)
+	_ = LaunchLogDaoPG.InsertLaunchLog(launchLog2)
+	_ = LaunchLogDaoPG.InsertLaunchLog(launchLog3)
 
-	launchLogs = LaunchLogDao.FindAllCreated()
+	launchLogs = LaunchLogDaoPG.FindAllCreated()
 	assert.EqualValues(t, 3, len(launchLogs))
 
-	launchLog := LaunchLogDao.FindLaunchLogByID(1)
+	launchLog := LaunchLogDaoPG.FindLaunchLogByID(1)
 	assert.EqualValues(t, 1, launchLog.ID)
 	assert.EqualValues(t, "created", launchLog.Status)
 	launchLog.Status = common.STATUS_PENDING
-	_ = LaunchLogDao.UpdateLaunchLog(launchLog)
+	_ = LaunchLogDaoPG.UpdateLaunchLog(launchLog)
 
-	launchLog = LaunchLogDao.FindLaunchLogByID(1)
+	launchLog = LaunchLogDaoPG.FindLaunchLogByID(1)
 	assert.EqualValues(t, 1, launchLog.ID)
 	assert.EqualValues(t, common.STATUS_PENDING, launchLog.Status)
 }
@@ -45,7 +47,7 @@ func TestLaunchLogDao_FindAllCreated(t *testing.T) {
 func newLaunchLog() *LaunchLog {
 	launchLog := LaunchLog{
 		ItemType:    "hydro_trade",
-		ItemID:      rand.Int63(),
+		ItemID:      int64(rand.Int31()),
 		Status:      "created",
 		Hash:        sql.NullString{},
 		BlockNumber: sql.NullInt64{},
@@ -58,9 +60,9 @@ func newLaunchLog() *LaunchLog {
 		Nonce:    sql.NullInt64{},
 		Data:     "some data",
 
-		ExecutedAt: time.Now(),
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		ExecutedAt: time.Now().UTC(),
+		CreatedAt:  time.Now().UTC(),
+		UpdatedAt:  time.Now().UTC(),
 	}
 
 	return &launchLog

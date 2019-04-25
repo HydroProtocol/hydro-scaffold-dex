@@ -208,7 +208,7 @@ func Run(ctx context.Context, startMetrics func()) {
 	utils.Info("dex engine start...")
 
 	//init database
-	models.ConnectDatabase("sqlite3", config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(config.Getenv("HSK_DATABASE_URL"))
 
 	//start dex engine
 	dexEngine := NewDexEngine(ctx)

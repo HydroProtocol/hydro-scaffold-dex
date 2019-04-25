@@ -151,6 +151,12 @@ func EditMarketHandler(e echo.Context) (err error) {
 	}
 
 	dbMarket := models.MarketDao.FindMarketByID(fields.ID)
+
+	if dbMarket == nil {
+		err = fmt.Errorf("cannot find market by ID %s", fields.ID)
+		return response(e, nil, err)
+	}
+
 	var publishType string
 	if dbMarket.IsPublished == false && fields.IsPublished == "true" {
 		publishType = "publish"
@@ -158,55 +164,51 @@ func EditMarketHandler(e echo.Context) (err error) {
 		publishType = "unPublish"
 	}
 
-	if dbMarket == nil {
-		err = fmt.Errorf("cannot find market by ID %s", fields.ID)
-	} else {
-		if len(fields.MinOrderSize) > 0 {
-			dbMarket.MinOrderSize = utils.StringToDecimal(fields.MinOrderSize)
-		}
-		if len(fields.PricePrecision) > 0 {
-			dbMarket.PricePrecision = utils.ParseInt(fields.PricePrecision, 0)
-		}
-		if len(fields.PriceDecimals) > 0 {
-			dbMarket.PriceDecimals = utils.ParseInt(fields.PriceDecimals, 0)
-		}
-		if len(fields.AmountDecimals) > 0 {
-			dbMarket.AmountDecimals = utils.ParseInt(fields.AmountDecimals, 0)
-		}
-		if len(fields.MakerFeeRate) > 0 {
-			dbMarket.MakerFeeRate = utils.StringToDecimal(fields.MakerFeeRate)
-		}
-		if len(fields.TakerFeeRate) > 0 {
-			dbMarket.TakerFeeRate = utils.StringToDecimal(fields.TakerFeeRate)
-		}
-		if len(fields.GasUsedEstimation) > 0 {
-			dbMarket.GasUsedEstimation = utils.ParseInt(fields.GasUsedEstimation, 0)
-		}
-		if fields.IsPublished == "true" {
-			dbMarket.IsPublished = true
-		} else if fields.IsPublished == "false" {
-			dbMarket.IsPublished = false
-		}
+	if len(fields.MinOrderSize) > 0 {
+		dbMarket.MinOrderSize = utils.StringToDecimal(fields.MinOrderSize)
+	}
+	if len(fields.PricePrecision) > 0 {
+		dbMarket.PricePrecision = utils.ParseInt(fields.PricePrecision, 0)
+	}
+	if len(fields.PriceDecimals) > 0 {
+		dbMarket.PriceDecimals = utils.ParseInt(fields.PriceDecimals, 0)
+	}
+	if len(fields.AmountDecimals) > 0 {
+		dbMarket.AmountDecimals = utils.ParseInt(fields.AmountDecimals, 0)
+	}
+	if len(fields.MakerFeeRate) > 0 {
+		dbMarket.MakerFeeRate = utils.StringToDecimal(fields.MakerFeeRate)
+	}
+	if len(fields.TakerFeeRate) > 0 {
+		dbMarket.TakerFeeRate = utils.StringToDecimal(fields.TakerFeeRate)
+	}
+	if len(fields.GasUsedEstimation) > 0 {
+		dbMarket.GasUsedEstimation = utils.ParseInt(fields.GasUsedEstimation, 0)
+	}
+	if fields.IsPublished == "true" {
+		dbMarket.IsPublished = true
+	} else if fields.IsPublished == "false" {
+		dbMarket.IsPublished = false
+	}
 
-		err = models.MarketDao.UpdateMarket(dbMarket)
-		if err != nil {
-			if publishType == "publish" {
-				event := common.Event{
-					Type:     common.EventOpenMarket,
-					MarketID: dbMarket.ID,
-				}
-
-				err = queueService.Push([]byte(utils.ToJsonString(event)))
-			} else if publishType == "unPublish" {
-				event := common.CancelOrderEvent{
-					Event: common.Event{
-						Type:     common.EventCloseMarket,
-						MarketID: dbMarket.ID,
-					},
-				}
-
-				err = queueService.Push([]byte(utils.ToJsonString(event)))
+	err = models.MarketDao.UpdateMarket(dbMarket)
+	if err != nil {
+		if publishType == "publish" {
+			event := common.Event{
+				Type:     common.EventOpenMarket,
+				MarketID: dbMarket.ID,
 			}
+
+			err = queueService.Push([]byte(utils.ToJsonString(event)))
+		} else if publishType == "unPublish" {
+			event := common.CancelOrderEvent{
+				Event: common.Event{
+					Type:     common.EventCloseMarket,
+					MarketID: dbMarket.ID,
+				},
+			}
+
+			err = queueService.Push([]byte(utils.ToJsonString(event)))
 		}
 	}
 
@@ -229,14 +231,15 @@ func response(e echo.Context, data interface{}, err error) error {
 	ret := map[string]interface{}{}
 
 	if err == nil {
-		ret["status"] = "success"
+		ret["status"] = 0
+		ret["desc"] = "success"
 		ret["data"] = data
 	} else {
-		ret["status"] = "fail"
-		ret["error_message"] = err.Error()
+		ret["status"] = -1
+		ret["desc"] = err.Error()
 	}
 
-	return e.JSONPretty(http.StatusOK, ret, "\t")
+	return e.JSONPretty(http.StatusOK, ret, "  ")
 }
 
 type marketFields struct {

@@ -9,36 +9,41 @@ type ITokenDao interface {
 }
 
 type Token struct {
-	Symbol   string `json:"symbol"   db:"symbol"`
+	Symbol   string `json:"symbol"   db:"symbol" gorm:"primary_key"`
 	Name     string `json:"name"     db:"name"`
 	Decimals int    `json:"decimals" db:"decimals"`
 	Address  string `json:"address"  db:"address"`
 }
 
+func (Token) TableName() string {
+	return "tokens"
+}
+
 var TokenDao ITokenDao
+var TokenDaoPG ITokenDao
 
 func init() {
-	TokenDao = tokenDao{}
+	TokenDao = &tokenDaoPG{}
+	TokenDaoPG = TokenDao
 }
 
-type tokenDao struct {
+type tokenDaoPG struct {
 }
 
-func (tokenDao) InsertToken(token *Token) error {
-	_, err := insert(token)
-	return err
-}
-
-func (tokenDao) GetAllTokens() []*Token {
-	tokens := []*Token{}
-	findAllBy(&tokens, nil, nil, -1, -1)
+func (tokenDaoPG) GetAllTokens() []*Token {
+	var tokens []*Token
+	DB.Find(&tokens)
 	return tokens
 }
 
-func (tokenDao) FindTokenBySymbol(symbol string) *Token {
-	var token Token
-	findBy(&token, &OpEq{"symbol", symbol}, nil)
+func (tokenDaoPG) InsertToken(token *Token) error {
+	return DB.Create(token).Error
+}
 
+func (tokenDaoPG) FindTokenBySymbol(symbol string) *Token {
+	var token Token
+
+	DB.Where("symbol = ?", symbol).Find(&token)
 	if token.Symbol == "" {
 		return nil
 	}
