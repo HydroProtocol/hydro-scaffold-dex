@@ -6,4 +6,6 @@ vendor
 build
 .env
 sqlite3.db
+.Dockerfile.local
 bin
+main

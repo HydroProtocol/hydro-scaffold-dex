@@ -9,7 +9,8 @@ const mapStateToProps = state => {
   const address = selectedAccount ? selectedAccount.get('address') : null;
   return {
     orders: state.account.get('orders'),
-    isLoggedIn: state.account.getIn(['isLoggedIn', address])
+    isLoggedIn: state.account.getIn(['isLoggedIn', address]),
+    currentMarket: state.market.getIn(['markets', 'currentMarket'])
   };
 };
 
@@ -22,8 +23,8 @@ class OpenOrders extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { isLoggedIn, dispatch, orders } = this.props;
-    if (isLoggedIn && isLoggedIn !== prevProps.isLoggedIn) {
+    const { isLoggedIn, dispatch, orders, currentMarket } = this.props;
+    if (isLoggedIn && (isLoggedIn !== prevProps.isLoggedIn || currentMarket !== prevProps.currentMarket)) {
       dispatch(loadOrders());
     }
     if (orders !== prevProps.orders) {
@@ -32,7 +33,7 @@ class OpenOrders extends React.PureComponent {
   }
 
   render() {
-    const { orders, dispatch } = this.props;
+    const { orders, dispatch, currentMarket } = this.props;
     return (
       <div className="orders flex-1 position-relative overflow-hidden" ref={ref => this.setRef(ref)}>
         <table className="table">
@@ -58,9 +59,9 @@ class OpenOrders extends React.PureComponent {
                   <tr key={id}>
                     <td>{order.marketID}</td>
                     <td className={order.side === 'sell' ? 'text-danger' : 'text-success'}>{order.side}</td>
-                    <td className="text-right">{order.price.toFixed()}</td>
+                    <td className="text-right">{order.price.toFixed(currentMarket.priceDecimals)}</td>
                     <td className="text-right">
-                      {order.availableAmount.toFixed()} {symbol}
+                      {order.availableAmount.toFixed(currentMarket.amountDecimals)} {symbol}
                     </td>
                     <td className="text-right">
                       <button className="btn btn-outline-danger" onClick={() => dispatch(cancelOrder(order.id))}>
