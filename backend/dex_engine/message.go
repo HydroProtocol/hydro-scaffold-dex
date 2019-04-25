@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
+	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
 )
 
@@ -75,6 +76,8 @@ func pushAccountMessage(address string, payload interface{}) error {
 }
 
 func pushMessage(message interface{}) error {
+	utils.Debug("sending pushMessage:", message)
+
 	msgBytes, err := json.Marshal(message)
 
 	if err != nil {

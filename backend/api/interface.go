@@ -159,7 +159,7 @@ type (
 		AmountDecimals         int             `json:"amountDecimals"`
 		AsMakerFeeRate         decimal.Decimal `json:"asMakerFeeRate"`
 		AsTakerFeeRate         decimal.Decimal `json:"asTakerFeeRate"`
-		GasFeeAmount           int             `json:"gasFeeAmount"`
+		GasFeeAmount           decimal.Decimal `json:"gasFeeAmount"`
 		SupportedOrderTypes    []string        `json:"supportedOrderTypes"`
 		MarketOrderMaxSlippage decimal.Decimal `json:"marketOrderMaxSlippage"`
 		MarketStatus
