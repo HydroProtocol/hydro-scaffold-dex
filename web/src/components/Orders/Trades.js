@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { loadTrades } from '../../actions/account';
 import PerfectScrollbar from 'perfect-scrollbar';
 import { getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
+import BigNumber from 'bignumber.js';
 
 const mapStateToProps = state => {
   const selectedAccount = getSelectedAccount(state);
@@ -10,7 +11,8 @@ const mapStateToProps = state => {
   return {
     address,
     trades: state.account.get('trades'),
-    isLoggedIn: state.account.getIn(['isLoggedIn', address])
+    isLoggedIn: state.account.getIn(['isLoggedIn', address]),
+    currentMarket: state.market.getIn(['markets', 'currentMarket'])
   };
 };
 
@@ -23,8 +25,8 @@ class Trades extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { isLoggedIn, dispatch, trades } = this.props;
-    if (isLoggedIn && isLoggedIn !== prevProps.isLoggedIn) {
+    const { isLoggedIn, dispatch, trades, currentMarket } = this.props;
+    if (isLoggedIn && (isLoggedIn !== prevProps.isLoggedIn || currentMarket !== prevProps.currentMarket)) {
       dispatch(loadTrades());
     }
 
@@ -34,7 +36,7 @@ class Trades extends React.PureComponent {
   }
 
   render() {
-    const { trades, address } = this.props;
+    const { trades, address, currentMarket } = this.props;
     return (
       <div className="trades flex-1 position-relative overflow-hidden" ref={ref => this.setRef(ref)}>
         <table className="table">
@@ -70,12 +72,17 @@ class Trades extends React.PureComponent {
                   className += 'text-danger';
                   status = <i className="fa fa-close" aria-hidden="true" />;
                 }
+                const symbol = trade.marketID.split('-')[0];
                 return (
                   <tr key={id}>
                     <td>{trade.marketID}</td>
                     <td className={`${side === 'sell' ? 'text-danger' : 'text-success'}`}>{side}</td>
-                    <td className={`text-right${side === 'sell' ? ' text-danger' : ' text-success'}`}>{trade.price}</td>
-                    <td className="text-right">{trade.amount}</td>
+                    <td className={`text-right${side === 'sell' ? ' text-danger' : ' text-success'}`}>
+                      {new BigNumber(trade.price).toFixed(currentMarket.priceDecimals)}
+                    </td>
+                    <td className="text-right">
+                      {new BigNumber(trade.amount).toFixed(currentMarket.amountDecimals)} {symbol}
+                    </td>
                     <td className={className}>{status}</td>
                   </tr>
                 );
