@@ -32,11 +32,7 @@ func NewDexCli() *cli.App {
 	var offset string
 	var status string
 
-	marketFlags := []cli.Flag{
-		cli.StringFlag{
-			Name:        "marketID",
-			Destination: &marketID,
-		},
+	newMarketFlags := []cli.Flag{
 		cli.StringFlag{
 			Name:        "baseTokenAddress",
 			Destination: &baseTokenAddress,
@@ -159,9 +155,10 @@ func NewDexCli() *cli.App {
 					Name:        "new",
 					Usage:       "Create a market",
 					Description: "Create a market",
-					Flags:       marketFlags,
+					Flags:       newMarketFlags,
 					Action: func(c *cli.Context) error {
 						marketID = c.Args().Get(0)
+
 						if len(marketID) == 0 || len(baseTokenAddress) == 0 || len(quoteTokenAddress) == 0 {
 							fmt.Println("require flag marketID, usage: hydro-dex-cli market new marketId --baseTokenAddress=xxx --quoteTokenAddress=xxx")
 							return nil
