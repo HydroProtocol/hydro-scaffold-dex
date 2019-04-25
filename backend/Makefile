@@ -1,12 +1,11 @@
 rmdb:
-	rm -f db/development.db
-	rm -f db/test.db
+    psql -hlocalhost -dpostgres -Upostgres < db/migrations/0001-init.down.sql
 
 initdb: rmdb
-	psql -hlocalhost -dpostgres -upostgres < db/migrations/0001-init.up.sql
+	psql -hlocalhost -dpostgres -Upostgres < db/migrations/0001-init.up.sql
 
 seed: initdb
-	psql -hlocalhost -dpostgres -upostgres < db/seed.sql
+	psql -hlocalhost -dpostgres -Upostgres < db/seed.sql
 
 test:
 	go test ./... --count=1 --cover
