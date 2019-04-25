@@ -5,7 +5,10 @@ import (
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"net"
+	"net/http"
 	"net/url"
+	"time"
 )
 
 const (
@@ -68,7 +71,13 @@ func NewAdmin(adminApiUrl string, httpClient utils.IHttpClient, erc20 ethereum.I
 
 	a := Admin{}
 	if httpClient == nil {
-		a.client = utils.NewHttpClient(nil)
+		transport := &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout: 500 * time.Millisecond,
+			}).DialContext,
+			TLSHandshakeTimeout: 1000 * time.Millisecond,
+		}
+		a.client = utils.NewHttpClient(transport)
 	} else {
 		a.client = httpClient
 	}

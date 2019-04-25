@@ -2,8 +2,10 @@ package adminapi
 
 import (
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"net"
 	"net/http"
 	"os"
+	"time"
 )
 
 const (
@@ -48,8 +50,14 @@ func NewHealthCheckService(options *HealthCheckOptions) IHealthCheckMonitor {
 		}
 	}
 
+	transport := &http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout: 500 * time.Millisecond,
+		}).DialContext,
+		TLSHandshakeTimeout: 1000 * time.Millisecond,
+	}
 	return &HealthCheckService{
-		client:  utils.NewHttpClient(nil),
+		client:  utils.NewHttpClient(transport),
 		options: options,
 	}
 }
