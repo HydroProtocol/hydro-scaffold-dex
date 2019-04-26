@@ -139,6 +139,9 @@ table {
         border-left: 1px solid $borderGrey;
     }
 }
+.navbar-nav .dropdown-menu {
+    position: absolute;
+}
 .form {
     margin: 12px 0;
     padding: 0 24px;
