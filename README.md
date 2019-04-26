@@ -105,8 +105,8 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
   - Websocket Server to handle keepalive connections and serve realtime data
   - Matching Engine to send matching orders to the hydro smart contract
   - Blockchain Monitor to watch for transaction changes on the blockchain
-- [Sqlite3](https://www.sqlite.org/index.html) as database
-- [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node
+- [PostgresSQL](https://www.postgresql.org) as database
+- [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node and support of ropsten and mainnet
 
 ## Run on other network and run from souce
 
