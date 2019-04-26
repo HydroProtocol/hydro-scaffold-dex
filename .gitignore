@@ -8,3 +8,5 @@ dump.rdb
 .env
 build
 .DS_Store
+
+docker-compose-source-go-vendor.yaml
