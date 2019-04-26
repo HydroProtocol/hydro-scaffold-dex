@@ -33,6 +33,29 @@ services:
       - REACT_APP_WETH_TOKEN_ADDRESS=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
       - REACT_APP_NETWORK_ID=1
     restart: on-failure:5
+  admin:
+    build: ./backend
+    container_name: hydro-box-dex-admin-api
+    command: /bin/adminapi
+    ports:
+      - 3003:3003
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_BLOCKCHAIN_RPC_URL=https://mainnet.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
+      - HSK_LOG_LEVEL=ERROR
+      - WEB_HEALTH_CHECK_URL=http://web:8043
+      - API_HEALTH_CHECK_URL=http://api:4001/metrics
+      - ENGINE_HEALTH_CHECK_URL=http://engine:4004/metrics
+      - LAUNCHER_HEALTH_CHECK_URL=http://launcher:4005/metrics
+      - WATCHER_HEALTH_CHECK_URL=http://watcher:4003/metrics
+      - WEBSOCKET_HEALTH_CHECK_URL=http://ws:4002/metrics
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+      - redis
+    restart: on-failure:5
   api:
     build: ./backend
     container_name: hydro-box-dex-api
