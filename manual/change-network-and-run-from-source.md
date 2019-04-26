@@ -4,11 +4,11 @@ we have prepared serveral docker-compose files for different networks, the docke
 
 *eth_node_type* can be:
 
-- localhost, which reprents a localhost eth node
-- ropsten, eth ropsten network
-- mainnet, eth mainnet network
+- localhost, which reprents a localhost Ethereum node
+- ropsten, Ethereum ropsten network
+- mainnet, Ethereum mainnet network
 
-if file name has suffix: -source, the docker images are built from local source code, otherwise, they are pulled from https://hub.docker.com/u/hydroprotocolio .
+if file name has suffix: `-source`, the docker images are built from local source code, otherwise, they are pulled from https://hub.docker.com/u/hydroprotocolio .
 
 the docker-compose files we provide are:
 
@@ -16,8 +16,8 @@ the docker-compose files we provide are:
 - docker-compose-localhost-source.yaml
 - docker-compose-ropsten.yaml
 - docker-compose-ropsten-source.yaml
-- docker-compose-mainnet.yaml - todo
-- docker-compose-mainnet-source.yaml - todo
+- docker-compose-mainnet.yaml
+- docker-compose-mainnet-source.yaml
 
 ## Step0: Cleanup
 
