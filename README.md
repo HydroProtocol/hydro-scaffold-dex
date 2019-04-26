@@ -108,7 +108,7 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 - [PostgresSQL](https://www.postgresql.org) as database
 - [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node and support of ropsten and mainnet
 
-## Run on other network and run from souce
+## Run on other network and run from source
 
 See [change network manual](./manual/change-network-and-run-from-source.md).
 
