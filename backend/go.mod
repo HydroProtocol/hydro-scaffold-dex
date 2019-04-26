@@ -3,7 +3,7 @@ module github.com/HydroProtocol/hydro-box-dex/backend
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.24
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.26
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -25,9 +25,10 @@ require (
 	gopkg.in/go-playground/validator.v9 v9.28.0
 )
 
-//replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190419153524-e8e3143a4f4a
+// replace golang.org/x/sys => github.com/golang/sys v0.0.0-20190419153524-e8e3143a4f4a
 
 // replace gopkg.in/go-playground/validator.v9 => github.com/go-playground/validator v9.28.0+incompatible
+
 // replace gopkg.in/fsnotify.v1 => github.com/fsnotify/fsnotify v1.4.7
 
 // for local test only

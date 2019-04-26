@@ -1,5 +1,24 @@
 # Run Hydro Box Dex on other ethereum network
 
+we have prepared serveral docker-compose files for different networks, the docker-compose file names are in format like: docker-compose-*eth_node_type*[-source].yaml
+
+*eth_node_type* can be:
+
+- localhost, which reprents a localhost eth node
+- ropsten, eth ropsten network
+- mainnet, eth mainnet network
+
+if file name has surfix: -source, the docker images are built from local source code, otherwise, they are pulled from https://hub.docker.com/u/hydroprotocolio .
+
+the docker-compose files we provide are:
+
+- docker-compose-localhost.yaml
+- docker-compose-localhost-source.yaml
+- docker-compose-ropsten.yaml
+- docker-compose-ropsten-source.yaml
+- docker-compose-mainnet.yaml - todo
+- docker-compose-mainnet-source.yaml - todo
+
 ## Step0: Cleanup
 
 If you have a dex running, stop it first. Or you can move to the next sectio.
@@ -8,27 +27,26 @@ The following command can help you to do that. Be careful, it also clean all dat
 
 	docker-compose down -v
 
-## Step1: Select network
+## Step1: Prepare a relayer address
 
-There are already some docker-compose templates for special envs.
-Currently, we support ropsten and mainnet. Choose an network, and copy the template docker-compose file to root directory.For example 
+You need to update relayer address and privateKey for corresponding network.
 
-	cp ./envs/ropsten/docker-compose.yaml ./docker-compose-ropsten.yaml
+Replace `___CHANGE_ME___` strings in the docker-file that you wanna run.
 
-## Step2: Prepare a relayer address
+## Step2: Start the service
 
-You need to provide an address as relayer on the corresponding network.
+Use docker-compose to start the service.
 
-Update the docker-compose file you just create. Use values to replace `___CHANGE_ME___` strings.
+```shell
+# run HydroBoxDex on ropsten  
+docker-compose -f docker-compose-ropsten.yaml up
 
-## Step3: Start the service
+# or run HydroBoxDex using local source code on ropsten  
+docker-compose -f docker-compose-ropsten-source.yaml up
+```
 
-Use docker-compose to run.
+## Step3: Use
 
-	docker-compose -f docker-compose-ropsten.yaml up
-
-## Step4: Use
-
-	There is only one market available at first. You can add your own market by using the admin-api and admin-cli. Learn more about them here.
+There is only one market available at first. You can add your own market by using the admin-api and admin-cli. Learn more about them here.
 
 Open `http://localhost:3000/` on your browser. You need to setup an address to trade.	

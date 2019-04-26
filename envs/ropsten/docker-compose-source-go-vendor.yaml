@@ -19,7 +19,7 @@ services:
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
       - ./envs/ropsten/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
-    image: hydroprotocolio/hydro-box-dex-web:latest
+    build: ./web
     container_name: hydro-box-dex-web
     ports:
       - 3000:8043
@@ -34,7 +34,9 @@ services:
       - REACT_APP_NETWORK_ID=3
     restart: on-failure:5
   api:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-api
     command: /bin/api
     ports:
@@ -55,7 +57,9 @@ services:
       - redis
     restart: on-failure:5
   ws:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-ws
     command: /bin/websocket
     ports:
@@ -71,7 +75,9 @@ services:
       - api
     restart: on-failure:5
   watcher:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-watcher
     command: /bin/watcher
     environment:
@@ -87,7 +93,9 @@ services:
       - db
     restart: on-failure:5
   engine:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-engine
     command: /bin/engine
     environment:
@@ -102,7 +110,9 @@ services:
       - db
     restart: on-failure:5
   launcher:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-launcher
     command: /bin/launcher
     environment:
