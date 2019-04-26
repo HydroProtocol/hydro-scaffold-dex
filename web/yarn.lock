@@ -773,9 +773,9 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
 
-"@gongddex/hydro-sdk-wallet@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@gongddex/hydro-sdk-wallet/-/hydro-sdk-wallet-0.0.8.tgz#ed3560a4ba945579f3ae696c036efec80c38354a"
+"@gongddex/hydro-sdk-wallet@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@gongddex/hydro-sdk-wallet/-/hydro-sdk-wallet-0.0.9.tgz#f3fb4f3a2516a665c51ae6df65b9c4f9e5e01ad8"
   dependencies:
     ethereumjs-util "5.2.0"
     ethers "^4.0.27"
