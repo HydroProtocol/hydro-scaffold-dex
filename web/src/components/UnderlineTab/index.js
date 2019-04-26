@@ -7,12 +7,18 @@ export default class UnderlineTab extends React.PureComponent {
     this.state = {
       underlineClassName: 'underline'
     };
+    this.mounted = false;
   }
 
   componentDidMount() {
     window.addEventListener('load', () => {
       this.forceUpdate();
     });
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   render() {
@@ -56,9 +62,11 @@ export default class UnderlineTab extends React.PureComponent {
     }
     this.container = ref;
     setTimeout(() => {
-      this.setState({
-        underlineClassName: 'underline transition'
-      });
+      if (this.mounted) {
+        this.setState({
+          underlineClassName: 'underline transition'
+        });
+      }
     }, 300);
   };
 }
