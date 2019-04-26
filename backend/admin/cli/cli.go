@@ -279,12 +279,12 @@ func NewDexCli() *cli.App {
 		//			Action: func(c *cli.Context) error {
 		//				address := c.Args().Get(0)
 		//				if len(address) == 0 {
-		//					fmt.Println("missing arguments, usage: hydro-dex-cli address orders address")
+		//					fmt.Println("missing arguments, usage: hydro-dex-cli address orders address --marketID=xxx")
 		//					return nil
 		//				}
 		//
 		//				if len(marketID) == 0 {
-		//					fmt.Println("missing arguments, usage: hydro-dex-cli address balances address --marketID=xxx")
+		//					fmt.Println("missing arguments, usage: hydro-dex-cli address orders address --marketID=xxx")
 		//					return nil
 		//				}
 		//
@@ -314,7 +314,7 @@ func NewDexCli() *cli.App {
 		//			Action: func(c *cli.Context) error {
 		//				address := c.Args().Get(0)
 		//				if len(address) == 0 {
-		//					fmt.Println("missing arguments, usage: hydro-dex-cli address trades address")
+		//					fmt.Println("missing arguments, usage: hydro-dex-cli address trades address --marketID=xxx")
 		//					return nil
 		//				}
 		//
