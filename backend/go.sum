@@ -7,6 +7,10 @@ git.apache.org/thrift.git v0.12.0/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqbl
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.26 h1:fdX4qFugaVz9W5kSw2yjrXbMIzVH6n9EsonqXxHzqeg=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.26/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.27 h1:8q8ozlwWOytohhU1J2Q/89PIOtQ3kl8YP57gH2HeaB4=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.27/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.28 h1:RigtLJSWmzfPF6hYyXkX4r61fidRkcK8AO11Cc/kCcc=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.28/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
@@ -96,6 +100,7 @@ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/kkdai/bstream v0.0.0-20161212061736-f391b8402d23/go.mod h1:J+Gs4SYgM6CZQHDETBtE9HaSEkGmuNXF86RwHhHUvq4=
+github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
 github.com/kr/pty v1.1.3/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=

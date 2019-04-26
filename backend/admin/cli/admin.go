@@ -111,7 +111,7 @@ func (a *Admin) ListMarkets() (ret []byte, err error) {
 }
 
 func (a *Admin) NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) (ret []byte, err error) {
-	err, baseTokenSymbol := a.erc20.Name(baseTokenAddress)
+	err, baseTokenSymbol := a.erc20.Symbol(baseTokenAddress)
 	if err != nil || len(baseTokenSymbol) == 0 {
 		return
 	}
