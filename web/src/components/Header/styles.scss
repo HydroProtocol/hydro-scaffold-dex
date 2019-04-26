@@ -19,7 +19,7 @@
     }
 }
 
-@media screen and (max-width: 769px) {
+@media screen and (max-width: 768px) {
     .collapse {
         position: absolute;
         top: 100%;
@@ -37,7 +37,7 @@
     }
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 767px) {
     .dropdown-toggle::after {
         margin-left: 12px;
     }
