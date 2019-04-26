@@ -126,6 +126,7 @@ table {
 .flex {
     display: flex;
 }
+.ps__rail-x,
 .ps__rail-y {
     display: none;
 }
@@ -134,6 +135,7 @@ table {
 }
 .nav-tabs {
     border-bottom: 0;
+    white-space: nowrap;
 }
 .navbar-nav .dropdown-menu {
     position: absolute;
