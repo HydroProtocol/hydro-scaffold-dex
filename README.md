@@ -108,25 +108,13 @@ The native token for Hydro Protocol is completely opt-in - you are not required 
 - [Sqlite3](https://www.sqlite.org/index.html) as database
 - [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node
 
-## Run on other network
+## Run on other network and run from souce
 
-See [change network manual](./manual/change-network.md).
+See [change network manual](./manual/change-network-and-run-from-source.md).
 
-## How to build and run from source
+## How to setup environment for local development
 
-```shell
-# build
-docker-compose -f docker-compose-build-from-source.yaml build
-
-# run and visit http://localhost:3000/
-docker-compose -f docker-compose-build-from-source.yaml up
-
-# stop the service your wanna edit, e.g. engine
-docker-compose -f docker-compose-build-from-source.yaml stop engine
-
-# after finish editing the project, start it 
-docker-compose -f docker-compose-build-from-source.yaml start engine
-```
+See [setup dev env manual](./manual/setup_dev_env.md).
 
 ## License
 
