@@ -46,7 +46,7 @@ services:
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
       - HSK_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
-      - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
+      - HSK_RELAYER_ADDRESS=___CHANGE_ME___
       - HSK_LOG_LEVEL=DEBUG
     volumes:
       - datavolume:/data
@@ -109,8 +109,8 @@ services:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
-      - HSK_RELAYER_ADDRESS=0xd89fc9207caed3cd5119e7f3db6813d13a1bc486
-      - HSK_RELAYER_PK=0x01d175f4cd5c8cbca1e9916934b59ef9804524db177762f25818ca270d2d0b50
+      - HSK_RELAYER_ADDRESS=___CHANGE_ME___
+      - HSK_RELAYER_PK=___CHANGE_ME___
       - HSK_LOG_LEVEL=DEBUG
     volumes:
       - datavolume:/data
