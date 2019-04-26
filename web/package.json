@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@gongddex/hydro-sdk-wallet": "^0.0.8",
+    "@gongddex/hydro-sdk-wallet": "^0.0.10",
     "@wangleiddex/hydro-sdk-charts": "^0.1.6",
     "axios": "^0.18.0",
     "bignumber.js": "^8.1.1",
@@ -30,12 +30,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
   "devDependencies": {
     "babel-eslint": "9.0.0",
     "eslint": "5.12.0",

@@ -32,7 +32,9 @@ class App extends React.PureComponent {
   componentDidMount() {
     const { dispatch, currentMarket } = this.props;
     dispatch(loadMarkets());
-    this.initTestBrowserWallet();
+    if (parseInt(env.NETWORK_ID) === 66) {
+      this.initTestBrowserWallet();
+    }
     if (currentMarket) {
       dispatch(loadTradeHistory(currentMarket.id));
     }

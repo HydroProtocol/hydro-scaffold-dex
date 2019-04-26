@@ -32,7 +32,7 @@ services:
     ports:
       - 3000:8043
     environment:
-      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL,REACT_APP_WETH_TOKEN_ADDRESS
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_NODE_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_WETH_TOKEN_ADDRESS,REACT_APP_NETWORK_ID
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
       - REACT_APP_NODE_URL=http://localhost:8545
@@ -95,7 +95,7 @@ services:
     command: /bin/websocket
     ports:
       - 3002:3002
-      - 4002:4002      
+      - 4002:4002
     environment:
       - HSK_API_URL=http://api:3001
       - HSK_REDIS_URL=redis://redis:6379/0
@@ -112,7 +112,7 @@ services:
     container_name: hydro-box-dex-watcher
     command: /bin/watcher
     ports:
-      - 4003:4003    
+      - 4003:4003
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
