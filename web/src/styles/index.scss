@@ -134,10 +134,6 @@ table {
 }
 .nav-tabs {
     border-bottom: 0;
-    .nav-item {
-        margin-left: -1px;
-        border-left: 1px solid $borderGrey;
-    }
 }
 .navbar-nav .dropdown-menu {
     position: absolute;
@@ -153,6 +149,8 @@ table {
     line-height: 48px;
     background: $backgroundGrey;
     border-bottom: 1px solid $borderGrey;
+    margin-left: -1px;
+    border-left: 1px solid $borderGrey;
     cursor: pointer;
 
     &.active {

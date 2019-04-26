@@ -39,7 +39,7 @@ class OpenOrders extends React.PureComponent {
         <table className="table">
           <thead>
             <tr className="text-secondary">
-              <th>Pair</th>
+              <th className="pair-column">Pair</th>
               <th>Side</th>
               <th className="text-right">Price</th>
               <th className="text-right">Amount</th>
@@ -57,7 +57,7 @@ class OpenOrders extends React.PureComponent {
                 const symbol = order.marketID.split('-')[0];
                 return (
                   <tr key={id}>
-                    <td>{order.marketID}</td>
+                    <td className="pair-column">{order.marketID}</td>
                     <td className={order.side === 'sell' ? 'text-danger' : 'text-success'}>{order.side}</td>
                     <td className="text-right">{order.price.toFixed(currentMarket.priceDecimals)}</td>
                     <td className="text-right">
