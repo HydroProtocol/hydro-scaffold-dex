@@ -19,7 +19,7 @@
     }
 }
 
-@media screen and (max-width: 769px) {
+@media screen and (max-width: 768px) {
     .collapse {
         position: absolute;
         top: 100%;
@@ -32,21 +32,12 @@
             border: none;
         }
         .HydroSDK-toggleButton {
-            width: 100%;
             border: none;
-            padding-left: 0;
-            span {
-                word-break: keep-all;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                -webkit-line-clamp: 1;
-            }
         }
     }
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 767px) {
     .dropdown-toggle::after {
         margin-left: 12px;
     }

@@ -14,6 +14,7 @@ import { loadHydroWallet } from '@gongddex/hydro-sdk-wallet/build/actions/wallet
 import env from './lib/env';
 import MediaQuery from 'react-responsive';
 import Fold from './components/Fold';
+import PerfectScrollbar from 'perfect-scrollbar';
 
 const mapStateToProps = state => {
   return {
@@ -32,7 +33,9 @@ class App extends React.PureComponent {
   componentDidMount() {
     const { dispatch, currentMarket } = this.props;
     dispatch(loadMarkets());
-    this.initTestBrowserWallet();
+    if (parseInt(env.NETWORK_ID) === 66) {
+      this.initTestBrowserWallet();
+    }
     if (currentMarket) {
       dispatch(loadTradeHistory(currentMarket.id));
     }
@@ -75,6 +78,15 @@ class App extends React.PureComponent {
     );
   }
 
+  setRef(ref) {
+    if (ref) {
+      this.ps = new PerfectScrollbar(ref, {
+        suppressScrollY: true,
+        maxScrollbarLength: 20
+      });
+    }
+  }
+
   renderMobile() {
     const selectTab = this.state.mobileTab;
     let content;
@@ -112,50 +124,50 @@ class App extends React.PureComponent {
     return (
       <div className="flex-column flex-1 overflow-hidden">
         <div className="flex-column flex-1">{content}</div>
-        <ul className="nav nav-tabs">
-          <li className="nav-item border-top flex-1 flex">
+        <div className="flex nav-tabs overflow-hidden position-relative" ref={ref => this.setRef(ref)}>
+          <div className="nav-item flex-1 border-top d-inline-block">
             <div
               onClick={() => this.setState({ mobileTab: 'trade' })}
-              className={`flex-1 tab-button text-secondary text-center${selectTab === 'trade' ? ' active' : ''}`}>
+              className={`tab-button text-secondary text-center${selectTab === 'trade' ? ' active' : ''}`}>
               Trade
             </div>
-          </li>
-          <li className="nav-item border-top flex-1 flex">
+          </div>
+          <div className="nav-item flex-1 border-top d-inline-block">
             <div
               onClick={() => this.setState({ mobileTab: 'orders' })}
-              className={`flex-1 tab-button text-secondary text-center${selectTab === 'orders' ? ' active' : ''}`}>
+              className={`tab-button text-secondary text-center${selectTab === 'orders' ? ' active' : ''}`}>
               Orders
             </div>
-          </li>
-          <li className="nav-item border-top flex-1 flex">
+          </div>
+          <div className="nav-item flex-1 border-top d-inline-block">
             <div
               onClick={() => this.setState({ mobileTab: 'charts' })}
-              className={`flex-1 tab-button text-secondary text-center${selectTab === 'charts' ? ' active' : ''}`}>
+              className={`tab-button text-secondary text-center${selectTab === 'charts' ? ' active' : ''}`}>
               Charts
             </div>
-          </li>
-          <li className="nav-item border-top flex-1 flex">
+          </div>
+          <div className="nav-item flex-1 border-top d-inline-block">
             <div
               onClick={() => this.setState({ mobileTab: 'orderbook' })}
-              className={`flex-1 tab-button text-secondary text-center${selectTab === 'orderbook' ? ' active' : ''}`}>
+              className={`tab-button text-secondary text-center${selectTab === 'orderbook' ? ' active' : ''}`}>
               Orderbook
             </div>
-          </li>
-          <li className="nav-item border-top flex-1 flex">
+          </div>
+          <div className="nav-item flex-1 border-top d-inline-block">
             <div
               onClick={() => this.setState({ mobileTab: 'history' })}
-              className={`flex-1 tab-button text-secondary text-center${selectTab === 'history' ? ' active' : ''}`}>
+              className={`tab-button text-secondary text-center${selectTab === 'history' ? ' active' : ''}`}>
               History
             </div>
-          </li>
-          <li className="nav-item border-top flex-1 flex">
+          </div>
+          <div className="nav-item flex-1 border-top d-inline-block">
             <div
               onClick={() => this.setState({ mobileTab: 'wallet' })}
-              className={`flex-1 tab-button text-secondary text-center${selectTab === 'wallet' ? ' active' : ''}`}>
+              className={`tab-button text-secondary text-center${selectTab === 'wallet' ? ' active' : ''}`}>
               Wallet
             </div>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     );
   }

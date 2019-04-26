@@ -42,7 +42,7 @@ class Trades extends React.PureComponent {
         <table className="table">
           <thead>
             <tr className="text-secondary">
-              <th>Pair</th>
+              <th className="pair-column">Pair</th>
               <th>Side</th>
               <th className="text-right">Price</th>
               <th className="text-right">Amount</th>
@@ -75,7 +75,7 @@ class Trades extends React.PureComponent {
                 const symbol = trade.marketID.split('-')[0];
                 return (
                   <tr key={id}>
-                    <td>{trade.marketID}</td>
+                    <td className="pair-column">{trade.marketID}</td>
                     <td className={`${side === 'sell' ? 'text-danger' : 'text-success'}`}>{side}</td>
                     <td className={`text-right${side === 'sell' ? ' text-danger' : ' text-success'}`}>
                       {new BigNumber(trade.price).toFixed(currentMarket.priceDecimals)}

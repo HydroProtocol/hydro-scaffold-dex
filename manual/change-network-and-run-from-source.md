@@ -1,4 +1,4 @@
-# Run Hydro Box Dex on other ethereum network
+# Run on other ethereum network and run from source
 
 we have prepared serveral docker-compose files for different networks, the docker-compose file names are in format like: docker-compose-***eth\_node\_type***[-source].yaml
 
@@ -16,8 +16,8 @@ The docker-compose files we provide are:
 - docker-compose-localhost-source.yaml
 - docker-compose-ropsten.yaml
 - docker-compose-ropsten-source.yaml
-- docker-compose-mainnet.yaml - **TODO**
-- docker-compose-mainnet-source.yaml - **TODO**
+- docker-compose-mainnet.yaml
+- docker-compose-mainnet-source.yaml
 
 ## Step0: Cleanup
 
@@ -64,6 +64,8 @@ docker-compose -f docker-compose-ropsten-source.yaml up
 
 ## Step3: Use
 
-There is only one market available at first. You can add your own market by using the admin-api and admin-cli. Learn more about them [here](./admin-api-and-cli.md).
+Open `http://localhost:3000/` on your browser. 
 
-Open `http://localhost:3000/` on your browser. For localhost, we have already prepared an address for you to test. For the other environments, you need to setup an address to trade.
+For localhost, we have already prepared an address in the frontend wallet for you to trade. For the other environments, you need to setup an address by yourself.
+
+There are 3 markets available at first: `HOT-WETH`, `HOT-DAI` and `WETH-DAI`. You can add your own market by using the admin-api and admin-cli. Learn more about them [here](./admin-api-and-cli.md).
