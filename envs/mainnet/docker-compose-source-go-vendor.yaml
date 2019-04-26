@@ -24,7 +24,7 @@ services:
     ports:
       - 3000:8043
     environment:
-      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_HYDRO_PROXY_MODE,REACT_APP_NODE_URL,REACT_APP_WETH_TOKEN_ADDRESS,REACT_APP_NETWORK_ID
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_NODE_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_WETH_TOKEN_ADDRESS,REACT_APP_NETWORK_ID
       - REACT_APP_API_URL=http://localhost:3001
       - REACT_APP_WS_URL=ws://localhost:3002
       - REACT_APP_NODE_URL=https://mainnet.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
@@ -34,7 +34,7 @@ services:
       - REACT_APP_NETWORK_ID=1
     restart: on-failure:5
   api:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-api
@@ -57,7 +57,7 @@ services:
       - redis
     restart: on-failure:5
   ws:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-ws
@@ -75,7 +75,7 @@ services:
       - api
     restart: on-failure:5
   watcher:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-watcher
@@ -93,7 +93,7 @@ services:
       - db
     restart: on-failure:5
   engine:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-engine
@@ -110,7 +110,7 @@ services:
       - db
     restart: on-failure:5
   launcher:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile-vendor
     container_name: hydro-box-dex-launcher
