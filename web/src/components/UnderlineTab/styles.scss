@@ -1,0 +1,48 @@
+@import '../../styles/variables.scss';
+
+.underlineTabContainer {
+    line-height: 1;
+    margin-bottom: 0;
+    position: relative;
+    display: flex;
+
+    .item {
+        width: auto;
+        padding: 16px 10px 18px 10px;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        color: $grey;
+        position: relative;
+    }
+    .active {
+        color: $black;
+    }
+
+    .underline,
+    .defaultUnderline {
+        background: #5a7ec3;
+        height: 2px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+    .transition {
+        transition-duration: 0.3 * 1s;
+        transition-timing-function: ease;
+        transition-property: left, width;
+    }
+
+    .defaultUnderline {
+        right: 0;
+    }
+}
+
+.broad {
+    width: 100%;
+
+    .item {
+        flex: 1;
+    }
+}

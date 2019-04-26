@@ -41,62 +41,56 @@ class OrderBook extends React.Component {
     let { bids, asks, websocketConnected, currentMarket } = this.props;
 
     return (
-      <>
-        <div className="title">
-          <div>Orderbook</div>
-          <div className="text-secondary">Available Bid and Ask orders</div>
+      <div className="orderbook flex-column flex-1">
+        <div className="flex header text-secondary">
+          <div className="col-6 text-right">Amount</div>
+          <div className="col-6 text-right">Price</div>
         </div>
-        <div className="orderbook flex-column flex-1">
-          <div className="flex header text-secondary">
-            <div className="col-6 text-right">Amount</div>
-            <div className="col-6 text-right">Price</div>
+        <div className="flex-column flex-1">
+          <div className="asks flex-column flex-column-reverse flex-1 overflow-hidden">
+            {asks
+              .slice(-20)
+              .reverse()
+              .toArray()
+              .map(([price, amount]) => {
+                return (
+                  <div className="ask flex align-items-center" key={price.toString()}>
+                    <div className="col-6 orderbook-amount text-right">
+                      {amount.toFixed(currentMarket.amountDecimals)}
+                    </div>
+                    <div className="col-6 text-danger text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
+                  </div>
+                );
+              })}
           </div>
-          <div className="flex-column flex-1">
-            <div className="asks flex-column flex-column-reverse flex-1 overflow-hidden">
-              {asks
-                .slice(-20)
-                .reverse()
-                .toArray()
-                .map(([price, amount]) => {
-                  return (
-                    <div className="ask flex align-items-center" key={price.toString()}>
-                      <div className="col-6 orderbook-amount text-right">
-                        {amount.toFixed(currentMarket.amountDecimals)}
-                      </div>
-                      <div className="col-6 text-danger text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
+          <div className="status border-top border-bottom">
+            {websocketConnected ? (
+              <div className="col-6 text-success">
+                <i className="fa fa-circle" aria-hidden="true" /> RealTime
+              </div>
+            ) : (
+              <div className="col-6 text-danger">
+                <i className="fa fa-circle" aria-hidden="true" /> Disconnected
+              </div>
+            )}
+          </div>
+          <div className="bids flex-column flex-1 overflow-hidden">
+            {bids
+              .slice(0, 20)
+              .toArray()
+              .map(([price, amount]) => {
+                return (
+                  <div className="bid flex align-items-center" key={price.toString()}>
+                    <div className="col-6 orderbook-amount text-right">
+                      {amount.toFixed(currentMarket.amountDecimals)}
                     </div>
-                  );
-                })}
-            </div>
-            <div className="status border-top border-bottom">
-              {websocketConnected ? (
-                <div className="col-6 text-success">
-                  <i className="fa fa-circle" aria-hidden="true" /> RealTime
-                </div>
-              ) : (
-                <div className="col-6 text-danger">
-                  <i className="fa fa-circle" aria-hidden="true" /> Disconnected
-                </div>
-              )}
-            </div>
-            <div className="bids flex-column flex-1 overflow-hidden">
-              {bids
-                .slice(0, 20)
-                .toArray()
-                .map(([price, amount]) => {
-                  return (
-                    <div className="bid flex align-items-center" key={price.toString()}>
-                      <div className="col-6 orderbook-amount text-right">
-                        {amount.toFixed(currentMarket.amountDecimals)}
-                      </div>
-                      <div className="col-6 text-success text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
-                    </div>
-                  );
-                })}
-            </div>
+                    <div className="col-6 text-success text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
+                  </div>
+                );
+              })}
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }

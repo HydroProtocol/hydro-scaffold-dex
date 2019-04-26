@@ -1,0 +1,16 @@
+@import '../../styles/variables.scss';
+
+.fold > div:last-child {
+    flex: 1;
+}
+
+.flod-header {
+    display: flex;
+    justify-content: space-between;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 12px;
+    border-bottom: 1px solid $borderGrey;
+}

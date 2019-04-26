@@ -68,23 +68,33 @@ class Header extends React.PureComponent {
             })}
           </div>
         </div>
-
-        {selectedAccountID === 'EXTENSION' && parseInt(networkId, 10) !== parseInt(env.NETWORK_ID, 10) && (
-          <span className="btn text-danger" style={{ marginRight: 12 }}>
-            Network Error: Switch Metamask's network to {this.getNetworkName()}.
-          </span>
-        )}
-        <a
-          href="https://hydroprotocol.io/developers/docs/overview/what-is-hydro.html"
-          className="btn btn-primary"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ marginRight: 12 }}>
-          DOCUMENTATION
-        </a>
-        <WalletButton />
-        <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Browser Wallet" />
-        {this.renderAccount()}
+        <button
+          className="btn btn-primary collapse-toggle"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbar-collapse"
+          aria-expanded="false">
+          <i className="fa fa-bars" />
+        </button>
+        <div className="collapse" id="navbar-collapse">
+          {selectedAccountID === 'EXTENSION' && parseInt(networkId, 10) !== parseInt(env.NETWORK_ID, 10) && (
+            <span className="btn text-danger item">
+              Network Error: Switch Metamask's network to {this.getNetworkName()}.
+            </span>
+          )}
+          <a
+            href="https://hydroprotocol.io/developers/docs/overview/what-is-hydro.html"
+            className="btn btn-primary item"
+            target="_blank"
+            rel="noopener noreferrer">
+            DOCUMENTATION
+          </a>
+          <div className="item">
+            <WalletButton />
+          </div>
+          <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Browser Wallet" />
+          {this.renderAccount()}
+        </div>
       </div>
     );
   }

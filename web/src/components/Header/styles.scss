@@ -1,5 +1,63 @@
 @import '../../styles/variables.scss';
 
-.dropdown-toggle::after {
-    margin-left: 12px;
+.collapsing {
+    -webkit-transition: none;
+    transition: none;
+    display: none;
+}
+
+.HydroSDK-toggleButton {
+    &:hover,
+    &:focus,
+    &:active,
+    &:visited {
+        outline: none;
+        background-color: #535ec3 !important;
+        border-color: #4954ac !important;
+        color: $white !important;
+        box-shadow: none;
+    }
+}
+
+@media screen and (max-width: 769px) {
+    .collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #535ec3;
+        z-index: 1;
+        .item {
+            margin: 4px 0;
+            border: none;
+        }
+        .HydroSDK-toggleButton {
+            width: 100%;
+            border: none;
+            padding-left: 0;
+            span {
+                word-break: keep-all;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -webkit-line-clamp: 1;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .dropdown-toggle::after {
+        margin-left: 12px;
+    }
+    .item {
+        margin-right: 12px;
+    }
+    .collapse-toggle {
+        display: none;
+    }
+    .collapse,
+    .collapse:not(.show) {
+        display: flex;
+    }
 }
