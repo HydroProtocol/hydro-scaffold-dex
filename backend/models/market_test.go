@@ -1,9 +1,9 @@
 package models
 
 import (
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
@@ -28,8 +28,8 @@ func Test_PG_MarketDao_FindAndInsertMarket(t *testing.T) {
 		BaseTokenName:      "HOT",
 		QuoteTokenSymbol:   "WETH",
 		QuoteTokenName:     "WETH",
-		BaseTokenAddress:   config.Getenv("HSK_HYDRO_TOKEN_ADDRESS"),
-		QuoteTokenAddress:  config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		BaseTokenAddress:   os.Getenv("HSK_HYDRO_TOKEN_ADDRESS"),
+		QuoteTokenAddress:  os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		BaseTokenDecimals:  18,
 		QuoteTokenDecimals: 18,
 		MinOrderSize:       utils.IntToDecimal(1),

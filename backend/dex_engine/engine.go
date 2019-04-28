@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
+	"os"
 	"strings"
 	"sync"
 )
@@ -59,7 +59,7 @@ type DexEngine struct {
 
 func NewDexEngine(ctx context.Context) *DexEngine {
 	// init redis
-	redis := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
+	redis := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))
 
 	// init websocket queue
 	wsQueue, _ := common.InitQueue(
@@ -220,7 +220,7 @@ func Run(ctx context.Context, startMetrics func()) {
 	utils.Info("dex engine start...")
 
 	//init database
-	models.Connect(config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(os.Getenv("HSK_DATABASE_URL"))
 
 	//start dex engine
 	dexEngine := NewDexEngine(ctx)

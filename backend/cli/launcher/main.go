@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/launcher"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
@@ -16,16 +15,16 @@ import (
 )
 
 func run() int {
-	utils.Error("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), config.Getenv("HSK_LOG_LEVEL"))
-	fmt.Println("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), config.Getenv("HSK_LOG_LEVEL"))
+	utils.Error("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), os.Getenv("HSK_LOG_LEVEL"))
+	fmt.Println("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), os.Getenv("HSK_LOG_LEVEL"))
 
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
-	models.Connect(config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(os.Getenv("HSK_DATABASE_URL"))
 
 	// blockchain
-	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), config.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
+	hydro := ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 	if os.Getenv("HSK_LOG_LEVEL") == "DEBUG" {
 		hydro.EnableDebug(true)
 	}

@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -200,11 +200,11 @@ func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
 
 	baseTokenLockedBalance := models.BalanceDao.GetByAccountAndSymbol(address, market.BaseTokenSymbol, market.BaseTokenDecimals)
 	baseTokenBalance := hydro.GetTokenBalance(market.BaseTokenAddress, address)
-	baseTokenAllowance := hydro.GetTokenAllowance(market.BaseTokenAddress, config.Getenv("HSK_PROXY_ADDRESS"), address)
+	baseTokenAllowance := hydro.GetTokenAllowance(market.BaseTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), address)
 
 	quoteTokenLockedBalance := models.BalanceDao.GetByAccountAndSymbol(address, market.QuoteTokenSymbol, market.QuoteTokenDecimals)
 	quoteTokenBalance := hydro.GetTokenBalance(market.QuoteTokenAddress, address)
-	quoteTokenAllowance := hydro.GetTokenAllowance(market.QuoteTokenAddress, config.Getenv("HSK_PROXY_ADDRESS"), address)
+	quoteTokenAllowance := hydro.GetTokenAllowance(market.QuoteTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), address)
 
 	var quoteTokenHugeAmount decimal.Decimal
 	var baseTokenHugeAmount decimal.Decimal
@@ -275,7 +275,7 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 
 	orderJson := models.OrderJSON{
 		Trader:                  address,
-		Relayer:                 config.Getenv("HSK_RELAYER_ADDRESS"),
+		Relayer:                 os.Getenv("HSK_RELAYER_ADDRESS"),
 		BaseCurrency:            market.BaseTokenAddress,
 		QuoteCurrency:           market.QuoteTokenAddress,
 		BaseCurrencyHugeAmount:  baseTokenHugeAmount,
@@ -285,7 +285,7 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 	}
 
 	sdkOrder := sdk.NewOrderWithData(address,
-		config.Getenv("HSK_RELAYER_ADDRESS"),
+		os.Getenv("HSK_RELAYER_ADDRESS"),
 		market.BaseTokenAddress,
 		market.QuoteTokenAddress,
 		utils.DecimalToBigInt(baseTokenHugeAmount),

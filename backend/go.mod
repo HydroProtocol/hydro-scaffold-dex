@@ -3,12 +3,13 @@ module github.com/HydroProtocol/hydro-box-dex/backend
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.28
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.29
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-playground/validator v9.28.0+incompatible
+	github.com/go-redis/redis v6.15.1+incompatible
 	github.com/jinzhu/gorm v1.9.4
 	github.com/jmoiron/sqlx v1.2.0 // indirect
 	github.com/joho/godotenv v1.3.0

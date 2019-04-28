@@ -2,13 +2,13 @@ package adminapi
 
 import (
 	"context"
+	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -45,7 +45,7 @@ func newEchoServer() *echo.Echo {
 
 func StartServer(ctx context.Context) {
 	//init database
-	models.Connect(config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(os.Getenv("HSK_DATABASE_URL"))
 
 	//init health check service
 	healthCheckService = NewHealthCheckService(nil)
@@ -55,7 +55,7 @@ func StartServer(ctx context.Context) {
 		&common.RedisQueueConfig{
 			Name:   common.HYDRO_ENGINE_EVENTS_QUEUE_KEY,
 			Ctx:    ctx,
-			Client: connection.NewRedisClient(config.Getenv("HSK_REDIS_URL")),
+			Client: connection.NewRedisClient(os.Getenv("HSK_REDIS_URL")),
 		},
 	)
 

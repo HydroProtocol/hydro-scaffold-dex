@@ -3,10 +3,9 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
@@ -130,13 +129,13 @@ var hydro sdk.Hydro
 
 func StartServer(ctx context.Context, startMetric func()) {
 	// init redis
-	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
+	redisClient := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))
 
 	// init blockchain
 	hydro = ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 
 	//init database
-	models.Connect(config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(os.Getenv("HSK_DATABASE_URL"))
 
 	CacheService, _ = common.InitKVStore(
 		&common.RedisKVStoreConfig{

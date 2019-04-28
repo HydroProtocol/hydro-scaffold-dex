@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"math/big"
+	"os"
 	"runtime"
 	"time"
 
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
@@ -179,8 +179,8 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		ItemType:  "hydroTrade",
 		ItemID:    transaction.ID,
 		Status:    "created",
-		From:      config.Getenv("HSK_RELAYER_ADDRESS"),
-		To:        config.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"),
+		From:      os.Getenv("HSK_RELAYER_ADDRESS"),
+		To:        os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"),
 		Value:     decimal.Zero,
 		GasLimit:  int64(len(matchResult.MatchItems) * 250000),
 		Data:      utils.Bytes2HexP(hydroProtocol.GetMatchOrderCallData(hydroTakerOrder, hydroMakerOrders, baseTokenFilledAmounts)),

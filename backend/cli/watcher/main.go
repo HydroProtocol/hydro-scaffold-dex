@@ -1,22 +1,20 @@
 package main
 
 import (
-	_ "github.com/joho/godotenv/autoload"
-	"os"
-)
-
-import (
 	"context"
 	"encoding/json"
+
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
+	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/HydroProtocol/hydro-sdk-backend/watcher"
+	"os"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type DBTransactionHandler struct {
@@ -78,7 +76,7 @@ func main() {
 	go cli.WaitExitSignal(stop)
 
 	// Init Database Client
-	models.Connect(config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(os.Getenv("HSK_DATABASE_URL"))
 
 	// Init Redis client
 	client := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))

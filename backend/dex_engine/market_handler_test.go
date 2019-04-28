@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
@@ -16,6 +15,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 )
@@ -41,10 +41,10 @@ func (s *marketHandlerSuite) SetupTest() {
 	market := &models.Market{
 		ID:                 "HOT-DAI",
 		BaseTokenSymbol:    "HOT",
-		BaseTokenAddress:   config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		BaseTokenAddress:   os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		BaseTokenDecimals:  18,
 		QuoteTokenSymbol:   "DAI",
-		QuoteTokenAddress:  config.Getenv("HSK_USD_TOKEN_ADDRESS"),
+		QuoteTokenAddress:  os.Getenv("HSK_USD_TOKEN_ADDRESS"),
 		QuoteTokenDecimals: 18,
 		MinOrderSize:       decimal.NewFromFloat(0.1),
 		PricePrecision:     5,
@@ -63,7 +63,7 @@ func (s *marketHandlerSuite) SetupTest() {
 	token := &models.Token{
 		Name:     "HOT",
 		Symbol:   "HOT",
-		Address:  config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		Address:  os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		Decimals: 18,
 	}
 
@@ -876,7 +876,7 @@ func newModelOrder(side string, price, amount decimal.Decimal) *models.Order {
 	baseTokenHugeAmount := amount.Mul(decimal.New(1, int32(market.BaseTokenDecimals)))
 	orderJson := models.OrderJSON{
 		Trader:                  trader,
-		Relayer:                 config.Getenv("HSK_RELAYER_ADDRESS"),
+		Relayer:                 os.Getenv("HSK_RELAYER_ADDRESS"),
 		BaseCurrency:            market.BaseTokenAddress,
 		QuoteCurrency:           market.QuoteTokenAddress,
 		BaseCurrencyHugeAmount:  baseTokenHugeAmount,
