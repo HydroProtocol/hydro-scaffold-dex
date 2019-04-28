@@ -5,6 +5,7 @@ import (
 	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
+	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 
 var queueService common.IQueue
 var healthCheckService IHealthCheckMonitor
+var erc20Service ethereum.IErc20
 
 func loadRoutes(e *echo.Echo) {
 	e.Add("GET", "/markets", ListMarketsHandler)
@@ -49,6 +51,9 @@ func StartServer(ctx context.Context) {
 
 	//init health check service
 	healthCheckService = NewHealthCheckService(nil)
+
+	//init erc20 service
+	erc20Service = ethereum.NewErc20Service(nil)
 
 	//init event queue
 	queueService, _ = common.InitQueue(

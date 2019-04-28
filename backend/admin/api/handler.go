@@ -7,7 +7,10 @@ import (
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
+	"math/big"
 	"net/http"
+	"os"
+	"time"
 )
 
 func RestartEngineHandler(e echo.Context) (err error) {
@@ -199,7 +202,10 @@ func EditMarketHandler(e echo.Context) (err error) {
 				MarketID: dbMarket.ID,
 			}
 
-			err = queueService.Push([]byte(utils.ToJsonString(event)))
+			err = approveMarket(dbMarket)
+			if err != nil {
+				err = queueService.Push([]byte(utils.ToJsonString(event)))
+			}
 		} else if publishType == "unPublish" {
 			event := common.CancelOrderEvent{
 				Event: common.Event{
@@ -225,6 +231,46 @@ func CreateMarketHandler(e echo.Context) (err error) {
 
 	err = models.MarketDao.InsertMarket(&market)
 	return response(e, nil, err)
+}
+
+func approveMarket(market *models.Market) (err error) {
+	err, quoteTokenAllowance := erc20Service.AllowanceOf(market.QuoteTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), os.Getenv("HSK_RELAYER_ADDRESS"))
+	if err != nil {
+		return
+	}
+	if quoteTokenAllowance.Cmp(big.NewInt(0)) <= 0 {
+		err = approveToken(market.QuoteTokenAddress)
+		if err != nil {
+			return
+		}
+	}
+	err, baseTokenAllowance := erc20Service.AllowanceOf(market.BaseTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), os.Getenv("HSK_RELAYER_ADDRESS"))
+	if err != nil {
+		return
+	}
+	if baseTokenAllowance.Cmp(big.NewInt(0)) <= 0 {
+		err = approveToken(market.BaseTokenAddress)
+		if err != nil {
+			return
+		}
+	}
+	return err
+}
+
+func approveToken(tokenAddress string) error {
+	approveLog := models.LaunchLog{
+		ItemType:  "hydroApprove",
+		Status:    "created",
+		From:      os.Getenv("HSK_RELAYER_ADDRESS"),
+		To:        tokenAddress,
+		Value:     decimal.Zero,
+		GasLimit:  int64(200000),
+		Data:      fmt.Sprintf("0x095ea7b3000000000000000000000000%s000000000000000000000000f000000000000000000000000000000000000", os.Getenv("HSK_PROXY_ADDRESS")),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+
+	return models.LaunchLogDao.InsertLaunchLog(&approveLog)
 }
 
 func response(e echo.Context, data interface{}, err error) error {
