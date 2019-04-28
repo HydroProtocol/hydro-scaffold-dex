@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/config"
@@ -16,9 +15,6 @@ import (
 )
 
 func run() int {
-	utils.Error("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), config.Getenv("HSK_LOG_LEVEL"))
-	fmt.Println("HSK_LOG_LEVEL:", os.Getenv("HSK_LOG_LEVEL"), config.Getenv("HSK_LOG_LEVEL"))
-
 	ctx, stop := context.WithCancel(context.Background())
 	go cli.WaitExitSignal(stop)
 
