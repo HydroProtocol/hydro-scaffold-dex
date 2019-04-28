@@ -39,10 +39,14 @@ func Test_PG_MarketDao_FindAndInsertMarket(t *testing.T) {
 		MakerFeeRate:       utils.StringToDecimal("0.001"),
 		TakerFeeRate:       utils.StringToDecimal("0.001"),
 		GasUsedEstimation:  250000,
+		IsPublished:        true,
 	}
 
 	assert.Nil(t, MarketDaoPG.InsertMarket(&market))
 	dbMarket = MarketDaoPG.FindMarketByID("HOT-WETH")
+
+	publishMarkets := MarketDaoPG.FindPublishedMarkets()
+	assert.EqualValues(t, 1, len(publishMarkets))
 
 	assert.EqualValues(t, market.ID, dbMarket.ID)
 	assert.EqualValues(t, market.BaseTokenDecimals, dbMarket.BaseTokenDecimals)

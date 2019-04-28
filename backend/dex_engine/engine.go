@@ -98,7 +98,7 @@ func NewDexEngine(ctx context.Context) *DexEngine {
 		HydroEngine: e,
 	}
 
-	markets := models.MarketDao.FindAllMarkets()
+	markets := models.MarketDao.FindPublishedMarkets()
 	for _, market := range markets {
 		_, err := engine.newMarket(market.ID)
 		if err != nil {
@@ -110,9 +110,21 @@ func NewDexEngine(ctx context.Context) *DexEngine {
 }
 
 func (e *DexEngine) newMarket(marketId string) (marketHandler *MarketHandler, err error) {
+	_, ok := e.marketHandlerMap[marketId]
+
+	if ok {
+		err = fmt.Errorf("open market fail, market [%s] already exist", marketId)
+		return
+	}
+
 	market := models.MarketDao.FindMarketByID(marketId)
 	if market == nil {
 		err = fmt.Errorf("open market fail, market [%s] not found", marketId)
+		return
+	}
+
+	if !market.IsPublished {
+		err = fmt.Errorf("open market fail, market [%s] not published", marketId)
 		return
 	}
 

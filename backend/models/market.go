@@ -6,6 +6,7 @@ import (
 
 type IMarketDao interface {
 	FindAllMarkets() []*Market
+	FindPublishedMarkets() []*Market
 	FindMarketByID(marketID string) *Market
 	InsertMarket(market *Market) error
 	UpdateMarket(market *Market) error
@@ -46,6 +47,12 @@ func init() {
 }
 
 type marketDaoPG struct {
+}
+
+func (marketDaoPG) FindPublishedMarkets() []*Market {
+	var markets []*Market
+	DB.Where("is_published = ?", true).Find(&markets)
+	return markets
 }
 
 func (marketDaoPG) FindAllMarkets() []*Market {

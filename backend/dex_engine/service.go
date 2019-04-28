@@ -3,13 +3,10 @@ package dex_engine
 import (
 	"github.com/HydroProtocol/hydro-box-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func UpdateOrder(order *models.Order) error {
-	spew.Dump("111", order.CreatedAt, order.UpdatedAt)
 	err := models.OrderDao.UpdateOrder(order)
-	spew.Dump("111", order.CreatedAt, order.UpdatedAt)
 	market := models.MarketDao.FindMarketByID(order.MarketID)
 	sendOrderUpdateMessage(order)
 	if order.Side == "buy" {

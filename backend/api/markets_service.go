@@ -45,7 +45,7 @@ func GetOrderBook(p Param) (interface{}, error) {
 
 func GetMarkets(_ Param) (interface{}, error) {
 	var markets []Market
-	dbMarkets := models.MarketDao.FindAllMarkets()
+	dbMarkets := models.MarketDao.FindPublishedMarkets()
 
 	for _, dbMarket := range dbMarkets {
 		marketStatus := GetMarketStatus(dbMarket.ID)

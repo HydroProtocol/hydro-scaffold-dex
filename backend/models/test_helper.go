@@ -20,6 +20,11 @@ func (m *MMarketDao) UpdateMarket(market *Market) error {
 	panic("implement me")
 }
 
+func (m *MMarketDao) FindPublishedMarkets() []*Market {
+	args := m.Called()
+	return args.Get(0).([]*Market)
+}
+
 func (m *MMarketDao) FindAllMarkets() []*Market {
 	args := m.Called()
 	return args.Get(0).([]*Market)
