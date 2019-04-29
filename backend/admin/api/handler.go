@@ -230,7 +230,7 @@ func ApproveMarketHandler(e echo.Context) (err error) {
 		return response(e, nil, err)
 	}
 
-	return approveMarket(dbMarket)
+	return response(e, nil, approveMarket(dbMarket))
 }
 
 func CreateMarketHandler(e echo.Context) (err error) {
