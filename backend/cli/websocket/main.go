@@ -5,6 +5,7 @@ import (
 	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
 	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
+	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/HydroProtocol/hydro-sdk-backend/websocket"
 	"os"
 
@@ -46,6 +47,8 @@ func run() int {
 
 	// Start the server
 	// It will block the current process to listen on the `addr` your provided.
+	go utils.StartMetrics()
 	wsServer.Start(ctx)
+
 	return 0
 }
