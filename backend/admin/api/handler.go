@@ -203,7 +203,7 @@ func EditMarketHandler(e echo.Context) (err error) {
 			}
 
 			err = approveMarket(dbMarket)
-			if err != nil {
+			if err == nil {
 				err = queueService.Push([]byte(utils.ToJsonString(event)))
 			}
 		} else if publishType == "unPublish" {
