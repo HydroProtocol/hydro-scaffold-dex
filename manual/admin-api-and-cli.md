@@ -57,7 +57,7 @@ POST /markets
 
 ##### Request body
 
-```json
+```js
 {
 	"id": "HOT-WETH",                                                  // required
 	"baseTokenAddress": "0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218",  // required
