@@ -20,6 +20,7 @@ var erc20Service ethereum.IErc20
 func loadRoutes(e *echo.Echo) {
 	e.Add("GET", "/markets", ListMarketsHandler)
 	e.Add("POST", "/markets", CreateMarketHandler)
+	e.Add("POST", "/markets/approve", ApproveMarketHandler)
 	e.Add("PUT", "/markets", EditMarketHandler)
 	e.Add("DELETE", "/orders/:order_id", DeleteOrderHandler)
 	e.Add("GET", "/orders", GetOrdersHandler)

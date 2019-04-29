@@ -34,6 +34,7 @@ type IAdminApi interface {
 	ListMarkets() ([]byte, error)
 	UpdateMarket(marketID, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation, isPublish string) ([]byte, error)
 	PublishMarket(marketID string) ([]byte, error)
+	ApproveMarket(marketID string) (ret []byte, err error)
 	UnPublishMarket(marketID string) ([]byte, error)
 	UpdateMarketFee(marketID, makerFee, takerFee string) ([]byte, error)
 
@@ -191,6 +192,13 @@ func (a *Admin) PublishMarket(marketID string) (ret []byte, err error) {
 	}
 
 	err, _, ret = a.client.Put(a.MarketUrl, nil, market, nil)
+	return
+}
+
+func (a *Admin) ApproveMarket(marketID string) (ret []byte, err error) {
+	var params []utils.KeyValue
+	params = append(params, utils.KeyValue{Key: "marketID", Value: marketID})
+	err, _, ret = a.client.Post(fmt.Sprintf("%s%s", a.MarketUrl, "/approve"), params, nil, nil)
 	return
 }
 

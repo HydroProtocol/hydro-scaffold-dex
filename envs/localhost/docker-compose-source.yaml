@@ -11,8 +11,6 @@ services:
   ethereum-node:
     container_name: hydro-box-dex-ethereum-node
     image: hydroprotocolio/hydro-box-dex-ethereum-node:latest
-    logging:
-      driver: "none"
     ports:
       - 8545:8545
     restart: on-failure:5
@@ -58,6 +56,8 @@ services:
       - LAUNCHER_HEALTH_CHECK_URL=http://launcher:4005/metrics
       - WATCHER_HEALTH_CHECK_URL=http://watcher:4003/metrics
       - WEBSOCKET_HEALTH_CHECK_URL=http://ws:4002/metrics
+      - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
     volumes:
       - datavolume:/data
     depends_on:
@@ -156,8 +156,6 @@ services:
       - HSK_RELAYER_PK=95b0a982c0dfc5ab70bf915dcf9f4b790544d25bc5e6cff0f38a59d0bba58651
       - HSK_LOG_LEVEL=DEBUG
       - METRICS_PORT=4005
-    logging:
-      driver: "none"
     volumes:
       - datavolume:/data
     depends_on:

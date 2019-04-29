@@ -50,6 +50,8 @@ services:
       - LAUNCHER_HEALTH_CHECK_URL=http://launcher:4005/metrics
       - WATCHER_HEALTH_CHECK_URL=http://watcher:4003/metrics
       - WEBSOCKET_HEALTH_CHECK_URL=http://ws:4002/metrics
+      - HSK_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
+      - HSK_RELAYER_ADDRESS=___CHANGE_ME___
     volumes:
       - datavolume:/data
     depends_on:

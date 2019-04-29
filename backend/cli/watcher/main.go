@@ -50,6 +50,14 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 			status = common.STATUS_FAILED
 		}
 
+		if launchLog.ItemType == "hydroApprove" {
+			launchLog.Status = status
+			err := models.LaunchLogDao.UpdateLaunchLog(launchLog)
+			if err != nil {
+				panic(err)
+			}
+			return
+		}
 		event := &common.ConfirmTransactionEvent{
 			Event: common.Event{
 				Type:     common.EventConfirmTransaction,

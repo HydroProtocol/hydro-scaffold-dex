@@ -230,6 +230,23 @@ func NewDexCli() *cli.App {
 					},
 				},
 				{
+					Name:  "approve",
+					Usage: "Approve a market",
+					Description: `
+    Example: approve market 'HOT-WWW'
+    
+    hydor-dex-ctl market approve HOT-WWW`,
+					Action: func(c *cli.Context) error {
+						marketID = c.Args().Get(0)
+						if len(marketID) == 0 {
+							return cli.ShowSubcommandHelp(c)
+						}
+
+						printIfErr(admin.ApproveMarket(marketID))
+						return nil
+					},
+				},
+				{
 					Name:  "unpublish",
 					Usage: "Unpublish a market",
 					Description: `

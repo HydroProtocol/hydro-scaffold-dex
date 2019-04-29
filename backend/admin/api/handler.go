@@ -195,7 +195,7 @@ func EditMarketHandler(e echo.Context) (err error) {
 	}
 
 	err = models.MarketDao.UpdateMarket(dbMarket)
-	if err != nil {
+	if err == nil {
 		if publishType == "publish" {
 			event := common.Event{
 				Type:     common.EventOpenMarket,
@@ -219,6 +219,18 @@ func EditMarketHandler(e echo.Context) (err error) {
 	}
 
 	return response(e, nil, err)
+}
+
+func ApproveMarketHandler(e echo.Context) (err error) {
+	marketID := e.QueryParam("marketID")
+	dbMarket := models.MarketDao.FindMarketByID(marketID)
+
+	if dbMarket == nil {
+		err = fmt.Errorf("cannot find market by ID %s", marketID)
+		return response(e, nil, err)
+	}
+
+	return approveMarket(dbMarket)
 }
 
 func CreateMarketHandler(e echo.Context) (err error) {
@@ -254,10 +266,15 @@ func approveMarket(market *models.Market) (err error) {
 			return
 		}
 	}
-	return err
+	return
 }
 
 func approveToken(tokenAddress string) error {
+	proxyAddress := os.Getenv("HSK_PROXY_ADDRESS")
+	if len(proxyAddress) != 42 {
+		return fmt.Errorf("HSK_PROXY_ADDRESS empty")
+	}
+	proxyAddress = proxyAddress[2:]
 	approveLog := models.LaunchLog{
 		ItemType:  "hydroApprove",
 		Status:    "created",
@@ -265,7 +282,7 @@ func approveToken(tokenAddress string) error {
 		To:        tokenAddress,
 		Value:     decimal.Zero,
 		GasLimit:  int64(200000),
-		Data:      fmt.Sprintf("0x095ea7b3000000000000000000000000%s000000000000000000000000f000000000000000000000000000000000000", os.Getenv("HSK_PROXY_ADDRESS")),
+		Data:      fmt.Sprintf("0x095ea7b3000000000000000000000000%sf000000000000000000000000000000000000000000000000000000000000000", proxyAddress),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 	}

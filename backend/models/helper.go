@@ -14,6 +14,10 @@ func UpdateLaunchLogToPending(launchLog *LaunchLog) (err error) {
 		return
 	}
 
+	if launchLog.ItemType == "hydroApprove" {
+		return nil
+	}
+
 	transaction := TransactionDao.FindTransactionByID(launchLog.ItemID)
 	transaction.TransactionHash = &launchLog.Hash
 
