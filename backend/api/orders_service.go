@@ -33,7 +33,17 @@ func GetLockedBalance(p Param) (interface{}, error) {
 	}, nil
 }
 
-func GetOrder(p Param) (interface{}, error) {
+func GetSingleOrder(p Param) (interface{}, error) {
+	req := p.(*QuerySingleOrderReq)
+
+	order := models.OrderDao.FindByID(req.OrderID)
+
+	return &QuerySingleOrderResp{
+		Order: order,
+	}, nil
+}
+
+func GetOrders(p Param) (interface{}, error) {
 	req := p.(*QueryOrderReq)
 	if req.Status == "" {
 		req.Status = common.ORDER_PENDING
@@ -48,7 +58,7 @@ func GetOrder(p Param) (interface{}, error) {
 	offset := req.PerPage * (req.Page - 1)
 	limit := req.PerPage
 
-	count, orders := models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, limit, offset)
+	count, orders := models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, offset, limit)
 
 	return &QueryOrderResp{
 		Count:  count,

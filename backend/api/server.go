@@ -36,7 +36,8 @@ func loadRoutes(e *echo.Echo) {
 	addRoute(e, "GET", "/markets/:marketID/candles", &CandlesReq{}, GetTradingView)
 	addRoute(e, "GET", "/fees", &FeesReq{}, GetFees)
 
-	addRoute(e, "GET", "/orders", &QueryOrderReq{}, GetOrder, authMiddelware)
+	addRoute(e, "GET", "/orders", &QueryOrderReq{}, GetOrders, authMiddelware)
+	addRoute(e, "GET", "/orders/:orderID", &QuerySingleOrderReq{}, GetSingleOrder, authMiddelware)
 	addRoute(e, "POST", "/orders/build", &BuildOrderReq{}, BuildOrder, authMiddelware)
 	addRoute(e, "POST", "/orders", &PlaceOrderReq{}, PlaceOrder, authMiddelware)
 	addRoute(e, "DELETE", "/orders/:orderID", &CancelOrderReq{}, CancelOrder, authMiddelware)

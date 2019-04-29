@@ -61,6 +61,15 @@ type (
 		Orders []*models.Order `json:"orders"`
 	}
 
+	QuerySingleOrderReq struct {
+		BaseReq
+		OrderID string `json:"orderID" param:"orderID" validate:"required"`
+	}
+
+	QuerySingleOrderResp struct {
+		Order *models.Order `json:"order"`
+	}
+
 	BuildOrderReq struct {
 		BaseReq
 		MarketID  string `json:"marketID"  validate:"required"`
