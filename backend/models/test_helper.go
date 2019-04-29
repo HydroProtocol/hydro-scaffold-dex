@@ -224,6 +224,7 @@ func MockMarketDao() {
 	markets = append(markets, marketHotDai)
 
 	marketDao.On("FindAllMarkets").Return(markets).Once()
+	marketDao.On("FindPublishedMarkets").Times(10).Return(markets)
 	marketDao.On("FindMarketByID", mock.MatchedBy(func(marketID string) bool { return marketID == "WETH-DAI" })).Return(marketWethDai)
 	marketDao.On("FindMarketByID", "HOT-DAI").Times(10).Return(marketHotDai)
 	marketDao.On("FindMarketByID", mock.AnythingOfType("string")).Times(10).Return(nil)

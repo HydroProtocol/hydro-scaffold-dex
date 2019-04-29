@@ -40,7 +40,6 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 		hash := tx.GetHash()
 		transaction := models.TransactionDao.FindTransactionByID(launchLog.ItemID)
 		utils.Info("Transaction %s result is %+v", tx.GetHash(), result)
-		//w.handleTransaction(launchLog.ItemID, result)
 
 		var status string
 
@@ -50,6 +49,7 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 			status = common.STATUS_FAILED
 		}
 
+		//approve event should not process with engine, so update and return
 		if launchLog.ItemType == "hydroApprove" {
 			launchLog.Status = status
 			err := models.LaunchLogDao.UpdateLaunchLog(launchLog)

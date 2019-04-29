@@ -14,6 +14,7 @@ func UpdateLaunchLogToPending(launchLog *LaunchLog) (err error) {
 		return
 	}
 
+	//if approve event, it should not update trades or transactions
 	if launchLog.ItemType == "hydroApprove" {
 		return nil
 	}
