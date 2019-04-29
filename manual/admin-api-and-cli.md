@@ -90,6 +90,29 @@ POST /markets
 }
 ```
 
+#### Approve market tokens
+
+```
+POST /markets/approve?marketID=HOT-WETH
+```
+
+##### Response on success
+
+```json
+{
+	"status": "success"
+}
+```
+
+##### Response on fail
+
+```json
+{
+	"status": "fail",
+	"error_message": "reason"
+}
+```
+
 #### Update a market
 
 ```
@@ -173,6 +196,14 @@ hydro-dex-ctl market new HOT-WWW \
   --takerFeeRate=0.002 \
   --gasUsedEstimation=150000
 
+```
+
+#### Approve market tokens.
+
+Approve market tokens for realyer .
+
+```
+hydro-dex-ctl market approve HOT-WETH
 ```
 
 #### Update a market
