@@ -129,8 +129,8 @@ export const loadToken = (tokenAddress, symbol, decimals) => {
     }
 
     const [balance, allowance] = await Promise.all([
-      dispatch(getTokenBalance(tokenAddress, accountAddress)),
-      dispatch(getAllowance(tokenAddress, accountAddress))
+      getTokenBalance(tokenAddress, accountAddress),
+      getAllowance(tokenAddress, accountAddress)
     ]);
 
     return dispatch({

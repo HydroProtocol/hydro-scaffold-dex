@@ -2,31 +2,19 @@ import BigNumber from 'bignumber.js';
 import { watchToken } from '../actions/account';
 import abi from './abi';
 import env from './env';
-import { getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
+import { getSelectedAccountWallet, getTransactionReceipt, getContract } from '@gongddex/hydro-sdk-wallet';
 export let web3, Contract;
 
-export const getTokenBalance = (tokenAddress, accountAddress) => {
-  return async (dispatch, getState) => {
-    const wallet = getSelectedAccountWallet(getState());
-    if (!wallet) {
-      return new BigNumber('0');
-    }
-    const contract = wallet.getContract(tokenAddress, abi);
-    const balance = await wallet.contractCall(contract, 'balanceOf', accountAddress);
-    return new BigNumber(balance);
-  };
+export const getTokenBalance = async (tokenAddress, accountAddress) => {
+  const contract = getContract(tokenAddress, abi);
+  const balance = await contract.balanceOf(accountAddress);
+  return new BigNumber(balance);
 };
 
-export const getAllowance = (tokenAddress, accountAddress) => {
-  return async (dispatch, getState) => {
-    const wallet = getSelectedAccountWallet(getState());
-    if (!wallet) {
-      return new BigNumber('0');
-    }
-    const contract = wallet.getContract(tokenAddress, abi);
-    const allowance = await wallet.contractCall(contract, 'allowance', accountAddress, env.HYDRO_PROXY_ADDRESS);
-    return new BigNumber(allowance);
-  };
+export const getAllowance = async (tokenAddress, accountAddress) => {
+  const contract = getContract(tokenAddress, abi);
+  const allowance = await contract.allowance(accountAddress, env.HYDRO_PROXY_ADDRESS);
+  return new BigNumber(allowance);
 };
 
 export const wrapETH = amount => {
@@ -48,7 +36,7 @@ export const wrapETH = amount => {
       const transactionID = await wallet.sendTransaction(params);
 
       alert(`Wrap ETH request submitted`);
-      watchTransactionStatus(wallet, transactionID, async success => {
+      watchTransactionStatus(transactionID, async success => {
         if (success) {
           dispatch(watchToken(WETH.address, WETH.symbol));
           alert('Wrap ETH Successfully');
@@ -85,7 +73,7 @@ export const unwrapWETH = amount => {
       const transactionID = await wallet.sendTransaction(params);
 
       alert(`Unwrap WETH request submitted`);
-      watchTransactionStatus(wallet, transactionID, async success => {
+      watchTransactionStatus(transactionID, async success => {
         if (success) {
           dispatch(watchToken(WETH.address, WETH.symbol));
           alert('Wrap ETH Successfully');
@@ -141,7 +129,7 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
       const transactionID = await wallet.sendTransaction(params);
 
       alert(`${action} ${symbol} request submitted`);
-      watchTransactionStatus(wallet, transactionID, async success => {
+      watchTransactionStatus(transactionID, async success => {
         if (success) {
           dispatch(watchToken(tokenAddress, symbol));
           alert(`${action} ${symbol} Successfully`);
@@ -157,18 +145,18 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
   };
 };
 
-const watchTransactionStatus = (wallet, txID, callback) => {
-  const getTransactionReceipt = async () => {
-    const tx = await wallet.sendCustomRequest('eth_getTransactionReceipt', txID);
+const watchTransactionStatus = (txID, callback) => {
+  const getTransactionStatus = async () => {
+    const tx = await getTransactionReceipt(txID);
     if (!tx) {
-      window.setTimeout(() => getTransactionReceipt(txID), 3000);
+      window.setTimeout(() => getTransactionStatus(txID), 3000);
     } else if (callback) {
       callback(Number(tx.status) === 1);
     } else {
       alert('success');
     }
   };
-  window.setTimeout(() => getTransactionReceipt(txID), 3000);
+  window.setTimeout(() => getTransactionStatus(txID), 3000);
 };
 
 const get64BytesString = string => {

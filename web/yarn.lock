@@ -773,12 +773,14 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
 
-"@gongddex/hydro-sdk-wallet@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@gongddex/hydro-sdk-wallet/-/hydro-sdk-wallet-0.0.11.tgz#731af04de4654b07734b7673c6aba01332ae2d5c"
+"@gongddex/hydro-sdk-wallet@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@gongddex/hydro-sdk-wallet/-/hydro-sdk-wallet-0.0.17.tgz#5fcab4eb5091eeae2af285072e9fc225e3cd5ec5"
   dependencies:
+    "@walletconnect/browser" "^1.0.0-beta.18"
     ethereumjs-util "5.2.0"
     ethers "^4.0.27"
+    qr-image "^3.2.0"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -916,6 +918,33 @@
     "@types/node" "*"
     "@types/unist" "*"
     "@types/vfile-message" "*"
+
+"@walletconnect/browser@^1.0.0-beta.18":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/browser/-/browser-1.0.0-beta.18.tgz#97af55422c3d0943ba512c91d2cb541bd8403bc2"
+  dependencies:
+    "@walletconnect/core" "^1.0.0-beta.18"
+    "@walletconnect/types" "^1.0.0-beta.17"
+    "@walletconnect/utils" "^1.0.0-beta.18"
+
+"@walletconnect/core@^1.0.0-beta.18":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.0.0-beta.18.tgz#b43d5d79bb6b7beaca1bf42b0d2500f04fcd3815"
+  dependencies:
+    "@walletconnect/types" "^1.0.0-beta.17"
+    "@walletconnect/utils" "^1.0.0-beta.18"
+
+"@walletconnect/types@^1.0.0-beta.17":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.0-beta.18.tgz#c258413d41e4c557b68cef5d22ff463c3b1cd0d6"
+
+"@walletconnect/utils@^1.0.0-beta.18":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.0-beta.18.tgz#077569c9c7e525ec8a50f4014eb662ca33694cec"
+  dependencies:
+    "@walletconnect/types" "^1.0.0-beta.17"
+    js-sha3 "^0.8.0"
+    lodash.isnumber "^3.0.3"
 
 "@wangleiddex/hydro-sdk-charts@^0.1.6":
   version "0.1.6"
@@ -5153,6 +5182,10 @@ js-sha3@0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.5.7.tgz#0d4ffd8002d5333aabaf4a23eed2f6374c9f28e7"
 
+js-sha3@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -5450,6 +5483,10 @@ lodash.flattendeep@^4.4.0:
 lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+
+lodash.isnumber@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
@@ -7235,6 +7272,10 @@ punycode@^1.2.4, punycode@^1.4.1:
 q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
+
+qr-image@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/qr-image/-/qr-image-3.2.0.tgz#9fa8295beae50c4a149cf9f909a1db464a8672e8"
 
 qs@6.5.2, qs@~6.5.2:
   version "6.5.2"
