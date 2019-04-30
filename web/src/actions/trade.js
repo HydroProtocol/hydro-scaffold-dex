@@ -1,5 +1,5 @@
 import api from '../lib/api';
-import { getSelectedAccount, getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
+import { getSelectedAccountWallet } from '@gongddex/hydro-sdk-wallet';
 
 export const TRADE_FORM_ID = 'TRADE';
 
@@ -42,10 +42,8 @@ const createOrder = (side, price, amount, orderType, expires) => {
     const orderParams = buildOrderResponse.data.data.order;
     const { id: orderID } = orderParams;
     try {
-      const selectedAccount = getSelectedAccount(state);
-      const address = selectedAccount ? selectedAccount.get('address') : null;
       const wallet = getSelectedAccountWallet(state);
-      const signature = await wallet.signPersonalMessage(orderID, address);
+      const signature = await wallet.signPersonalMessage(orderID);
       const orderSignature = '0x' + signature.slice(130) + '0'.repeat(62) + signature.slice(2, 130);
       const placeOrderResponse = await api.post('/orders', {
         orderID,

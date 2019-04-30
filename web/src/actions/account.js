@@ -12,10 +12,10 @@ export const loginRequest = () => {
     const selectedAccount = getSelectedAccount(state);
     const address = selectedAccount ? selectedAccount.get('address') : null;
     const wallet = getSelectedAccountWallet(state);
-    if (!address || !wallet) {
+    if (!wallet) {
       return;
     }
-    const signature = await wallet.signPersonalMessage(message, address);
+    const signature = await wallet.signPersonalMessage(message);
     if (!signature) {
       return;
     }
