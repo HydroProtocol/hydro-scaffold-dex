@@ -105,8 +105,6 @@ services:
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
-    logging:
-      driver: "none"
     volumes:
       - datavolume:/data
     depends_on:
@@ -139,8 +137,6 @@ services:
       - HSK_RELAYER_ADDRESS=___CHANGE_ME___
       - HSK_RELAYER_PK=___CHANGE_ME___
       - HSK_LOG_LEVEL=DEBUG
-    logging:
-      driver: "none"
     volumes:
       - datavolume:/data
     depends_on:
