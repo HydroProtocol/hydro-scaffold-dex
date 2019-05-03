@@ -28,7 +28,7 @@ class TradeHistory extends React.PureComponent {
             <tr className="text-secondary">
               <th className="text-right">Price</th>
               <th className="text-right">Amount</th>
-              <th>Time</th>
+              <th>Timestamp</th>
             </tr>
           </thead>
           <tbody>
