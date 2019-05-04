@@ -80,7 +80,7 @@ Our Hydro Scaffolds come with a powerful API and easy Command Line Interface (CL
 
 2. **View the CLI manual to see a list of functions you can perform**
 
-    See [admin cli manual](./manual/admin-api-and-cli.md#cli-guide-(admin-cli))
+    See [admin cli manual](./manual/admin-api-and-cli.md#cli-guide-admin-cli)
 
 3. **Try creating a new market**
 
