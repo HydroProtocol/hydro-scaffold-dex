@@ -34,7 +34,7 @@ you should use `docker-compose -f docker-compose-ropsten.yaml down` to stop them
 
 If the following command shows nothing docker containers existent, you are good to go.
 
-	docker ps -a | grep hydro-box-dex
+	docker ps -a | grep hydro-scaffold-dex
 
 ## Step1: Prepare a relayer address
 
@@ -55,10 +55,10 @@ For the other environments, you shoud prepare your own relayer address. The valu
 Use docker-compose to start the service.
 
 ```shell
-# run HydroBoxDex on ropsten  
+# run HydroScaffoldDex on ropsten  
 docker-compose -f docker-compose-ropsten.yaml up
 
-# or run HydroBoxDex using local source code on ropsten
+# or run HydroScaffoldDex using local source code on ropsten
 docker-compose -f docker-compose-ropsten-source.yaml up
 ```
 

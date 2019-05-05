@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/backend/connection"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/connection"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
