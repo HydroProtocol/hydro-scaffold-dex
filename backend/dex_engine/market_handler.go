@@ -156,7 +156,7 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		baseTokenFilledAmt := utils.DecimalToBigInt(baseTokenHugeAmt)
 		baseTokenFilledAmounts = append(baseTokenFilledAmounts, baseTokenFilledAmt)
 
-		_ = models.OrderDao.InsertOrder(modelMakerOrder)
+		_ = UpdateOrder(modelMakerOrder)
 	}
 
 	transaction := &models.Transaction{
