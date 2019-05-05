@@ -2,8 +2,8 @@ Hydro DEX's provide an Admin API: a RESTful interface for operating and configur
 
 Hydro also provides a basic CLI to make configuring your DEX simple and easy. This document:
 
-- Summarizes the [key details of the Admin API](https://github.com/HydroProtocol/hydro-box-dex/blob/master/manual/admin-api-and-cli.md#admin-api)
-- Provides a [guide for CLI functions](https://github.com/HydroProtocol/hydro-box-dex/blob/master/manual/admin-api-and-cli.md#cli-guide-admin-cli)
+- Summarizes the [key details of the Admin API](https://github.com/HydroProtocol/hydro-scaffold-dex/blob/master/manual/admin-api-and-cli.md#admin-api)
+- Provides a [guide for CLI functions](https://github.com/HydroProtocol/hydro-scaffold-dex/blob/master/manual/admin-api-and-cli.md#cli-guide-admin-cli)
 
 *Note that because this API controls important fundamental elements of Hydro dex, it is important to secure this API against unwanted access.*
 

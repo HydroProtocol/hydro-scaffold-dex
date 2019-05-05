@@ -4,13 +4,13 @@ volumes:
 services:
   redis:
     image: redis:5.0
-    container_name: hydro-box-dex-redis
+    container_name: hydro-scaffold-dex-redis
     ports:
       - 6379:6379
     restart: on-failure:5
   db:
     image: postgres
-    container_name: hydro-box-dex-pg
+    container_name: hydro-scaffold-dex-pg
     ports:
       - 5432:5432
     restart: always
@@ -20,7 +20,7 @@ services:
       - ./envs/mainnet/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     build: ./web
-    container_name: hydro-box-dex-web
+    container_name: hydro-scaffold-dex-web
     ports:
       - 3000:8043
     environment:
@@ -35,7 +35,7 @@ services:
     restart: on-failure:5
   admin:
     build: ./backend
-    container_name: hydro-box-dex-admin-api
+    container_name: hydro-scaffold-dex-admin-api
     command: /bin/adminapi
     ports:
       - 3003:3003
@@ -60,7 +60,7 @@ services:
     restart: on-failure:5
   api:
     build: ./backend
-    container_name: hydro-box-dex-api
+    container_name: hydro-scaffold-dex-api
     command: /bin/api
     ports:
       - 3001:3001
@@ -81,7 +81,7 @@ services:
     restart: on-failure:5
   ws:
     build: ./backend
-    container_name: hydro-box-dex-ws
+    container_name: hydro-scaffold-dex-ws
     command: /bin/websocket
     ports:
       - 3002:3002
@@ -97,7 +97,7 @@ services:
     restart: on-failure:5
   watcher:
     build: ./backend
-    container_name: hydro-box-dex-watcher
+    container_name: hydro-scaffold-dex-watcher
     command: /bin/watcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -115,7 +115,7 @@ services:
     restart: on-failure:5
   engine:
     build: ./backend
-    container_name: hydro-box-dex-engine
+    container_name: hydro-scaffold-dex-engine
     command: /bin/engine
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -130,7 +130,7 @@ services:
     restart: on-failure:5
   launcher:
     build: ./backend
-    container_name: hydro-box-dex-launcher
+    container_name: hydro-scaffold-dex-launcher
     command: /bin/launcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable

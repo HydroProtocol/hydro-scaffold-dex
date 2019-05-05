@@ -1,4 +1,4 @@
-module github.com/HydroProtocol/hydro-box-dex/backend
+module github.com/HydroProtocol/hydro-scaffold-dex/backend
 
 go 1.12
 

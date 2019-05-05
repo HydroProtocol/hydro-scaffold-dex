@@ -35,11 +35,11 @@ If you don't already have them installed, you can follow [this link](https://doc
 
 1.  **Clone this repo**
 
-        git clone https://github.com/hydroprotocol/hydro-box-dex.git
+        git clone https://github.com/hydroprotocol/hydro-scaffold-dex.git
 
 1.  **Change your working directory**
 
-        cd hydro-box-dex
+        cd hydro-scaffold-dex
 
 1.  **Build and launch your hydro relayer**
 

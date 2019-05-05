@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
