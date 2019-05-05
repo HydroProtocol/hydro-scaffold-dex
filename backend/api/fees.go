@@ -69,12 +69,29 @@ type feeDetail struct {
 //
 // For an example, a trader is placing an order for HOT-DAI market.
 // Let's assume:
-//   1) ETH price is 145 DAI
+//   1) ETH price is 150 DAI
 //   2) Reasonable gas price is 10 GWei
-// So the gas fee should be 145 * 180000 * 0.000000001 * 10 = 0.261 DAI
+// So the gas fee should be 150 * 180000 * 0.000000001 * 10 = 0.27 DAI
 func getGasFeeAmount(market *models.Market) decimal.Decimal {
-	// we use a simple zero here to make the test easier
-	return decimal.New(0, 0)
+	// 3GWei
+	gasPrice := decimal.New(3, 9)
+
+	gasCostInEth := gasPrice.Mul(decimal.NewFromFloat(float64(market.GasUsedEstimation)))
+
+	var gasCostInQuoteToken decimal.Decimal
+	if market.QuoteTokenSymbol == "WETH" {
+		gasCostInQuoteToken = gasCostInEth
+	} else {
+		// for markets with other quote token, assume its DAI for simplicity, should replace this logic in real world app
+
+		// assume WETH's price is: 150 DAI
+		wethPriceInDai := decimal.NewFromFloat(150)
+
+		gasCostInQuoteToken = gasCostInEth.Mul(wethPriceInDai)
+	}
+
+	humanFriendlyGasCostInQuoteToken := gasCostInQuoteToken.Div(decimal.New(1, 18))
+	return humanFriendlyGasCostInQuoteToken
 }
 
 func calculateFee(price, amount decimal.Decimal, market *models.Market, address string) *feeDetail {

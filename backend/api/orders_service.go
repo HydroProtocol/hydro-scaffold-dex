@@ -263,6 +263,8 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 	fee := calculateFee(price, amount, market, address)
 
 	gasFeeInQuoteToken := fee.GasFeeAmount
+	gasFeeInQuoteTokenHugeAmount := fee.GasFeeAmount.Mul(decimal.New(1, int32(market.QuoteTokenDecimals)))
+
 	makerRebateRate := decimal.Zero
 	offeredAmount := decimal.Zero
 
@@ -290,7 +292,7 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 		QuoteCurrency:           market.QuoteTokenAddress,
 		BaseCurrencyHugeAmount:  baseTokenHugeAmount,
 		QuoteCurrencyHugeAmount: quoteTokenHugeAmount,
-		GasTokenHugeAmount:      gasFeeInQuoteToken,
+		GasTokenHugeAmount:      gasFeeInQuoteTokenHugeAmount,
 		Data:                    orderData,
 	}
 
@@ -300,7 +302,7 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 		market.QuoteTokenAddress,
 		utils.DecimalToBigInt(baseTokenHugeAmount),
 		utils.DecimalToBigInt(quoteTokenHugeAmount),
-		utils.DecimalToBigInt(gasFeeInQuoteToken),
+		utils.DecimalToBigInt(gasFeeInQuoteTokenHugeAmount),
 		orderData,
 		"",
 	)

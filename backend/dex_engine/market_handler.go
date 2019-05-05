@@ -98,7 +98,14 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 	var eventOrder models.Order
 	_ = json.Unmarshal([]byte(eventOrderString), &eventOrder)
 
-	eventMemoryOrder := &common.MemoryOrder{ID: eventOrder.ID, MarketID: eventOrder.MarketID, Price: eventOrder.Price, Amount: eventOrder.Amount, Side: eventOrder.Side}
+	eventMemoryOrder := &common.MemoryOrder{
+		ID:           eventOrder.ID,
+		MarketID:     eventOrder.MarketID,
+		Price:        eventOrder.Price,
+		Amount:       eventOrder.Amount,
+		Side:         eventOrder.Side,
+		GasFeeAmount: eventOrder.GasFeeAmount,
+	}
 
 	utils.Debug("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
 
@@ -111,13 +118,29 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 			makerOrder := resultWithOrders.modelMakerOrders[item.MakerOrder.ID]
 
 			makerOrder.AvailableAmount = makerOrder.AvailableAmount.Sub(item.MatchedAmount)
-			makerOrder.PendingAmount = makerOrder.PendingAmount.Add(item.MatchedAmount)
-
 			eventOrder.AvailableAmount = eventOrder.AvailableAmount.Sub(item.MatchedAmount)
-			eventOrder.PendingAmount = eventOrder.PendingAmount.Add(item.MatchedAmount)
+
+			if item.MatchShouldBeCanceled {
+				makerOrder.CanceledAmount = makerOrder.CanceledAmount.Add(item.MatchedAmount)
+				eventOrder.CanceledAmount = eventOrder.CanceledAmount.Add(item.MatchedAmount)
+			} else {
+				makerOrder.PendingAmount = makerOrder.PendingAmount.Add(item.MatchedAmount)
+				eventOrder.PendingAmount = eventOrder.PendingAmount.Add(item.MatchedAmount)
+			}
+
+			if item.MakerOrderIsDone {
+				makerOrder.CanceledAmount = makerOrder.Amount.Sub(makerOrder.ConfirmedAmount.Add(makerOrder.PendingAmount))
+				makerOrder.AvailableAmount = decimal.Zero
+			}
+
 			_ = UpdateOrder(makerOrder)
 
 			utils.Debug("  [Take Liquidity] price: %s amount: %s (%s) ", item.MakerOrder.Price.StringFixed(5), item.MatchedAmount.StringFixed(5), item.MakerOrder.ID)
+		}
+
+		if matchResult.TakerOrderIsDone {
+			eventOrder.CanceledAmount = eventOrder.Amount.Sub(eventOrder.ConfirmedAmount.Add(eventOrder.PendingAmount))
+			eventOrder.AvailableAmount = decimal.Zero
 		}
 
 		transaction, launchLog = processTransactionAndLaunchLog(resultWithOrders)
