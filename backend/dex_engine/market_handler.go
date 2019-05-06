@@ -105,6 +105,8 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 		Amount:       eventOrder.Amount,
 		Side:         eventOrder.Side,
 		GasFeeAmount: eventOrder.GasFeeAmount,
+		MakerFeeRate: eventOrder.MakerFeeRate,
+		TakerFeeRate: eventOrder.TakerFeeRate,
 	}
 
 	utils.Debug("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
@@ -143,11 +145,13 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 			eventOrder.AvailableAmount = decimal.Zero
 		}
 
-		transaction, launchLog = processTransactionAndLaunchLog(resultWithOrders)
-		trades := newTradesByMatchResult(resultWithOrders, transaction.ID)
+		if matchResult.ExistMatchToBeExecuted() {
+			transaction, launchLog = processTransactionAndLaunchLog(resultWithOrders)
+			trades := newTradesByMatchResult(resultWithOrders, transaction.ID)
 
-		for _, trade := range trades {
-			_ = InsertTrade(trade)
+			for _, trade := range trades {
+				_ = InsertTrade(trade)
+			}
 		}
 	}
 
@@ -170,6 +174,11 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 	baseTokenDecimal := market.BaseTokenDecimals
 
 	for _, item := range matchResult.MatchItems {
+		if item.MatchShouldBeCanceled {
+			//skip if match should be canceled
+			continue
+		}
+
 		modelMakerOrder := matchResult.modelMakerOrders[item.MakerOrder.ID]
 
 		hydroMakerOrder := getHydroOrderFromModelOrder(modelMakerOrder.GetOrderJson())
