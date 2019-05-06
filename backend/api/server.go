@@ -32,16 +32,16 @@ func loadRoutes(e *echo.Echo) {
 	addRoute(e, "GET", "/markets/:marketID/orderbook", &OrderBookReq{}, GetOrderBook)
 	addRoute(e, "GET", "/markets/:marketID/trades", &QueryTradeReq{}, GetAllTrades)
 
-	addRoute(e, "GET", "/markets/:marketID/trades/mine", &QueryTradeReq{}, GetAccountTrades, authMiddelware)
+	addRoute(e, "GET", "/markets/:marketID/trades/mine", &QueryTradeReq{}, GetAccountTrades, authMiddleware)
 	addRoute(e, "GET", "/markets/:marketID/candles", &CandlesReq{}, GetTradingView)
 	addRoute(e, "GET", "/fees", &FeesReq{}, GetFees)
 
-	addRoute(e, "GET", "/orders", &QueryOrderReq{}, GetOrders, authMiddelware)
-	addRoute(e, "GET", "/orders/:orderID", &QuerySingleOrderReq{}, GetSingleOrder, authMiddelware)
-	addRoute(e, "POST", "/orders/build", &BuildOrderReq{}, BuildOrder, authMiddelware)
-	addRoute(e, "POST", "/orders", &PlaceOrderReq{}, PlaceOrder, authMiddelware)
-	addRoute(e, "DELETE", "/orders/:orderID", &CancelOrderReq{}, CancelOrder, authMiddelware)
-	addRoute(e, "GET", "/account/lockedBalances", &LockedBalanceReq{}, GetLockedBalance, authMiddelware)
+	addRoute(e, "GET", "/orders", &QueryOrderReq{}, GetOrders, authMiddleware)
+	addRoute(e, "GET", "/orders/:orderID", &QuerySingleOrderReq{}, GetSingleOrder, authMiddleware)
+	addRoute(e, "POST", "/orders/build", &BuildOrderReq{}, BuildOrder, authMiddleware)
+	addRoute(e, "POST", "/orders", &PlaceOrderReq{}, PlaceOrder, authMiddleware)
+	addRoute(e, "DELETE", "/orders/:orderID", &CancelOrderReq{}, CancelOrder, authMiddleware)
+	addRoute(e, "GET", "/account/lockedBalances", &LockedBalanceReq{}, GetLockedBalance, authMiddleware)
 }
 
 func addRoute(e *echo.Echo, method, url string, param Param, handler func(p Param) (interface{}, error), middlewares ...echo.MiddlewareFunc) {
