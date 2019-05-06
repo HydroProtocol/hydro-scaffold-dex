@@ -18,7 +18,7 @@ func initHydroApiContext(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func authMiddelware(next echo.HandlerFunc) echo.HandlerFunc {
+func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cc := c.(*HydroApiContext)
 		cc.Response().Header().Set(echo.HeaderServer, "Echo/3.0")

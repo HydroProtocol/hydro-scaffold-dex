@@ -15,6 +15,7 @@ github.com/HydroProtocol/hydro-sdk-backend v0.0.29 h1:6mz7m6CnIYTiB3WV3ZmwBJrP01
 github.com/HydroProtocol/hydro-sdk-backend v0.0.29/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.30 h1:NaUT6APQVYAM5056bmBhYwoVG6PEuBNV2yRq8LBr7+A=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.30/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.31/go.mod h1:rcOZdey1sMf13zg9nVdye7LlqtcYsUkDy6jlcwkQpGA=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
