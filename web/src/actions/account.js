@@ -55,20 +55,28 @@ export const loadAccountLockedBalance = () => {
       res.data.data.lockedBalances.forEach(x => {
         lockedBalances[x.symbol] = x.lockedBalance;
       });
-      dispatch(updateTokenLockedBalances(lockedBalances, accountAddress));
+      dispatch(updateTokenLockedBalances(lockedBalances));
     }
   };
 };
 
-export const updateTokenLockedBalances = (lockedBalances, accountAddress) => {
-  Object.keys(lockedBalances).forEach((key, index) => {
-    lockedBalances[key] = new BigNumber(lockedBalances[key]);
-  });
+export const updateTokenLockedBalances = (lockedBalances) => {
+  return (dispatch, getState) => {
+    const selectedAccount = getSelectedAccount(getState());
+    const accountAddress = selectedAccount ? selectedAccount.get('address') : null;
+    if (!accountAddress) {
+      return;
+    }
 
-  return {
-    type: 'UPDATE_TOKEN_LOCKED_BALANCES',
-    payload: { lockedBalances, accountAddress }
-  };
+    Object.keys(lockedBalances).forEach((key, index) => {
+      lockedBalances[key] = new BigNumber(lockedBalances[key]);
+    });
+  
+    return dispatch({
+      type: 'UPDATE_TOKEN_LOCKED_BALANCES',
+      payload: { lockedBalances, accountAddress }
+    });
+  }
 };
 
 // load ERC20 tokens balance and allowance

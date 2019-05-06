@@ -19,7 +19,7 @@ The docker-compose files we provide are:
 - docker-compose-mainnet.yaml
 - docker-compose-mainnet-source.yaml
 
-## Step0: Cleanup
+## Step 1: Cleanup
 
 If you have a dex running, stop it first. Or you can move to the next section.
 
@@ -36,7 +36,7 @@ If the following command shows nothing docker containers existent, you are good 
 
 	docker ps -a | grep hydro-scaffold-dex
 
-## Step1: Prepare a relayer address
+## Step 2: Prepare a relayer address
 
 A Hydro Relayer needs to send matching orders to the Hydro Protocol Smart Contracts for settlement. It needs to provide the private key of the relayer address to sign the matching transactions.
 
@@ -48,9 +48,11 @@ For the other environments, you shoud prepare your own relayer address. The valu
 
 2) Set `HSK_RELAYER_ADDRESS` environment variables. The value should be your relayer address(with `0x` prefix).
 
-3) Hydro protocol require all relayer address has all quote token approved. It's beacuse when the taker side is `sell`, relayer will be a delegater for quote token between makers and taker. It is designed to allow taker to pay fee without quote approved.
+3) Make sure there are some Ether in this relayer address. The relayer is responsible for sending the transaction to the Ethereum network, so relayer should have some Ether to pay gas.
 
-## Step2: Start the service
+4) Hydro protocol require all relayer address has all quote token approved. It's beacuse when the taker side is `sell`, relayer will be a delegater for quote token between makers and taker. It is designed to allow taker to pay fee without quote approved. You can operate follow this [manual](admin-api-and-cli.md#approve-market-tokens-1) to approve tokens. This also requires some Ether to pay gas.
+
+## Step 3: Start the service
 
 Use docker-compose to start the service.
 
@@ -62,7 +64,7 @@ docker-compose -f docker-compose-ropsten.yaml up
 docker-compose -f docker-compose-ropsten-source.yaml up
 ```
 
-## Step3: Use
+## Step 4: Use
 
 Open `http://localhost:3000/` on your browser. 
 
