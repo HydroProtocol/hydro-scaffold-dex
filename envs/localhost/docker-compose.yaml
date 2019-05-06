@@ -168,11 +168,19 @@ services:
       - db
     restart: on-failure:5
   maker:
-    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    image: hydroprotocolio/amm-bots
     container_name: hydro-scaffold-dex-maker
-    command: /bin/maker
     depends_on:
       - api
     environment:
-      - HSK_API_URL=http://api:3001
+      - BOT_TYPE=CONST_PRODUCT
+      - BOT_PRIVATE_KEY=0xa6553a3cbade744d6c6f63e557345402abd93e25cd1f1dba8bb0d374de2fcf4f
+      - BOT_BASE_TOKEN=HOT
+      - BOT_QUOTE_TOKEN=DAI
+      - BOT_BASE_URL=http://api:3001
+      - BOT_MIN_PRICE=0.8
+      - BOT_MAX_PRICE=1.2
+      - BOT_PRICE_GAP=0.02
+      - BOT_EXPAND_INVENTORY=2
+      - BOT_WEB3_URL=http://ethereum-node:8545
     restart: on-failure:10
