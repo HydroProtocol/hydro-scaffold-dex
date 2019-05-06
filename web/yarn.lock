@@ -773,10 +773,10 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
 
-"@gongddex/hydro-sdk-wallet@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@gongddex/hydro-sdk-wallet/-/hydro-sdk-wallet-0.0.20.tgz#af27409293d51689a728a91dc2a5eebf332ebb6c"
-  integrity sha512-xoABw9GiKto2/ymnk1geBoxdp+ZX9YRo6glaA/0Odgead2ksMoTIcFGhW4i0LTfjSbVOMuMhsQOG9WV/VmcQmQ==
+"@gongddex/hydro-sdk-wallet@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@gongddex/hydro-sdk-wallet/-/hydro-sdk-wallet-0.0.21.tgz#24ecc43de2be943c927f115e4493e91f2536587c"
+  integrity sha512-iLLPxqniM1BVIw6/X6vw4sO9F1FpT+iAfSz/QrSLIwQM0KYXDIKOpXNe5bcaNRhqSSPnVAsBwFPR5NjAiLcimQ==
   dependencies:
     "@walletconnect/browser" "^1.0.0-beta.18"
     ethereumjs-util "5.2.0"
