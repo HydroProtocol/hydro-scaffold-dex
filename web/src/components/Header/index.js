@@ -84,7 +84,7 @@ class Header extends React.PureComponent {
           <div className="item">
             <WalletButton />
           </div>
-          <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Browser Wallet" />
+          <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Hydro-Wallet" />
           {this.renderAccount()}
         </div>
       </div>
