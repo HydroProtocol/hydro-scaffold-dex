@@ -1,9 +1,9 @@
-module github.com/HydroProtocol/hydro-box-dex/backend
+module github.com/HydroProtocol/hydro-scaffold-dex/backend
 
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.30
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.31
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -30,4 +30,4 @@ require (
 // replace gopkg.in/fsnotify.v1 => github.com/fsnotify/fsnotify v1.4.7
 
 // for local test only
-replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
+// replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend

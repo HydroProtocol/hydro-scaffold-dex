@@ -1,12 +1,17 @@
-# Operate your hydro dex
+Hydro DEX's provide an Admin API: a RESTful interface for operating and configuring your DEX.
 
-After experiencing the basic box feature, you may have a question: How to add a trading market? How to change the fee rates or a market? Fortunately, we have prepared a suite of api and a command line tool for you to modify the state of hydro dex.
+Hydro also provides a basic CLI to make configuring your DEX simple and easy. This document:
 
-Hydro dex Admin API provides a RESTful interface for administration and configuration of markets.
+- Summarizes the [key details of the Admin API](https://github.com/HydroProtocol/hydro-scaffold-dex/blob/master/manual/admin-api-and-cli.md#admin-api)
+- Provides a [guide for CLI functions](https://github.com/HydroProtocol/hydro-scaffold-dex/blob/master/manual/admin-api-and-cli.md#cli-guide-admin-cli)
 
-Because this API describes a control of Hydro dex, it is important to secure this API against unwanted access. 
+*Note that because this API controls important fundamental elements of Hydro dex, it is important to secure this API against unwanted access.*
 
-## Admin api
+***
+
+# Configuring Your Hydro Relayer
+
+## Admin API
 
 ### Supported Content Types
 
@@ -146,10 +151,15 @@ PUT /markets
 }
 ```
 
+***
 
-## hydro-dex-ctl (admin-cli)
+## CLI Guide (admin-cli)
 
-If you are using docker-compose to run hydro dex. You can login into the admin service via `docker-compose exec admin sh`, the `hydro-dex-ctl` binary has already included in it.
+If you are using docker-compose to run your hydro relayer, you can login into the admin service by entering: 
+
+		docker-compose exec admin sh
+
+This enters the Admin CLI. Once you are logged in, you can use the commands detailed below to configure your DEX. To exit the CLI, type `exit`
 
 ### Commands
 
@@ -159,7 +169,7 @@ If you are using docker-compose to run hydro dex. You can login into the admin s
 hydro-dex-ctl help
 ```
 
-#### Get dex status.
+#### Get dex status
 
 ```
 hydro-dex-ctl status
@@ -178,13 +188,20 @@ hydro-dex-ctl market list
 
 #### Create a new market
 
+When creating a new market, you can choose to either:
+
+- use default options for the majority of the parameters
+- specify all parameters
+
+To use default options, you only need to specify the base and quote token addresses for your trading pair. You can always edit these parameters later.
+
 ```
-// create a market, just set the token addresses, use default parameters for the other attributes.
+// Default market creation: specify the token addresses for your trading pair
 hydro-dex-ctl market new HOT-WWW \
   --baseTokenAddress=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218 \
   --quoteTokenAddress=0xbc3524faa62d0763818636d5e400f112279d6cc0
 
-// create a market with full attributes
+// create a new market and specify all attributes
 hydro-dex-ctl market new HOT-WWW \
   --baseTokenAddress=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218 \
   --quoteTokenAddress=0xbc3524faa62d0763818636d5e400f112279d6cc0 \
@@ -200,38 +217,44 @@ hydro-dex-ctl market new HOT-WWW \
 
 #### Approve market tokens.
 
-Approve market tokens for realyer .
+In order to make trades with a new token pair, the relayer must first set token allowance permissions for the new market. To do this, enter:
 
 ```
 hydro-dex-ctl market approve HOT-WETH
 ```
 
+In the example above, the Relayer is approving both HOT and WETH (if not already approved) for trading.
+
 #### Update a market
+
+To change parameters in an existing market, specify the market and the parameter you wish to modify.
 
 ```
 hydro-dex-ctl market update HOT-WWW --amountDecimals=3
 ```
 
-#### Set a market pulbished. 
+#### Publish a market
 
-The market will exist in frontend markets select.
+The market selection area on the frontend will only show markets that are published.
 
 ```
 hydro-dex-ctl market publish HOT-WETH
 ```
 
-#### Set a market unpulbished. 
+#### Unpublish a market
 
-The market will no longer exist in frontend markets select.
+Unpublishing a market will make the market no exist in the frontend market selection area.
 
 ```
 hydro-dex-ctl market unpublish HOT-WETH
 
 ```
-#### Change fees of a market.
+#### Change fee structure for a market
+
+You can modify the fee structure for each market. Hydro supports assymetric fee structures - so you can have the order maker and order taker automatically pay different fees.
 
 ```
-// set HOT-WETH market makerFee to 0.1%, takerFee to 0.3%
+// set the HOT-WETH market makerFee to 0.1% and takerFee to 0.3%
 
 hydro-dex-ctl market changeFees HOT-WETH "0.001" "0.003"
 ```

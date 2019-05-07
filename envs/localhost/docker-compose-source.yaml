@@ -3,19 +3,19 @@ volumes:
   datavolume: {}
 services:
   redis:
-    container_name: hydro-box-dex-redis
+    container_name: hydro-scaffold-dex-redis
     image: redis:5.0
     ports:
       - 6379:6379
     restart: on-failure:5
   ethereum-node:
-    container_name: hydro-box-dex-ethereum-node
-    image: hydroprotocolio/hydro-box-dex-ethereum-node:latest
+    container_name: hydro-scaffold-dex-ethereum-node
+    image: hydroprotocolio/hydro-scaffold-dex-ethereum-node:latest
     ports:
       - 8545:8545
     restart: on-failure:5
   db:
-    container_name: hydro-box-dex-pg
+    container_name: hydro-scaffold-dex-pg
     image: postgres
     ports:
       - 5432:5432
@@ -26,7 +26,7 @@ services:
       - ./envs/localhost/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     build: ./web
-    container_name: hydro-box-dex-web
+    container_name: hydro-scaffold-dex-web
     ports:
       - 3000:8043
     environment:
@@ -41,7 +41,7 @@ services:
     restart: on-failure:5
   admin:
     build: ./backend
-    container_name: hydro-box-dex-admin-api
+    container_name: hydro-scaffold-dex-admin-api
     command: /bin/adminapi
     ports:
       - 3003:3003
@@ -67,7 +67,7 @@ services:
     restart: on-failure:5
   api:
     build: ./backend
-    container_name: hydro-box-dex-api
+    container_name: hydro-scaffold-dex-api
     command: /bin/api
     ports:
       - 3001:3001
@@ -91,7 +91,7 @@ services:
     restart: on-failure:5
   ws:
     build: ./backend
-    container_name: hydro-box-dex-ws
+    container_name: hydro-scaffold-dex-ws
     command: /bin/websocket
     ports:
       - 3002:3002
@@ -109,7 +109,7 @@ services:
     restart: on-failure:5
   watcher:
     build: ./backend
-    container_name: hydro-box-dex-watcher
+    container_name: hydro-scaffold-dex-watcher
     command: /bin/watcher
     ports:
       - 4003:4003
@@ -129,7 +129,7 @@ services:
     restart: on-failure:5
   engine:
     build: ./backend
-    container_name: hydro-box-dex-engine
+    container_name: hydro-scaffold-dex-engine
     command: /bin/engine
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -146,7 +146,7 @@ services:
     restart: on-failure:5
   launcher:
     build: ./backend
-    container_name: hydro-box-dex-launcher
+    container_name: hydro-scaffold-dex-launcher
     command: /bin/launcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -163,11 +163,19 @@ services:
       - db
     restart: on-failure:5
   maker:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-maker
-    command: /bin/maker
+    image: hydroprotocolio/amm-bots
+    container_name: hydro-scaffold-dex-maker
     depends_on:
       - api
     environment:
-      - HSK_API_URL=http://api:3001
+      - BOT_TYPE=CONST_PRODUCT
+      - BOT_PRIVATE_KEY=0xa6553a3cbade744d6c6f63e557345402abd93e25cd1f1dba8bb0d374de2fcf4f
+      - BOT_BASE_TOKEN=HOT
+      - BOT_QUOTE_TOKEN=DAI
+      - BOT_BASE_URL=http://api:3001
+      - BOT_MIN_PRICE=0.8
+      - BOT_MAX_PRICE=1.2
+      - BOT_PRICE_GAP=0.02
+      - BOT_EXPAND_INVENTORY=2
+      - BOT_WEB3_URL=http://ethereum-node:8545
     restart: on-failure:10

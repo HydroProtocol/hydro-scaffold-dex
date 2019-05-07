@@ -6,8 +6,8 @@ import (
 
 import (
 	"context"
-	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
-	"github.com/HydroProtocol/hydro-box-dex/backend/dex_engine"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/cli"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/dex_engine"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"os"
 )

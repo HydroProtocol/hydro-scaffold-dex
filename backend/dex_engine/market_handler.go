@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
@@ -188,7 +188,7 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		baseTokenFilledAmt := utils.DecimalToBigInt(baseTokenHugeAmt)
 		baseTokenFilledAmounts = append(baseTokenFilledAmounts, baseTokenFilledAmt)
 
-		_ = models.OrderDao.InsertOrder(modelMakerOrder)
+		_ = UpdateOrder(modelMakerOrder)
 	}
 
 	transaction := &models.Transaction{

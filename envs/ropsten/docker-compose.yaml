@@ -3,14 +3,14 @@ volumes:
   datavolume: {}
 services:
   redis:
-    container_name: hydro-box-dex-redis
+    container_name: hydro-scaffold-dex-redis
     image: redis:5.0
     ports:
       - 6379:6379
     restart: on-failure:5
   db:
     image: postgres
-    container_name: hydro-box-dex-pg
+    container_name: hydro-scaffold-dex-pg
     ports:
       - 5432:5432
     restart: always
@@ -19,8 +19,8 @@ services:
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
       - ./envs/ropsten/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
-    image: hydroprotocolio/hydro-box-dex-web:latest
-    container_name: hydro-box-dex-web
+    image: hydroprotocolio/hydro-scaffold-dex-web:latest
+    container_name: hydro-scaffold-dex-web
     ports:
       - 3000:8043
     environment:
@@ -34,8 +34,8 @@ services:
       - REACT_APP_NETWORK_ID=3
     restart: on-failure:5
   admin:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-admin-api
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-admin-api
     command: /bin/adminapi
     ports:
       - 3003:3003
@@ -59,8 +59,8 @@ services:
       - redis
     restart: on-failure:5
   api:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-api
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-api
     command: /bin/api
     ports:
       - 3001:3001
@@ -80,8 +80,8 @@ services:
       - redis
     restart: on-failure:5
   ws:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-ws
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-ws
     command: /bin/websocket
     ports:
       - 3002:3002
@@ -96,8 +96,8 @@ services:
       - api
     restart: on-failure:5
   watcher:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-watcher
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-watcher
     command: /bin/watcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -112,8 +112,8 @@ services:
       - db
     restart: on-failure:5
   engine:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-engine
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-engine
     command: /bin/engine
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
@@ -127,8 +127,8 @@ services:
       - db
     restart: on-failure:5
   launcher:
-    image: hydroprotocolio/hydro-box-dex-backend:latest
-    container_name: hydro-box-dex-launcher
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-launcher
     command: /bin/launcher
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable

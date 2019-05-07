@@ -2,12 +2,13 @@ package admincli
 
 import (
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -112,6 +113,9 @@ func (a *Admin) ListMarkets() (ret []byte, err error) {
 }
 
 func (a *Admin) NewMarket(marketID, baseTokenAddress, quoteTokenAddress, minOrderSize, pricePrecision, priceDecimals, amountDecimals, makerFeeRate, takerFeeRate, gasUsedEstimation string) (ret []byte, err error) {
+	baseTokenAddress = strings.ToLower(baseTokenAddress)
+	quoteTokenAddress = strings.ToLower(quoteTokenAddress)
+
 	err, baseTokenSymbol := a.erc20.Symbol(baseTokenAddress)
 	if err != nil || len(baseTokenSymbol) == 0 {
 		return
@@ -226,7 +230,7 @@ func (a *Admin) UpdateMarketFee(marketID, makerFee, takerFee string) (ret []byte
 func (a *Admin) ListAccountOrders(marketID, address, limit, offset, status string) (ret []byte, err error) {
 	var params []utils.KeyValue
 	params = append(params, utils.KeyValue{Key: "market_id", Value: marketID})
-	params = append(params, utils.KeyValue{Key: "address", Value: address})
+	params = append(params, utils.KeyValue{Key: "address", Value: strings.ToLower(address)})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})
 	params = append(params, utils.KeyValue{Key: "status", Value: DefaultIfNil(status, DefaultStatus)})
@@ -237,7 +241,7 @@ func (a *Admin) ListAccountOrders(marketID, address, limit, offset, status strin
 
 func (a *Admin) ListAccountBalances(address, limit, offset string) (ret []byte, err error) {
 	var params []utils.KeyValue
-	params = append(params, utils.KeyValue{Key: "address", Value: address})
+	params = append(params, utils.KeyValue{Key: "address", Value: strings.ToLower(address)})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})
 
@@ -248,7 +252,7 @@ func (a *Admin) ListAccountBalances(address, limit, offset string) (ret []byte, 
 func (a *Admin) ListAccountTrades(marketID, address, limit, offset, status string) (ret []byte, err error) {
 	var params []utils.KeyValue
 	params = append(params, utils.KeyValue{Key: "market_id", Value: marketID})
-	params = append(params, utils.KeyValue{Key: "address", Value: address})
+	params = append(params, utils.KeyValue{Key: "address", Value: strings.ToLower(address)})
 	params = append(params, utils.KeyValue{Key: "limit", Value: DefaultIfNil(limit, DefaultLimit)})
 	params = append(params, utils.KeyValue{Key: "offset", Value: DefaultIfNil(offset, DefaultOffset)})
 	params = append(params, utils.KeyValue{Key: "status", Value: DefaultIfNil(status, DefaultStatus)})

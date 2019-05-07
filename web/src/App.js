@@ -17,8 +17,11 @@ import Fold from './components/Fold';
 import PerfectScrollbar from 'perfect-scrollbar';
 
 const mapStateToProps = state => {
+  const selectedAccountID = state.WalletReducer.get('selectedAccountID');
   return {
-    currentMarket: state.market.getIn(['markets', 'currentMarket'])
+    selectedAccountID,
+    currentMarket: state.market.getIn(['markets', 'currentMarket']),
+    networkId: state.WalletReducer.getIn(['accounts', selectedAccountID, 'networkId'])
   };
 };
 
@@ -58,7 +61,7 @@ class App extends React.PureComponent {
   }
 
   render() {
-    const { currentMarket } = this.props;
+    const { currentMarket, networkId, selectedAccountID } = this.props;
     if (!currentMarket) {
       return null;
     }
@@ -66,6 +69,11 @@ class App extends React.PureComponent {
       <div className="app">
         <WebsocketConnector />
         <Header />
+        {selectedAccountID === 'EXTENSION' && parseInt(networkId, 10) !== parseInt(env.NETWORK_ID, 10) && (
+          <span className="network-warning bg-warning text-white text-center" style={{ padding: 4 }}>
+            Network Error: Switch Metamask's network to {this.getNetworkName()}.
+          </span>
+        )}
         <MediaQuery minWidth={1366}>{this.renderDesktop()}</MediaQuery>
         <MediaQuery minWidth={1024} maxWidth={1365}>
           {this.renderLaptop()}
@@ -84,6 +92,19 @@ class App extends React.PureComponent {
         suppressScrollY: true,
         maxScrollbarLength: 20
       });
+    }
+  }
+
+  getNetworkName() {
+    switch (parseInt(env.NETWORK_ID, 10)) {
+      case 1:
+        return 'Mainnet';
+      case 3:
+        return 'Ropsten';
+      case 66:
+        return 'localhost:8545';
+      default:
+        return null;
     }
   }
 
