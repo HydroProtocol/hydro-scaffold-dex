@@ -28,8 +28,6 @@ const mapStateToProps = state => {
     initialValues: {
       side: 'buy',
       orderType: 'limit',
-      amount: new BigNumber(0),
-      price: new BigNumber(0),
       subtotal: new BigNumber(0),
       total: new BigNumber(0),
       totalBase: new BigNumber(0),
@@ -318,6 +316,9 @@ const validate = (values, props) => {
   return errors;
 };
 
+const shouldError = () => {
+  return true;
+};
 const onSubmitFail = (_, dispatch) => {
   setTimeout(() => {
     dispatch(stopSubmit(TRADE_FORM_ID));
@@ -329,6 +330,7 @@ export default connect(mapStateToProps)(
     form: TRADE_FORM_ID,
     destroyOnUnmount: false,
     onSubmitFail,
-    validate
+    validate,
+    shouldError
   })(Trade)
 );
