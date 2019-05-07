@@ -119,8 +119,20 @@ class Trade extends React.PureComponent {
               className="form flex-column text-secondary flex-1 justify-content-between"
               onSubmit={handleSubmit(() => this.submit())}>
               <div>
-                <Field name="price" unit={currentMarket.quoteToken} component={this.renderField} label="Price" />
-                <Field name="amount" unit={currentMarket.baseToken} component={this.renderField} label="Amount" />
+                <Field
+                  name="price"
+                  unit={currentMarket.quoteToken}
+                  autoComplete="off"
+                  component={this.renderField}
+                  label="Price"
+                />
+                <Field
+                  name="amount"
+                  unit={currentMarket.baseToken}
+                  autoComplete="off"
+                  component={this.renderField}
+                  label="Amount"
+                />
                 <div className="form-group">
                   <div className="form-title">Order Summary</div>
                   <div className="list">
