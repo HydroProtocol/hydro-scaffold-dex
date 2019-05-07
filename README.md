@@ -172,7 +172,7 @@ See [change network manual](./manual/change-network-and-run-from-source.md).
 
 ## How to setup environment for local development
 
-See [setup dev env manual](./manual/setup_dev_env.md).
+See [setup dev env manual](./manual/setup-dev-env.md).
 
 ## License
 

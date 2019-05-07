@@ -1,6 +1,6 @@
 # How to setup env for development
 
-## Step0: prerequisite
+## Step 1: prerequisite
 
 Make sure you have:
 
@@ -8,7 +8,7 @@ Make sure you have:
 - yarn
 - go
 
-## Step1: basic services
+## Step 2: basic services
 
 start redis, local-ethereum-node and PostgresDB
 
@@ -16,7 +16,7 @@ start redis, local-ethereum-node and PostgresDB
 docker-compose up redis ethereum-node db
 ```
 
-## Step2: hydro services
+## Step 3: hydro services
 
 start other Hydro Backend Services
 
@@ -43,7 +43,7 @@ make ws
 cd ..
 ```
 
-## Step3: web
+## Step 4: web
 
 ```shell
 # change to sub-dir: web
