@@ -15,6 +15,7 @@ import env from './lib/env';
 import MediaQuery from 'react-responsive';
 import Fold from './components/Fold';
 import PerfectScrollbar from 'perfect-scrollbar';
+import { Wallet as SDKWallet } from '@gongddex/hydro-sdk-wallet';
 
 const mapStateToProps = state => {
   const selectedAccountID = state.WalletReducer.get('selectedAccountID');
@@ -67,6 +68,7 @@ class App extends React.PureComponent {
     }
     return (
       <div className="app">
+        <SDKWallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Hydro-Wallet" />
         <WebsocketConnector />
         <Header />
         {selectedAccountID === 'EXTENSION' && parseInt(networkId, 10) !== parseInt(env.NETWORK_ID, 10) && (

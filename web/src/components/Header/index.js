@@ -2,10 +2,9 @@ import React from 'react';
 import { loginRequest, login } from '../../actions/account';
 import { updateCurrentMarket } from '../../actions/markets';
 import { connect } from 'react-redux';
-import { Wallet, WalletButton, getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
+import { WalletButton, getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 import './styles.scss';
 import { loadAccountHydroAuthentication } from '../../lib/session';
-import env from '../../lib/env';
 
 const mapStateToProps = state => {
   const selectedAccount = getSelectedAccount(state);
@@ -84,7 +83,7 @@ class Header extends React.PureComponent {
           <div className="item">
             <WalletButton />
           </div>
-          <Wallet title="Starter Kit Wallet" nodeUrl={env.NODE_URL} defaultWalletType="Hydro-Wallet" />
+
           {this.renderAccount()}
         </div>
       </div>
