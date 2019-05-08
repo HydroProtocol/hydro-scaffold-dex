@@ -76,13 +76,11 @@ func pushAccountMessage(address string, payload interface{}) error {
 }
 
 func pushMessage(message interface{}) error {
-	utils.Debug("sending pushMessage: %v", message)
-
 	msgBytes, err := json.Marshal(message)
-
 	if err != nil {
 		return nil
 	}
 
+	utils.Debug("sending pushMessage: %v", string(msgBytes))
 	return wsQueue.Push(msgBytes)
 }
