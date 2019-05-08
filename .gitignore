@@ -9,4 +9,4 @@ dump.rdb
 build
 .DS_Store
 
-docker-compose-source-go-vendor.yaml
+docker-compose-*source-go-vendor.yaml

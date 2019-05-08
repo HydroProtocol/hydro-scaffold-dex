@@ -38,7 +38,7 @@ export const wrapETH = amount => {
       alert(`Wrap ETH request submitted`);
       watchTransactionStatus(transactionID, async success => {
         if (success) {
-          dispatch(watchToken(WETH.address, WETH.symbol));
+          dispatch(watchToken(WETH.address, WETH.symbol, WETH.decimals));
           alert('Wrap ETH Successfully');
         } else {
           alert('Wrap ETH Failed');
@@ -75,7 +75,7 @@ export const unwrapWETH = amount => {
       alert(`Unwrap WETH request submitted`);
       watchTransactionStatus(transactionID, async success => {
         if (success) {
-          dispatch(watchToken(WETH.address, WETH.symbol));
+          dispatch(watchToken(WETH.address, WETH.symbol, WETH.decimals));
           alert('Wrap ETH Successfully');
         } else {
           alert('Wrap ETH Failed');
@@ -89,25 +89,25 @@ export const unwrapWETH = amount => {
   };
 };
 
-export const enable = (address, symbol) => {
+export const enable = (address, symbol, decimals) => {
   return async (dispatch, getState) => {
     let transactionID = await dispatch(
-      approve(address, symbol, 'f000000000000000000000000000000000000000000000000000000000000000', 'Enable')
+      approve(address, symbol, 'f000000000000000000000000000000000000000000000000000000000000000', 'Enable', decimals)
     );
     return transactionID;
   };
 };
 
-export const disable = (address, symbol) => {
+export const disable = (address, symbol, decimals) => {
   return async (dispatch, getState) => {
     let transactionID = await dispatch(
-      approve(address, symbol, '0000000000000000000000000000000000000000000000000000000000000000', 'Disable')
+      approve(address, symbol, '0000000000000000000000000000000000000000000000000000000000000000', 'Disable', decimals)
     );
     return transactionID;
   };
 };
 
-export const approve = (tokenAddress, symbol, allowance, action) => {
+export const approve = (tokenAddress, symbol, allowance, action, decimals) => {
   return async (dispatch, getState) => {
     const state = getState();
     const functionSelector = '095ea7b3';
@@ -131,7 +131,7 @@ export const approve = (tokenAddress, symbol, allowance, action) => {
       alert(`${action} ${symbol} request submitted`);
       watchTransactionStatus(transactionID, async success => {
         if (success) {
-          dispatch(watchToken(tokenAddress, symbol));
+          dispatch(watchToken(tokenAddress, symbol, decimals));
           alert(`${action} ${symbol} Successfully`);
         } else {
           alert(`${action} ${symbol} Failed`);

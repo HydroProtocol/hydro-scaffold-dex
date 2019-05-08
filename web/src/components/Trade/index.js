@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { change, formValueSelector, Field, stopSubmit } from 'redux-form';
+import { formValueSelector, Field, stopSubmit } from 'redux-form';
 import { TRADE_FORM_ID } from '../../actions/trade';
 import { reduxForm } from 'redux-form';
 import { trade } from '../../actions/trade';
@@ -21,12 +21,13 @@ const mapStateToProps = state => {
   const selectedAccount = getSelectedAccount(state);
   const address = selectedAccount ? selectedAccount.get('address') : null;
   const currentMarket = state.market.getIn(['markets', 'currentMarket']);
+  const lastTrade = state.market.get('tradeHistory').first();
+  const lastPrice = lastTrade ? new BigNumber(lastTrade.price) : new BigNumber('0');
+
   return {
     initialValues: {
       side: 'buy',
       orderType: 'limit',
-      amount: new BigNumber(0),
-      price: new BigNumber(0),
       subtotal: new BigNumber(0),
       total: new BigNumber(0),
       totalBase: new BigNumber(0),
@@ -39,6 +40,7 @@ const mapStateToProps = state => {
       marketOrderWorstTotalQuote: new BigNumber(0),
       marketOrderWorstTotalBase: new BigNumber(0)
     },
+    lastPrice,
     currentMarket,
     quoteTokenBalance: stateUtils.getTokenAvailableBalance(state, address, currentMarket.quoteToken),
     baseTokenBalance: stateUtils.getTokenAvailableBalance(state, address, currentMarket.baseToken),
@@ -75,8 +77,11 @@ class Trade extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentMarket, reset } = this.props;
+    const { currentMarket, reset, lastPrice, price, change } = this.props;
     if (currentMarket.id === prevProps.currentMarket.id) {
+      if (lastPrice !== prevProps.lastPrice && price.eq(0)) {
+        change('price', lastPrice);
+      }
       this.updateFees(prevProps);
     } else {
       reset();
@@ -84,7 +89,7 @@ class Trade extends React.PureComponent {
   }
 
   render() {
-    const { dispatch, side, handleSubmit, currentMarket, total, gasFee, tradeFee, subtotal } = this.props;
+    const { side, handleSubmit, currentMarket, total, gasFee, tradeFee, subtotal, change } = this.props;
     if (!currentMarket) {
       return null;
     }
@@ -102,14 +107,14 @@ class Trade extends React.PureComponent {
             <li className="nav-item flex-1 flex">
               <div
                 className={`flex-1 tab-button text-secondary text-center${side === 'buy' ? ' active' : ''}`}
-                onClick={() => dispatch(change(TRADE_FORM_ID, 'side', 'buy'))}>
+                onClick={() => change('side', 'buy')}>
                 Buy
               </div>
             </li>
             <li className="nav-item flex-1 flex">
               <div
                 className={`flex-1 tab-button text-secondary text-center${side === 'sell' ? ' active' : ''}`}
-                onClick={() => dispatch(change(TRADE_FORM_ID, 'side', 'sell'))}>
+                onClick={() => change('side', 'sell')}>
                 Sell
               </div>
             </li>
@@ -311,6 +316,9 @@ const validate = (values, props) => {
   return errors;
 };
 
+const shouldError = () => {
+  return true;
+};
 const onSubmitFail = (_, dispatch) => {
   setTimeout(() => {
     dispatch(stopSubmit(TRADE_FORM_ID));
@@ -322,6 +330,7 @@ export default connect(mapStateToProps)(
     form: TRADE_FORM_ID,
     destroyOnUnmount: false,
     onSubmitFail,
-    validate
+    validate,
+    shouldError
   })(Trade)
 );

@@ -60,7 +60,7 @@ export const loadAccountLockedBalance = () => {
   };
 };
 
-export const updateTokenLockedBalances = (lockedBalances) => {
+export const updateTokenLockedBalances = lockedBalances => {
   return (dispatch, getState) => {
     const selectedAccount = getSelectedAccount(getState());
     const accountAddress = selectedAccount ? selectedAccount.get('address') : null;
@@ -71,12 +71,12 @@ export const updateTokenLockedBalances = (lockedBalances) => {
     Object.keys(lockedBalances).forEach((key, index) => {
       lockedBalances[key] = new BigNumber(lockedBalances[key]);
     });
-  
+
     return dispatch({
       type: 'UPDATE_TOKEN_LOCKED_BALANCES',
       payload: { lockedBalances, accountAddress }
     });
-  }
+  };
 };
 
 // load ERC20 tokens balance and allowance
@@ -119,10 +119,10 @@ export const loadTokens = () => {
 };
 
 // load ERC20 token 10 times
-export const watchToken = (tokenAddress, symbol) => {
+export const watchToken = (tokenAddress, symbol, decimals) => {
   return dispatch => {
     for (let i = 0; i < 10; i++) {
-      setTimeout(() => dispatch(loadToken(tokenAddress, symbol)), 3000 * i);
+      setTimeout(() => dispatch(loadToken(tokenAddress, symbol, decimals)), 3000 * i);
     }
   };
 };
