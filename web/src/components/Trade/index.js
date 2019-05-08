@@ -79,7 +79,7 @@ class Trade extends React.PureComponent {
   componentDidUpdate(prevProps) {
     const { currentMarket, reset, lastPrice, price, change } = this.props;
     if (currentMarket.id === prevProps.currentMarket.id) {
-      if (lastPrice !== prevProps.lastPrice && price.eq(0)) {
+      if (!lastPrice.eq(prevProps.lastPrice) && price.eq(0)) {
         change('price', lastPrice);
       }
       this.updateFees(prevProps);
