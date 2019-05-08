@@ -35,7 +35,7 @@ func run() int {
 		panic(err)
 	}
 
-	// new a websockert server
+	// new a websocket server
 	wsServer := websocket.NewWSServer(":3002", queue)
 
 	websocket.RegisterChannelCreator(
