@@ -166,9 +166,10 @@ You now have a fully functioning DEX on your local system, complete with a CLI f
 - [PostgresSQL](https://www.postgresql.org) database
 - [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node and support for ropsten and mainnet
 
-## Run on other network and run from source
+## F&Q
 
-See [change network manual](./manual/change-network-and-run-from-source.md).
+- [How to run on other network and run from source?](./manual/change-network-and-run-from-source.md)
+- [How to configure for external access?](./manual/config-nginx.md)
 
 ## How to setup environment for local development
 
