@@ -90,7 +90,7 @@ func BuildOrder(p Param) (interface{}, error) {
 	utils.Debugf("BuildOrder param %v", p)
 
 	req := p.(*BuildOrderReq)
-	err := checkBalanceAndAllowance(req, req.Address)
+	err := checkBalanceAllowancePriceAndAmount(req, req.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func getCacheOrderByOrderID(orderID string) *CacheOrder {
 	return &cacheOrder
 }
 
-func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
+func checkBalanceAllowancePriceAndAmount(order *BuildOrderReq, address string) error {
 	market := models.MarketDao.FindMarketByID(order.MarketID)
 	if market == nil {
 		return MarketNotFoundError(order.MarketID)
@@ -206,6 +206,11 @@ func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
 
 	if !amount.Mod(minAmountUnit).Equal(decimal.Zero) {
 		return NewApiError(-1, "invalid_amount_unit")
+	}
+
+	orderSizeInQuoteToken := amount.Mul(price)
+	if orderSizeInQuoteToken.LessThan(market.MinOrderSize) {
+		return NewApiError(-1, "order_less_than_minOrderSize")
 	}
 
 	baseTokenLockedBalance := models.BalanceDao.GetByAccountAndSymbol(address, market.BaseTokenSymbol, market.BaseTokenDecimals)

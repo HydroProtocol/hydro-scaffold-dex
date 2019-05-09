@@ -14,7 +14,7 @@ func TestCheckBalanceAndAllowance(t *testing.T) {
 	models.MockMarketDao()
 	order := BuildOrderReq{}
 	address := "some address"
-	checkBalanceAndAllowance(&order, address)
+	checkBalanceAllowancePriceAndAmount(&order, address)
 }
 
 func TestEetExpiredAt(t *testing.T) {
