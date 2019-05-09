@@ -26,9 +26,11 @@ func run() int {
 	}
 
 	signService := launcher.NewDefaultSignService(os.Getenv("HSK_RELAYER_PK"), hydro.GetTransactionCount)
-	gasService := func() decimal.Decimal { return utils.StringToDecimal("3000000000") } // default 10 Gwei
 
-	launcher := launcher.NewLauncher(ctx, signService, hydro, gasService)
+	fallbackGasPrice := decimal.New(3, 9) // 3Gwei
+	priceDecider := launcher.NewGasStationGasPriceDecider(fallbackGasPrice)
+
+	launcher := launcher.NewLauncher(ctx, signService, hydro, priceDecider)
 
 	Run(launcher, utils.StartMetrics)
 
@@ -60,7 +62,7 @@ func Run(l *launcher.Launcher, startMetrics func()) {
 
 		for _, modelLaunchLog := range launchLogs {
 			modelLaunchLog.GasPrice = decimal.NullDecimal{
-				Decimal: l.GasPrice(),
+				Decimal: l.GasPriceDecider.GasPriceInWei(),
 				Valid:   true,
 			}
 
