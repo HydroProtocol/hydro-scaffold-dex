@@ -289,8 +289,8 @@ const validate = (values, props) => {
 
       if (_amount.lte('0')) {
         errors.amount = `Amount cannot be 0`;
-      } else if (_amount.lt(currentMarket.minOrderSize)) {
-        errors.amount = `Amount must be at least ${Number(currentMarket.minOrderSize).toString()}`;
+      } else if (_amount.multipliedBy(_price).lt(currentMarket.minOrderSize)) {
+        errors.amount = `total sale price too small`;
       }
     }
   }
