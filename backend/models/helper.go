@@ -10,7 +10,7 @@ func UpdateLaunchLogToPending(launchLog *LaunchLog) (err error) {
 	err = LaunchLogDao.UpdateLaunchLog(launchLog)
 
 	if err != nil {
-		utils.Error("update launch error: %v", err)
+		utils.Errorf("update launch error: %v", err)
 		return
 	}
 
@@ -24,7 +24,7 @@ func UpdateLaunchLogToPending(launchLog *LaunchLog) (err error) {
 
 	err = TransactionDao.UpdateTransaction(transaction)
 	if err != nil {
-		utils.Error("update transaction error: %v", err)
+		utils.Errorf("update transaction error: %v", err)
 		return
 	}
 
@@ -34,7 +34,7 @@ func UpdateLaunchLogToPending(launchLog *LaunchLog) (err error) {
 		trade.TransactionHash = launchLog.Hash.String
 		err = TradeDao.UpdateTrade(trade)
 		if err != nil {
-			utils.Error("update trade error: %v", err)
+			utils.Errorf("update trade error: %v", err)
 			return
 		}
 	}

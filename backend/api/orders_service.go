@@ -87,7 +87,7 @@ func CancelOrder(p Param) (interface{}, error) {
 }
 
 func BuildOrder(p Param) (interface{}, error) {
-	utils.Debug("BuildOrder param %v", p)
+	utils.Debugf("BuildOrder param %v", p)
 
 	req := p.(*BuildOrderReq)
 	err := checkBalanceAndAllowance(req, req.Address)
@@ -108,7 +108,7 @@ func BuildOrder(p Param) (interface{}, error) {
 func PlaceOrder(p Param) (interface{}, error) {
 	order := p.(*PlaceOrderReq)
 	if valid := hydro.IsValidOrderSignature(order.Address, order.ID, order.Signature); !valid {
-		utils.Info("valid is %v", valid)
+		utils.Infof("valid is %v", valid)
 		return nil, errors.New("bad signature")
 	}
 
@@ -163,7 +163,7 @@ func getCacheOrderByOrderID(orderID string) *CacheOrder {
 	cacheOrderStr, err := CacheService.Get(generateOrderCacheKey(orderID))
 
 	if err != nil {
-		utils.Error("get cache order error: %v", err)
+		utils.Errorf("get cache order error: %v", err)
 		return nil
 	}
 
@@ -171,7 +171,7 @@ func getCacheOrderByOrderID(orderID string) *CacheOrder {
 
 	err = json.Unmarshal([]byte(cacheOrderStr), &cacheOrder)
 	if err != nil {
-		utils.Error("get cache order error: %v, cache order is: %v", err, cacheOrderStr)
+		utils.Errorf("get cache order error: %v, cache order is: %v", err, cacheOrderStr)
 		return nil
 	}
 

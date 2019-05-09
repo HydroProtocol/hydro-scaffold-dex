@@ -134,14 +134,14 @@ func (e *DexEngine) newMarket(marketId string) (marketHandler *MarketHandler, er
 	}
 
 	e.marketHandlerMap[market.ID] = marketHandler
-	utils.Info("market %s init done", marketHandler.market.ID)
+	utils.Infof("market %s init done", marketHandler.market.ID)
 	return
 }
 
 func (e *DexEngine) closeMarket(marketId string) {
 	_, ok := e.marketHandlerMap[marketId]
 	if !ok {
-		utils.Error("close market fail, market [%s] not found", marketId)
+		utils.Errorf("close market fail, market [%s] not found", marketId)
 		return
 	}
 
@@ -157,8 +157,8 @@ func runMarket(e *DexEngine, marketHandler *MarketHandler) {
 	go func() {
 		defer e.Wg.Done()
 
-		utils.Info("%s market handler is running", marketHandler.market.ID)
-		defer utils.Info("%s market handler is stopped", marketHandler.market.ID)
+		utils.Infof("%s market handler is running", marketHandler.market.ID)
+		defer utils.Infof("%s market handler is stopped", marketHandler.market.ID)
 
 		marketHandler.Run()
 	}()
@@ -186,7 +186,7 @@ func (e *DexEngine) start() {
 				var event common.Event
 				err = json.Unmarshal(data, &event)
 				if err != nil {
-					utils.Error("wrong event format: %+v", err)
+					utils.Errorf("wrong event format: %+v", err)
 					continue
 				}
 
@@ -196,7 +196,7 @@ func (e *DexEngine) start() {
 					if err == nil {
 						runMarket(e, marketHandler)
 					} else {
-						utils.Error(err.Error())
+						utils.Errorf(err.Error())
 					}
 					break
 				case common.EventCloseMarket:
@@ -205,7 +205,7 @@ func (e *DexEngine) start() {
 				default:
 					marketHandler, ok := e.marketHandlerMap[event.MarketID]
 					if !ok {
-						utils.Error("engine not support market [%s]", event.MarketID)
+						utils.Errorf("engine not support market [%s]", event.MarketID)
 					}
 					marketHandler.eventChan <- data
 				}
@@ -217,7 +217,7 @@ func (e *DexEngine) start() {
 var hydroProtocol = &ethereum.EthereumHydroProtocol{}
 
 func Run(ctx context.Context, startMetrics func()) {
-	utils.Info("dex engine start...")
+	utils.Infof("dex engine start...")
 
 	//init database
 	models.Connect(os.Getenv("HSK_DATABASE_URL"))
@@ -228,5 +228,5 @@ func Run(ctx context.Context, startMetrics func()) {
 	go startMetrics()
 
 	dexEngine.Wg.Wait()
-	utils.Info("dex engine stopped!")
+	utils.Infof("dex engine stopped!")
 }

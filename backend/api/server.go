@@ -100,8 +100,8 @@ func getEchoServer() *echo.Echo {
 	e := echo.New()
 	e.HideBanner = true
 
-	// open Debug will return server errors details in json body
-	// e.Debug = true
+	// open Debugf will return server errors details in json body
+	// e.Debugf = true
 
 	e.HTTPErrorHandler = errorHandler
 
@@ -112,8 +112,8 @@ func getEchoServer() *echo.Echo {
 	// More details goes https://echo.labstack.com/middleware/body-dump
 	//
 	// e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-	// 	utils.Debug("Header: %s", c.Request().Header)
-	// 	utils.Debug("Url: %s, Request Body: %s; Response Body: %s", c.Request().RequestURI, string(reqBody), string(resBody))
+	// 	utils.Debugf("Header: %s", c.Request().Header)
+	// 	utils.Debugf("Url: %s, Request Body: %s; Response Body: %s", c.Request().RequestURI, string(reqBody), string(resBody))
 	// }))
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -185,7 +185,7 @@ func recoverHandler(next echo.HandlerFunc) echo.HandlerFunc {
 				}
 				stack := make([]byte, 2048)
 				length := runtime.Stack(stack, false)
-				utils.Error("unhandled error: %v %s", err, stack[:length])
+				utils.Errorf("unhandled error: %v %s", err, stack[:length])
 				c.Error(err)
 			}
 		}()
