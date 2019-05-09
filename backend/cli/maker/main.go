@@ -75,9 +75,9 @@ func placeOrder() {
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		utils.Error("build order req error: %v", err)
+		utils.Errorf("build order req error: %v", err)
 	}
-	utils.Info("build order success %s", body)
+	utils.Infof("build order success %s", body)
 
 	resBytes, _ := ioutil.ReadAll(res.Body)
 
@@ -108,10 +108,10 @@ func placeOrder() {
 	res, err = http.DefaultClient.Do(req)
 
 	if err != nil {
-		utils.Error("place order req error: %v", err)
+		utils.Errorf("place order req error: %v", err)
 	}
 
-	utils.Info("place order success %s", buildOrderRes.Data.Order.ID)
+	utils.Infof("place order success %s", buildOrderRes.Data.Order.ID)
 }
 
 func toOrderSignature(sign []byte) []byte {

@@ -81,6 +81,6 @@ func pushMessage(message interface{}) error {
 		return nil
 	}
 
-	utils.Debug("sending pushMessage: %v", string(msgBytes))
+	utils.Debugf("sending pushMessage: %v", string(msgBytes))
 	return wsQueue.Push(msgBytes)
 }

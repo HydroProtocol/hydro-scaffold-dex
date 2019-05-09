@@ -25,12 +25,12 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 	launchLog := models.LaunchLogDao.FindByHash(tx.GetHash())
 
 	if launchLog == nil {
-		utils.Debug("Skip useless transaction %s", tx.GetHash())
+		utils.Debugf("Skip useless transaction %s", tx.GetHash())
 		return
 	}
 
 	if launchLog.Status != common.STATUS_PENDING {
-		utils.Info("LaunchLog is not pending %s, skip", launchLog.Hash.String)
+		utils.Infof("LaunchLog is not pending %s, skip", launchLog.Hash.String)
 		return
 	}
 
@@ -39,7 +39,7 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 		result := txReceipt.GetResult()
 		hash := tx.GetHash()
 		transaction := models.TransactionDao.FindTransactionByID(launchLog.ItemID)
-		utils.Info("Transaction %s result is %+v", tx.GetHash(), result)
+		utils.Infof("Transaction %s result is %+v", tx.GetHash(), result)
 
 		var status string
 
@@ -73,7 +73,7 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 		err := handler.w.QueueClient.Push(bts)
 
 		if err != nil {
-			utils.Error("Push event into Queue Error %v", err)
+			utils.Errorf("Push event into Queue Errorf %v", err)
 		}
 	}
 }
@@ -130,5 +130,5 @@ func main() {
 
 	w.Run()
 
-	utils.Info("Watcher Exit")
+	utils.Infof("Watcher Exit")
 }

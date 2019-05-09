@@ -11,6 +11,6 @@ func main() {
 	cli := admincli.NewDexCli()
 	err := cli.Run(os.Args)
 	if err != nil {
-		utils.Error(err.Error())
+		utils.Errorf(err.Error())
 	}
 }

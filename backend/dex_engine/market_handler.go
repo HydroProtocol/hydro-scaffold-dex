@@ -31,7 +31,7 @@ func (m *MarketHandler) Run() {
 	for data := range m.eventChan {
 		_ = handleEvent(m, string(data))
 	}
-	utils.Info("market %s stopped", m.market.ID)
+	utils.Infof("market %s stopped", m.market.ID)
 }
 
 func (m *MarketHandler) Stop() {
@@ -53,8 +53,8 @@ func handleEvent(marketHandler *MarketHandler, eventJSON string) (err error) {
 			n := runtime.Stack(buf, false)
 			stackInfo := fmt.Sprintf("%s", buf[:n])
 
-			utils.Error("Error: %+v", err)
-			utils.Error(stackInfo)
+			utils.Errorf("Errorf: %+v", err)
+			utils.Errorf(stackInfo)
 		}
 
 	}()
@@ -62,7 +62,7 @@ func handleEvent(marketHandler *MarketHandler, eventJSON string) (err error) {
 	err = json.Unmarshal([]byte(eventJSON), &event)
 
 	if err != nil {
-		utils.Error("Unmarshal event failed %s", eventJSON)
+		utils.Errorf("Unmarshal event failed %s", eventJSON)
 		return err
 	}
 
@@ -109,7 +109,7 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 		TakerFeeRate: eventOrder.TakerFeeRate,
 	}
 
-	utils.Debug("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
+	utils.Debugf("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
 
 	matchResult, hasMatch := m.hydroEngine.HandleNewOrder(eventMemoryOrder)
 	if hasMatch {
@@ -137,7 +137,7 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 
 			_ = UpdateOrder(makerOrder)
 
-			utils.Debug("  [Take Liquidity] price: %s amount: %s (%s) ", item.MakerOrder.Price.StringFixed(5), item.MatchedAmount.StringFixed(5), item.MakerOrder.ID)
+			utils.Debugf("  [Take Liquidity] price: %s amount: %s (%s) ", item.MakerOrder.Price.StringFixed(5), item.MatchedAmount.StringFixed(5), item.MakerOrder.ID)
 		}
 
 		if matchResult.TakerOrderIsDone {

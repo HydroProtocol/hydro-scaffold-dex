@@ -3,7 +3,7 @@ module github.com/HydroProtocol/hydro-scaffold-dex/backend
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.33
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.36
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
