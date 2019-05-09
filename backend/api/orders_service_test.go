@@ -17,7 +17,7 @@ func TestCheckBalanceAndAllowance(t *testing.T) {
 	checkBalanceAllowancePriceAndAmount(&order, address)
 }
 
-func TestEetExpiredAt(t *testing.T) {
+func TestExpiredAt(t *testing.T) {
 	now := time.Now().Unix()
 	timestamp := getExpiredAt(0)
 	assert.EqualValues(t, true, timestamp > now)

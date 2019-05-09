@@ -6,8 +6,8 @@ cloud.google.com/go v0.37.2/go.mod h1:H8IAquKe2L30IxoupDgqTaQvKSwF/c8prYHynGIWQb
 git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=
 git.apache.org/thrift.git v0.12.0/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/HydroProtocol/hydro-sdk-backend v0.0.37 h1:MbwN1M8vFYP9ijBViuOV44mLiiPjo8LhCr8CtxZBxaU=
-github.com/HydroProtocol/hydro-sdk-backend v0.0.37/go.mod h1:W65yZJcRbBL1jcvJmduFnPqYJuKB7ifzW0OpHX/DWMg=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.38 h1:/e9+zST8wAN8kHjfM9dT7nH1TlAK5PYmKjJE4PHISoo=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.38/go.mod h1:W65yZJcRbBL1jcvJmduFnPqYJuKB7ifzW0OpHX/DWMg=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
