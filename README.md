@@ -48,7 +48,7 @@ If you don't already have them installed, you can follow [this link](https://doc
     This step may takes a few minutes.
     When complete, it will start all necessary services.
 
-    It will use ports `3000`, `3001`, `3002`, `6379`, `8545` on your computer. Please make sure theses ports are available.
+    It will use ports `3000`, `3001`, `3002`, `6379`, `8043`, and `8545` on your computer. Please make sure theses ports are available.
 
 1.  **Check out your relayer**
 
