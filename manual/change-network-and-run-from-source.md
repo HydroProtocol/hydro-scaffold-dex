@@ -8,11 +8,11 @@ we have prepared serveral docker-compose files for different networks, the docke
 - ropsten - eth ropsten network
 - mainnet - eth mainnet network
 
-If file name has surfix: `-source`, the docker images are built from local source code, otherwise, they are pulled from [https://hub.docker.com/u/hydroprotocolio](https://hub.docker.com/u/hydroprotocolio).
+If file name has suffix: `-source`, the docker images are built from local source code, otherwise, they are pulled from [https://hub.docker.com/u/hydroprotocolio](https://hub.docker.com/u/hydroprotocolio).
 
 The docker-compose files we provide are:
 
-- docker-compose-localhost.yaml
+- docker-compose.yaml (default docker compose file for localhost)
 - docker-compose-localhost-source.yaml
 - docker-compose-ropsten.yaml
 - docker-compose-ropsten-source.yaml
