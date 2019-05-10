@@ -1,1 +1,186 @@
-envs/localhost/docker-compose.yaml
+version: "3"
+volumes:
+  datavolume: {}
+services:
+  redis:
+    container_name: hydro-scaffold-dex-redis
+    image: redis:5.0
+    ports:
+      - 6379:6379
+    restart: on-failure:5
+  ethereum-node:
+    container_name: hydro-scaffold-dex-ethereum-node
+    image: hydroprotocolio/hydro-scaffold-dex-ethereum-node:latest
+    ports:
+      - 8545:8545
+    restart: on-failure:5
+  db:
+    container_name: hydro-scaffold-dex-pg
+    image: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - datavolume:/var/lib/postgresql/data
+      - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
+      - ./envs/localhost/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
+  web:
+    image: hydroprotocolio/hydro-scaffold-dex-web:latest
+    container_name: hydro-scaffold-dex-web
+    ports:
+      - 3000:8043
+    environment:
+      - CONFIG_VARS=REACT_APP_API_URL,REACT_APP_WS_URL,REACT_APP_NODE_URL,REACT_APP_HYDRO_PROXY_ADDRESS,REACT_APP_HYDRO_TOKEN_ADDRESS,REACT_APP_WETH_TOKEN_ADDRESS,REACT_APP_NETWORK_ID
+      - REACT_APP_API_URL=http://localhost:3001
+      - REACT_APP_WS_URL=ws://localhost:3002
+      - REACT_APP_NODE_URL=http://localhost:8545
+      - REACT_APP_HYDRO_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
+      - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
+      - REACT_APP_WETH_TOKEN_ADDRESS=0x4a817489643A89a1428b2DD441c3fbe4DBf44789
+      - REACT_APP_NETWORK_ID=66
+    restart: on-failure:5
+  admin:
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-admin-api
+    command: /bin/adminapi
+    ports:
+      - 3003:3003
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_LOG_LEVEL=ERROR
+      - WEB_HEALTH_CHECK_URL=http://web:8043
+      - API_HEALTH_CHECK_URL=http://api:4001/metrics
+      - ENGINE_HEALTH_CHECK_URL=http://engine:4004/metrics
+      - LAUNCHER_HEALTH_CHECK_URL=http://launcher:4005/metrics
+      - WATCHER_HEALTH_CHECK_URL=http://watcher:4003/metrics
+      - WEBSOCKET_HEALTH_CHECK_URL=http://ws:4002/metrics
+      - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+      - redis
+      - ethereum-node
+    restart: on-failure:5
+  api:
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-api
+    command: /bin/api
+    ports:
+      - 3001:3001
+      - 4001:4001
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
+      - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
+      - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4001
+      - HSK_PROXY_MODE=deposit
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - db
+      - redis
+      - ethereum-node
+    restart: on-failure:5
+  ws:
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-ws
+    command: /bin/websocket
+    ports:
+      - 3002:3002
+      - 4002:4002
+    environment:
+      - HSK_API_URL=http://api:3001
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4002
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - api
+    restart: on-failure:5
+  watcher:
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-watcher
+    command: /bin/watcher
+    ports:
+      - 4003:4003
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_LOG_LEVEL=DEBUG
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
+      - METRICS_PORT=4003
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - ethereum-node
+      - db
+    restart: on-failure:5
+  engine:
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-engine
+    command: /bin/engine
+    ports:
+      - 4004:4004
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_REDIS_URL=redis://redis:6379/0
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
+      - HSK_PROXY_ADDRESS=0x04f67e8b7c39a25e100847cb167460d715215feb
+      - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4004
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - redis
+      - db
+    restart: on-failure:5
+  launcher:
+    image: hydroprotocolio/hydro-scaffold-dex-backend:latest
+    container_name: hydro-scaffold-dex-launcher
+    command: /bin/launcher
+    ports:
+      - 4005:4005
+    environment:
+      - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
+      - HSK_BLOCKCHAIN_RPC_URL=http://ethereum-node:8545
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5c0286bef1434b07202a5ae3de38e66130d5280d
+      - HSK_RELAYER_ADDRESS=0x93388b4efe13b9b18ed480783c05462409851547
+      - HSK_RELAYER_PK=95b0a982c0dfc5ab70bf915dcf9f4b790544d25bc5e6cff0f38a59d0bba58651
+      - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4005
+    volumes:
+      - datavolume:/data
+    depends_on:
+      - ethereum-node
+      - db
+    restart: on-failure:5
+  maker:
+    image: hydroprotocolio/amm-bots
+    container_name: hydro-scaffold-dex-maker
+    depends_on:
+      - api
+    environment:
+      - BOT_TYPE=CONST_PRODUCT
+      - BOT_PRIVATE_KEY=0xa6553a3cbade744d6c6f63e557345402abd93e25cd1f1dba8bb0d374de2fcf4f
+      - BOT_BASE_TOKEN=HOT
+      - BOT_QUOTE_TOKEN=DAI
+      - BOT_BASE_URL=http://api:3001
+      - BOT_MIN_PRICE=0.8
+      - BOT_MAX_PRICE=1.2
+      - BOT_PRICE_GAP=0.02
+      - BOT_EXPAND_INVENTORY=2
+      - BOT_WEB3_URL=http://ethereum-node:8545
+    restart: on-failure:10
