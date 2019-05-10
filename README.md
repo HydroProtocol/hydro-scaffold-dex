@@ -92,6 +92,10 @@ Our Hydro Scaffolds come with a powerful API and easy Command Line Interface (CL
 - You could try this with different token symbols and contract addresses.
 - This creates a market with "default parameters" for fees, decimals, etc.
 
+        hydro-dex-ctl market publish HOT-WWW
+
+- This makes the market viewable on the frontend
+
 4. **Exit the CLI**
 
         exit
