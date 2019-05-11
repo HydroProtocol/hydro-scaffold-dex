@@ -7,13 +7,13 @@ services:
     image: redis:5.0
     ports:
       - 6379:6379
-    restart: on-failure:5
+    restart: always
   ethereum-node:
     container_name: hydro-scaffold-dex-ethereum-node
     image: hydroprotocolio/hydro-scaffold-dex-ethereum-node:latest
     ports:
       - 8545:8545
-    restart: on-failure:5
+    restart: always
   db:
     container_name: hydro-scaffold-dex-pg
     image: postgres
@@ -38,7 +38,7 @@ services:
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218
       - REACT_APP_WETH_TOKEN_ADDRESS=0x4a817489643A89a1428b2DD441c3fbe4DBf44789
       - REACT_APP_NETWORK_ID=66
-    restart: on-failure:5
+    restart: always
   admin:
     build: ./backend
     container_name: hydro-scaffold-dex-admin-api
@@ -64,7 +64,7 @@ services:
       - db
       - redis
       - ethereum-node
-    restart: on-failure:5
+    restart: always
   api:
     build: ./backend
     container_name: hydro-scaffold-dex-api
@@ -88,7 +88,7 @@ services:
       - db
       - redis
       - ethereum-node
-    restart: on-failure:5
+    restart: always
   ws:
     build: ./backend
     container_name: hydro-scaffold-dex-ws
@@ -106,7 +106,7 @@ services:
     depends_on:
       - redis
       - api
-    restart: on-failure:5
+    restart: always
   watcher:
     build: ./backend
     container_name: hydro-scaffold-dex-watcher
@@ -126,7 +126,7 @@ services:
       - redis
       - ethereum-node
       - db
-    restart: on-failure:5
+    restart: always
   engine:
     build: ./backend
     container_name: hydro-scaffold-dex-engine
@@ -143,7 +143,7 @@ services:
     depends_on:
       - redis
       - db
-    restart: on-failure:5
+    restart: always
   launcher:
     build: ./backend
     container_name: hydro-scaffold-dex-launcher
@@ -161,7 +161,7 @@ services:
     depends_on:
       - ethereum-node
       - db
-    restart: on-failure:5
+    restart: always
   maker:
     image: hydroprotocolio/amm-bots
     container_name: hydro-scaffold-dex-maker
