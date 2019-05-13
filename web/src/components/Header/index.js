@@ -105,10 +105,12 @@ class Header extends React.PureComponent {
         return 'Mainnet';
       case 3:
         return 'Ropsten';
+      case 4:
+        return 'Rinkeby';
       case 66:
         return 'localhost:8545';
       default:
-        return null;
+        return 'id: ' + env.NETWORK_ID;
     }
   }
 
