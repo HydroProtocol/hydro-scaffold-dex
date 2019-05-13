@@ -3,10 +3,9 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/connection"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
@@ -33,15 +32,16 @@ func loadRoutes(e *echo.Echo) {
 	addRoute(e, "GET", "/markets/:marketID/orderbook", &OrderBookReq{}, GetOrderBook)
 	addRoute(e, "GET", "/markets/:marketID/trades", &QueryTradeReq{}, GetAllTrades)
 
-	addRoute(e, "GET", "/markets/:marketID/trades/mine", &QueryTradeReq{}, GetAccountTrades, authMiddelware)
+	addRoute(e, "GET", "/markets/:marketID/trades/mine", &QueryTradeReq{}, GetAccountTrades, authMiddleware)
 	addRoute(e, "GET", "/markets/:marketID/candles", &CandlesReq{}, GetTradingView)
 	addRoute(e, "GET", "/fees", &FeesReq{}, GetFees)
 
-	addRoute(e, "GET", "/orders", &QueryOrderReq{}, GetOrder, authMiddelware)
-	addRoute(e, "POST", "/orders/build", &BuildOrderReq{}, BuildOrder, authMiddelware)
-	addRoute(e, "POST", "/orders", &PlaceOrderReq{}, PlaceOrder, authMiddelware)
-	addRoute(e, "DELETE", "/orders/:orderID", &CancelOrderReq{}, CancelOrder, authMiddelware)
-	addRoute(e, "GET", "/account/lockedBalances", &LockedBalanceReq{}, GetLockedBalance, authMiddelware)
+	addRoute(e, "GET", "/orders", &QueryOrderReq{}, GetOrders, authMiddleware)
+	addRoute(e, "GET", "/orders/:orderID", &QuerySingleOrderReq{}, GetSingleOrder, authMiddleware)
+	addRoute(e, "POST", "/orders/build", &BuildOrderReq{}, BuildOrder, authMiddleware)
+	addRoute(e, "POST", "/orders", &PlaceOrderReq{}, PlaceOrder, authMiddleware)
+	addRoute(e, "DELETE", "/orders/:orderID", &CancelOrderReq{}, CancelOrder, authMiddleware)
+	addRoute(e, "GET", "/account/lockedBalances", &LockedBalanceReq{}, GetLockedBalance, authMiddleware)
 }
 
 func addRoute(e *echo.Echo, method, url string, param Param, handler func(p Param) (interface{}, error), middlewares ...echo.MiddlewareFunc) {
@@ -100,8 +100,8 @@ func getEchoServer() *echo.Echo {
 	e := echo.New()
 	e.HideBanner = true
 
-	// open Debug will return server errors details in json body
-	// e.Debug = true
+	// open Debugf will return server errors details in json body
+	// e.Debugf = true
 
 	e.HTTPErrorHandler = errorHandler
 
@@ -112,8 +112,8 @@ func getEchoServer() *echo.Echo {
 	// More details goes https://echo.labstack.com/middleware/body-dump
 	//
 	// e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-	// 	utils.Debug("Header: %s", c.Request().Header)
-	// 	utils.Debug("Url: %s, Request Body: %s; Response Body: %s", c.Request().RequestURI, string(reqBody), string(resBody))
+	// 	utils.Debugf("Header: %s", c.Request().Header)
+	// 	utils.Debugf("Url: %s, Request Body: %s; Response Body: %s", c.Request().RequestURI, string(reqBody), string(resBody))
 	// }))
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -130,13 +130,13 @@ var hydro sdk.Hydro
 
 func StartServer(ctx context.Context, startMetric func()) {
 	// init redis
-	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
+	redisClient := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))
 
 	// init blockchain
 	hydro = ethereum.NewEthereumHydro(os.Getenv("HSK_BLOCKCHAIN_RPC_URL"), os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"))
 
 	//init database
-	models.Connect(config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(os.Getenv("HSK_DATABASE_URL"))
 
 	CacheService, _ = common.InitKVStore(
 		&common.RedisKVStoreConfig{
@@ -185,7 +185,7 @@ func recoverHandler(next echo.HandlerFunc) echo.HandlerFunc {
 				}
 				stack := make([]byte, 2048)
 				length := runtime.Stack(stack, false)
-				utils.Error("unhandled error: %v %s", err, stack[:length])
+				utils.Errorf("unhandled error: %v %s", err, stack[:length])
 				c.Error(err)
 			}
 		}()

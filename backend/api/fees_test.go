@@ -1,10 +1,9 @@
 package api
 
 import (
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -23,19 +22,31 @@ func TestFees(t *testing.T) {
 
 	hydro = mockHydro
 
+	market := models.MarketDao.FindMarketByID("HOT-DAI")
+	// decimal18
+	decimals18 := decimal.New(1, 18)
+	// 3gwei
+	gasPrice := decimal.New(3, 9)
+	// ethInDai
+	ethPriceInDai := decimal.NewFromFloat(150)
+	// gas
+	gasFeeAmt := decimal.NewFromFloat(float64(market.GasUsedEstimation)).Mul(gasPrice).Mul(ethPriceInDai).Div(decimals18)
+	asMakerTotalFee := decimal.NewFromFloat(140 * 100).Mul(market.MakerFeeRate).Add(gasFeeAmt)
+	asTakerTotalFee := decimal.NewFromFloat(140 * 100).Mul(market.TakerFeeRate).Add(gasFeeAmt)
+
 	url := "/fees?price=140&amount=100&marketID=HOT-DAI"
 	resp := request(url, "GET", "", nil)
 
 	assert.EqualValues(t, 0, resp.Status)
 	fees := resp.Data.(map[string]interface{})["fees"]
-	spew.Dump(resp.Data)
+	//spew.Dump(resp.Data)
 	assert.EqualValues(t, "0.001", fees.(map[string]interface{})["asMakerFeeRate"])
 	assert.EqualValues(t, "14", fees.(map[string]interface{})["asMakerTradeFeeAmount"])
-	assert.EqualValues(t, "14", fees.(map[string]interface{})["asMakerTotalFeeAmount"])
+	assert.EqualValues(t, asMakerTotalFee.String(), fees.(map[string]interface{})["asMakerTotalFeeAmount"])
 	assert.EqualValues(t, "0.003", fees.(map[string]interface{})["asTakerFeeRate"])
 	assert.EqualValues(t, "42", fees.(map[string]interface{})["asTakerTradeFeeAmount"])
-	assert.EqualValues(t, "42", fees.(map[string]interface{})["asTakerTotalFeeAmount"])
-	assert.EqualValues(t, "0", fees.(map[string]interface{})["gasFeeAmount"])
+	assert.EqualValues(t, asTakerTotalFee.String(), fees.(map[string]interface{})["asTakerTotalFeeAmount"])
+	assert.EqualValues(t, gasFeeAmt.String(), fees.(map[string]interface{})["gasFeeAmount"])
 }
 
 // api should return -4 when amount or price is not positive number

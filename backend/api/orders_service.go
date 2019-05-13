@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -33,7 +33,17 @@ func GetLockedBalance(p Param) (interface{}, error) {
 	}, nil
 }
 
-func GetOrder(p Param) (interface{}, error) {
+func GetSingleOrder(p Param) (interface{}, error) {
+	req := p.(*QuerySingleOrderReq)
+
+	order := models.OrderDao.FindByID(req.OrderID)
+
+	return &QuerySingleOrderResp{
+		Order: order,
+	}, nil
+}
+
+func GetOrders(p Param) (interface{}, error) {
 	req := p.(*QueryOrderReq)
 	if req.Status == "" {
 		req.Status = common.ORDER_PENDING
@@ -48,7 +58,7 @@ func GetOrder(p Param) (interface{}, error) {
 	offset := req.PerPage * (req.Page - 1)
 	limit := req.PerPage
 
-	count, orders := models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, limit, offset)
+	count, orders := models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, offset, limit)
 
 	return &QueryOrderResp{
 		Count:  count,
@@ -77,10 +87,10 @@ func CancelOrder(p Param) (interface{}, error) {
 }
 
 func BuildOrder(p Param) (interface{}, error) {
-	utils.Debug("BuildOrder param %v", p)
+	utils.Debugf("BuildOrder param %v", p)
 
 	req := p.(*BuildOrderReq)
-	err := checkBalanceAndAllowance(req, req.Address)
+	err := checkBalanceAllowancePriceAndAmount(req, req.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +108,7 @@ func BuildOrder(p Param) (interface{}, error) {
 func PlaceOrder(p Param) (interface{}, error) {
 	order := p.(*PlaceOrderReq)
 	if valid := hydro.IsValidOrderSignature(order.Address, order.ID, order.Signature); !valid {
-		utils.Info("valid is %v", valid)
+		utils.Infof("valid is %v", valid)
 		return nil, errors.New("bad signature")
 	}
 
@@ -153,7 +163,7 @@ func getCacheOrderByOrderID(orderID string) *CacheOrder {
 	cacheOrderStr, err := CacheService.Get(generateOrderCacheKey(orderID))
 
 	if err != nil {
-		utils.Error("get cache order error: %v", err)
+		utils.Errorf("get cache order error: %v", err)
 		return nil
 	}
 
@@ -161,14 +171,14 @@ func getCacheOrderByOrderID(orderID string) *CacheOrder {
 
 	err = json.Unmarshal([]byte(cacheOrderStr), &cacheOrder)
 	if err != nil {
-		utils.Error("get cache order error: %v, cache order is: %v", err, cacheOrderStr)
+		utils.Errorf("get cache order error: %v, cache order is: %v", err, cacheOrderStr)
 		return nil
 	}
 
 	return &cacheOrder
 }
 
-func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
+func checkBalanceAllowancePriceAndAmount(order *BuildOrderReq, address string) error {
 	market := models.MarketDao.FindMarketByID(order.MarketID)
 	if market == nil {
 		return MarketNotFoundError(order.MarketID)
@@ -198,13 +208,18 @@ func checkBalanceAndAllowance(order *BuildOrderReq, address string) error {
 		return NewApiError(-1, "invalid_amount_unit")
 	}
 
+	orderSizeInQuoteToken := amount.Mul(price)
+	if orderSizeInQuoteToken.LessThan(market.MinOrderSize) {
+		return NewApiError(-1, "order_less_than_minOrderSize")
+	}
+
 	baseTokenLockedBalance := models.BalanceDao.GetByAccountAndSymbol(address, market.BaseTokenSymbol, market.BaseTokenDecimals)
 	baseTokenBalance := hydro.GetTokenBalance(market.BaseTokenAddress, address)
-	baseTokenAllowance := hydro.GetTokenAllowance(market.BaseTokenAddress, config.Getenv("HSK_PROXY_ADDRESS"), address)
+	baseTokenAllowance := hydro.GetTokenAllowance(market.BaseTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), address)
 
 	quoteTokenLockedBalance := models.BalanceDao.GetByAccountAndSymbol(address, market.QuoteTokenSymbol, market.QuoteTokenDecimals)
 	quoteTokenBalance := hydro.GetTokenBalance(market.QuoteTokenAddress, address)
-	quoteTokenAllowance := hydro.GetTokenAllowance(market.QuoteTokenAddress, config.Getenv("HSK_PROXY_ADDRESS"), address)
+	quoteTokenAllowance := hydro.GetTokenAllowance(market.QuoteTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), address)
 
 	var quoteTokenHugeAmount decimal.Decimal
 	var baseTokenHugeAmount decimal.Decimal
@@ -253,6 +268,8 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 	fee := calculateFee(price, amount, market, address)
 
 	gasFeeInQuoteToken := fee.GasFeeAmount
+	gasFeeInQuoteTokenHugeAmount := fee.GasFeeAmount.Mul(decimal.New(1, int32(market.QuoteTokenDecimals)))
+
 	makerRebateRate := decimal.Zero
 	offeredAmount := decimal.Zero
 
@@ -266,8 +283,8 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 		int64(2),
 		getExpiredAt(order.Expires),
 		rand.Int63(),
-		market.TakerFeeRate,
 		market.MakerFeeRate,
+		market.TakerFeeRate,
 		decimal.Zero,
 		order.Side == "sell",
 		order.OrderType == "market",
@@ -275,22 +292,22 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 
 	orderJson := models.OrderJSON{
 		Trader:                  address,
-		Relayer:                 config.Getenv("HSK_RELAYER_ADDRESS"),
+		Relayer:                 os.Getenv("HSK_RELAYER_ADDRESS"),
 		BaseCurrency:            market.BaseTokenAddress,
 		QuoteCurrency:           market.QuoteTokenAddress,
 		BaseCurrencyHugeAmount:  baseTokenHugeAmount,
 		QuoteCurrencyHugeAmount: quoteTokenHugeAmount,
-		GasTokenHugeAmount:      gasFeeInQuoteToken,
+		GasTokenHugeAmount:      gasFeeInQuoteTokenHugeAmount,
 		Data:                    orderData,
 	}
 
 	sdkOrder := sdk.NewOrderWithData(address,
-		config.Getenv("HSK_RELAYER_ADDRESS"),
+		os.Getenv("HSK_RELAYER_ADDRESS"),
 		market.BaseTokenAddress,
 		market.QuoteTokenAddress,
 		utils.DecimalToBigInt(baseTokenHugeAmount),
 		utils.DecimalToBigInt(quoteTokenHugeAmount),
-		utils.DecimalToBigInt(gasFeeInQuoteToken),
+		utils.DecimalToBigInt(gasFeeInQuoteTokenHugeAmount),
 		orderData,
 		"",
 	)

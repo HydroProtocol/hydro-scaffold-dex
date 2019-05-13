@@ -1,22 +1,20 @@
 package main
 
 import (
-	_ "github.com/joho/godotenv/autoload"
-	"os"
-)
-
-import (
 	"context"
 	"encoding/json"
-	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/cli"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/connection"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/HydroProtocol/hydro-sdk-backend/watcher"
+	"os"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type DBTransactionHandler struct {
@@ -27,12 +25,12 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 	launchLog := models.LaunchLogDao.FindByHash(tx.GetHash())
 
 	if launchLog == nil {
-		utils.Debug("Skip useless transaction %s", tx.GetHash())
+		utils.Debugf("Skip useless transaction %s", tx.GetHash())
 		return
 	}
 
 	if launchLog.Status != common.STATUS_PENDING {
-		utils.Info("LaunchLog is not pending %s, skip", launchLog.Hash.String)
+		utils.Infof("LaunchLog is not pending %s, skip", launchLog.Hash.String)
 		return
 	}
 
@@ -41,8 +39,7 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 		result := txReceipt.GetResult()
 		hash := tx.GetHash()
 		transaction := models.TransactionDao.FindTransactionByID(launchLog.ItemID)
-		utils.Info("Transaction %s result is %+v", tx.GetHash(), result)
-		//w.handleTransaction(launchLog.ItemID, result)
+		utils.Infof("Transaction %s result is %+v", tx.GetHash(), result)
 
 		var status string
 
@@ -52,6 +49,15 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 			status = common.STATUS_FAILED
 		}
 
+		//approve event should not process with engine, so update and return
+		if launchLog.ItemType == "hydroApprove" {
+			launchLog.Status = status
+			err := models.LaunchLogDao.UpdateLaunchLog(launchLog)
+			if err != nil {
+				panic(err)
+			}
+			return
+		}
 		event := &common.ConfirmTransactionEvent{
 			Event: common.Event{
 				Type:     common.EventConfirmTransaction,
@@ -67,7 +73,7 @@ func (handler DBTransactionHandler) Update(tx sdk.Transaction, timestamp uint64)
 		err := handler.w.QueueClient.Push(bts)
 
 		if err != nil {
-			utils.Error("Push event into Queue Error %v", err)
+			utils.Errorf("Push event into Queue Errorf %v", err)
 		}
 	}
 }
@@ -78,7 +84,7 @@ func main() {
 	go cli.WaitExitSignal(stop)
 
 	// Init Database Client
-	models.Connect(config.Getenv("HSK_DATABASE_URL"))
+	models.Connect(os.Getenv("HSK_DATABASE_URL"))
 
 	// Init Redis client
 	client := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))
@@ -124,5 +130,5 @@ func main() {
 
 	w.Run()
 
-	utils.Info("Watcher Exit")
+	utils.Infof("Watcher Exit")
 }

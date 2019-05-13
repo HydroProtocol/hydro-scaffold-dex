@@ -12,10 +12,10 @@ export const loginRequest = () => {
     const selectedAccount = getSelectedAccount(state);
     const address = selectedAccount ? selectedAccount.get('address') : null;
     const wallet = getSelectedAccountWallet(state);
-    if (!address || !wallet) {
+    if (!wallet) {
       return;
     }
-    const signature = await wallet.signPersonalMessage(message, address);
+    const signature = await wallet.signPersonalMessage(message);
     if (!signature) {
       return;
     }
@@ -55,19 +55,27 @@ export const loadAccountLockedBalance = () => {
       res.data.data.lockedBalances.forEach(x => {
         lockedBalances[x.symbol] = x.lockedBalance;
       });
-      dispatch(updateTokenLockedBalances(lockedBalances, accountAddress));
+      dispatch(updateTokenLockedBalances(lockedBalances));
     }
   };
 };
 
-export const updateTokenLockedBalances = (lockedBalances, accountAddress) => {
-  Object.keys(lockedBalances).forEach((key, index) => {
-    lockedBalances[key] = new BigNumber(lockedBalances[key]);
-  });
+export const updateTokenLockedBalances = lockedBalances => {
+  return (dispatch, getState) => {
+    const selectedAccount = getSelectedAccount(getState());
+    const accountAddress = selectedAccount ? selectedAccount.get('address') : null;
+    if (!accountAddress) {
+      return;
+    }
 
-  return {
-    type: 'UPDATE_TOKEN_LOCKED_BALANCES',
-    payload: { lockedBalances, accountAddress }
+    Object.keys(lockedBalances).forEach((key, index) => {
+      lockedBalances[key] = new BigNumber(lockedBalances[key]);
+    });
+
+    return dispatch({
+      type: 'UPDATE_TOKEN_LOCKED_BALANCES',
+      payload: { lockedBalances, accountAddress }
+    });
   };
 };
 
@@ -111,10 +119,10 @@ export const loadTokens = () => {
 };
 
 // load ERC20 token 10 times
-export const watchToken = (tokenAddress, symbol) => {
+export const watchToken = (tokenAddress, symbol, decimals) => {
   return dispatch => {
     for (let i = 0; i < 10; i++) {
-      setTimeout(() => dispatch(loadToken(tokenAddress, symbol)), 3000 * i);
+      setTimeout(() => dispatch(loadToken(tokenAddress, symbol, decimals)), 3000 * i);
     }
   };
 };
@@ -129,8 +137,8 @@ export const loadToken = (tokenAddress, symbol, decimals) => {
     }
 
     const [balance, allowance] = await Promise.all([
-      dispatch(getTokenBalance(tokenAddress, accountAddress)),
-      dispatch(getAllowance(tokenAddress, accountAddress))
+      getTokenBalance(tokenAddress, accountAddress),
+      getAllowance(tokenAddress, accountAddress)
     ]);
 
     return dispatch({

@@ -2,13 +2,13 @@ package models
 
 import (
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/davecgh/go-spew/spew"
 	uuid2 "github.com/satori/go.uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 )
@@ -20,17 +20,17 @@ func Test_PG_GetAccountOrders(t *testing.T) {
 	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 0, len(orders))
 
-	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order2 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order3 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order4 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order5 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order6 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order7 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order8 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order9 := NewOrder(config.User1, "WETH-DAI", "buy", false)
+	order1 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order2 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order3 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order4 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order5 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order6 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order7 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order8 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order9 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
 
-	order10 := NewOrder(config.User2, "WETH-DAI", "buy", false)
+	order10 := NewOrder(TestUser2, "WETH-DAI", "buy", false)
 
 	err := OrderDaoPG.InsertOrder(order1)
 	spew.Dump(err)
@@ -46,19 +46,19 @@ func Test_PG_GetAccountOrders(t *testing.T) {
 	_ = OrderDaoPG.InsertOrder(order10)
 
 	var count int64
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 3, 9)
+	count, orders = OrderDaoPG.FindByAccount(TestUser1, "WETH-DAI", common.ORDER_PENDING, 3, 9)
 	assert.EqualValues(t, 6, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 10)
+	count, orders = OrderDaoPG.FindByAccount(TestUser1, "WETH-DAI", common.ORDER_PENDING, 0, 10)
 	assert.EqualValues(t, 9, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_PENDING, 0, 9)
+	count, orders = OrderDaoPG.FindByAccount(TestUser1, "WETH-DAI", common.ORDER_PENDING, 0, 9)
 	assert.EqualValues(t, 9, len(orders))
 	assert.EqualValues(t, 9, count)
 
-	count, orders = OrderDaoPG.FindByAccount(config.User1, "WETH-DAI", common.ORDER_FULL_FILLED, 0, 9)
+	count, orders = OrderDaoPG.FindByAccount(TestUser1, "WETH-DAI", common.ORDER_FULL_FILLED, 0, 9)
 	assert.EqualValues(t, 0, len(orders))
 	assert.EqualValues(t, 0, count)
 }
@@ -70,9 +70,9 @@ func Test_PG_GetMarketPendingOrders(t *testing.T) {
 	orders := OrderDaoPG.FindMarketPendingOrders("WETH-DAI")
 	assert.EqualValues(t, 0, len(orders))
 
-	order1 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order2 := NewOrder(config.User1, "WETH-DAI", "buy", false)
-	order3 := NewOrder(config.User1, "WETH-DAI", "buy", false)
+	order1 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order2 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
+	order3 := NewOrder(TestUser1, "WETH-DAI", "buy", false)
 
 	_ = OrderDaoPG.InsertOrder(order1)
 	_ = OrderDaoPG.InsertOrder(order2)
@@ -119,12 +119,12 @@ func Test_PG_InsertAndFindOneAndUpdateOrders(t *testing.T) {
 
 func Test_PG_Order_GetOrderJson(t *testing.T) {
 	json := OrderJSON{
-		Trader:                  config.User1,
-		Relayer:                 config.Getenv("HSK_RELAYER_ADDRESS"),
+		Trader:                  TestUser1,
+		Relayer:                 os.Getenv("HSK_RELAYER_ADDRESS"),
 		BaseCurrencyHugeAmount:  utils.StringToDecimal("100000000000000000000000000000000000"),
 		QuoteCurrencyHugeAmount: utils.StringToDecimal("200000000000000000000000000000000000"),
-		BaseCurrency:            config.Getenv("HSK_HYDRO_TOKEN_ADDRESS"),
-		QuoteCurrency:           config.Getenv("HSK_USD_TOKEN_ADDRESS"),
+		BaseCurrency:            os.Getenv("HSK_HYDRO_TOKEN_ADDRESS"),
+		QuoteCurrency:           os.Getenv("HSK_USD_TOKEN_ADDRESS"),
 		GasTokenHugeAmount:      utils.StringToDecimal("1000000000"),
 		Signature:               "0x15a85430057580a5a35125db098b686b3541a291b3fce69365dc47d502fa63395ce9f7100240e4558c6ad29b8aa9a2c01d2b5353babdffd6ac50babf0127fdd600",
 		Data:                    "something",

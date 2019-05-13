@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/shopspring/decimal"
 )
 
@@ -59,6 +59,15 @@ type (
 	QueryOrderResp struct {
 		Count  int64           `json:"count"`
 		Orders []*models.Order `json:"orders"`
+	}
+
+	QuerySingleOrderReq struct {
+		BaseReq
+		OrderID string `json:"orderID" param:"orderID" validate:"required"`
+	}
+
+	QuerySingleOrderResp struct {
+		Order *models.Order `json:"order"`
 	}
 
 	BuildOrderReq struct {

@@ -14,24 +14,21 @@ const mapStateToProps = state => {
   return {
     tokensInfo: stateUtils.getTokensInfo(state, address),
     address,
-    isLoggedIn: state.account.getIn(['isLoggedIn', address]),
     ethBalance: toUnitAmount(state.WalletReducer.getIn(['accounts', selectedAccountID, 'balance']), 18)
   };
 };
 
 class Tokens extends React.PureComponent {
   componentDidMount() {
-    const { address, dispatch, isLoggedIn } = this.props;
-    if (address && isLoggedIn) {
+    const { address, dispatch } = this.props;
+    if (address) {
       dispatch(loadTokens());
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { address, dispatch, isLoggedIn } = this.props;
-    const accountChange = address !== prevProps.address;
-    const loggedInChange = isLoggedIn !== prevProps.isLoggedIn;
-    if (address && isLoggedIn && (accountChange || loggedInChange)) {
+    const { address, dispatch } = this.props;
+    if (address && address !== prevProps.address) {
       dispatch(loadTokens());
     }
   }
@@ -76,9 +73,9 @@ class Tokens extends React.PureComponent {
                     checked={isApproved}
                     onChange={() => {
                       if (isApproved) {
-                        dispatch(disable(address, token));
+                        dispatch(disable(address, token, decimals));
                       } else {
-                        dispatch(enable(address, token));
+                        dispatch(enable(address, token, decimals));
                       }
                     }}
                   />

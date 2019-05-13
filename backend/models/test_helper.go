@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	uuid2 "github.com/satori/go.uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/mock"
@@ -11,6 +10,9 @@ import (
 	"os"
 	"time"
 )
+
+const TestUser1 = "0xe36ea790bc9d7ab70c55260c66d52b1eca985f84"
+const TestUser2 = "0xe834ec434daba538cd1b9fe1582052b880bd7e63"
 
 type MMarketDao struct {
 	mock.Mock
@@ -162,10 +164,10 @@ func MarketHotDai() *Market {
 	marketHotDai := &Market{
 		ID:                 "HOT-DAI",
 		BaseTokenSymbol:    "HOT",
-		BaseTokenAddress:   config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		BaseTokenAddress:   os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		BaseTokenDecimals:  18,
 		QuoteTokenSymbol:   "DAI",
-		QuoteTokenAddress:  config.Getenv("HSK_USD_TOKEN_ADDRESS"),
+		QuoteTokenAddress:  os.Getenv("HSK_USD_TOKEN_ADDRESS"),
 		QuoteTokenDecimals: 18,
 		MinOrderSize:       decimal.NewFromFloat(0.1),
 		PricePrecision:     5,
@@ -188,10 +190,10 @@ func MockMarketDao() {
 	marketWethDai := &Market{
 		ID:                 "WETH-DAI",
 		BaseTokenSymbol:    "WETH",
-		BaseTokenAddress:   config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		BaseTokenAddress:   os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		BaseTokenDecimals:  18,
 		QuoteTokenSymbol:   "DAI",
-		QuoteTokenAddress:  config.Getenv("HSK_USD_TOKEN_ADDRESS"),
+		QuoteTokenAddress:  os.Getenv("HSK_USD_TOKEN_ADDRESS"),
 		QuoteTokenDecimals: 18,
 		MinOrderSize:       decimal.NewFromFloat(0.1),
 		PricePrecision:     5,
@@ -205,10 +207,10 @@ func MockMarketDao() {
 	marketHotDai := &Market{
 		ID:                 "HOT-DAI",
 		BaseTokenSymbol:    "HOT",
-		BaseTokenAddress:   config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		BaseTokenAddress:   os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		BaseTokenDecimals:  18,
 		QuoteTokenSymbol:   "DAI",
-		QuoteTokenAddress:  config.Getenv("HSK_USD_TOKEN_ADDRESS"),
+		QuoteTokenAddress:  os.Getenv("HSK_USD_TOKEN_ADDRESS"),
 		QuoteTokenDecimals: 18,
 		MinOrderSize:       decimal.NewFromFloat(0.1),
 		PricePrecision:     5,
@@ -222,6 +224,7 @@ func MockMarketDao() {
 	markets = append(markets, marketHotDai)
 
 	marketDao.On("FindAllMarkets").Return(markets).Once()
+	marketDao.On("FindPublishedMarkets").Times(10).Return(markets)
 	marketDao.On("FindMarketByID", mock.MatchedBy(func(marketID string) bool { return marketID == "WETH-DAI" })).Return(marketWethDai)
 	marketDao.On("FindMarketByID", "HOT-DAI").Times(10).Return(marketHotDai)
 	marketDao.On("FindMarketByID", mock.AnythingOfType("string")).Times(10).Return(nil)

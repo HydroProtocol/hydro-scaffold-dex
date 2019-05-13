@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"github.com/HydroProtocol/hydro-sdk-backend/engine"
 	"math/big"
+	"os"
 	"runtime"
 	"time"
 
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
@@ -31,7 +31,7 @@ func (m *MarketHandler) Run() {
 	for data := range m.eventChan {
 		_ = handleEvent(m, string(data))
 	}
-	utils.Info("market %s stopped", m.market.ID)
+	utils.Infof("market %s stopped", m.market.ID)
 }
 
 func (m *MarketHandler) Stop() {
@@ -53,8 +53,8 @@ func handleEvent(marketHandler *MarketHandler, eventJSON string) (err error) {
 			n := runtime.Stack(buf, false)
 			stackInfo := fmt.Sprintf("%s", buf[:n])
 
-			utils.Error("Error: %+v", err)
-			utils.Error(stackInfo)
+			utils.Errorf("Errorf: %+v", err)
+			utils.Errorf(stackInfo)
 		}
 
 	}()
@@ -62,7 +62,7 @@ func handleEvent(marketHandler *MarketHandler, eventJSON string) (err error) {
 	err = json.Unmarshal([]byte(eventJSON), &event)
 
 	if err != nil {
-		utils.Error("Unmarshal event failed %s", eventJSON)
+		utils.Errorf("Unmarshal event failed %s", eventJSON)
 		return err
 	}
 
@@ -98,9 +98,18 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 	var eventOrder models.Order
 	_ = json.Unmarshal([]byte(eventOrderString), &eventOrder)
 
-	eventMemoryOrder := &common.MemoryOrder{ID: eventOrder.ID, MarketID: eventOrder.MarketID, Price: eventOrder.Price, Amount: eventOrder.Amount, Side: eventOrder.Side}
+	eventMemoryOrder := &common.MemoryOrder{
+		ID:           eventOrder.ID,
+		MarketID:     eventOrder.MarketID,
+		Price:        eventOrder.Price,
+		Amount:       eventOrder.Amount,
+		Side:         eventOrder.Side,
+		GasFeeAmount: eventOrder.GasFeeAmount,
+		MakerFeeRate: eventOrder.MakerFeeRate,
+		TakerFeeRate: eventOrder.TakerFeeRate,
+	}
 
-	utils.Debug("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
+	utils.Debugf("%s NEW_ORDER  price: %s amount: %s %4s", event.MarketID, eventOrder.Price.StringFixed(5), eventOrder.Amount.StringFixed(5), eventOrder.Side)
 
 	matchResult, hasMatch := m.hydroEngine.HandleNewOrder(eventMemoryOrder)
 	if hasMatch {
@@ -111,20 +120,38 @@ func (m MarketHandler) handleNewOrder(event *common.NewOrderEvent) (transaction 
 			makerOrder := resultWithOrders.modelMakerOrders[item.MakerOrder.ID]
 
 			makerOrder.AvailableAmount = makerOrder.AvailableAmount.Sub(item.MatchedAmount)
-			makerOrder.PendingAmount = makerOrder.PendingAmount.Add(item.MatchedAmount)
-
 			eventOrder.AvailableAmount = eventOrder.AvailableAmount.Sub(item.MatchedAmount)
-			eventOrder.PendingAmount = eventOrder.PendingAmount.Add(item.MatchedAmount)
+
+			if item.MatchShouldBeCanceled {
+				makerOrder.CanceledAmount = makerOrder.CanceledAmount.Add(item.MatchedAmount)
+				eventOrder.CanceledAmount = eventOrder.CanceledAmount.Add(item.MatchedAmount)
+			} else {
+				makerOrder.PendingAmount = makerOrder.PendingAmount.Add(item.MatchedAmount)
+				eventOrder.PendingAmount = eventOrder.PendingAmount.Add(item.MatchedAmount)
+			}
+
+			if item.MakerOrderIsDone {
+				makerOrder.CanceledAmount = makerOrder.Amount.Sub(makerOrder.ConfirmedAmount.Add(makerOrder.PendingAmount))
+				makerOrder.AvailableAmount = decimal.Zero
+			}
+
 			_ = UpdateOrder(makerOrder)
 
-			utils.Debug("  [Take Liquidity] price: %s amount: %s (%s) ", item.MakerOrder.Price.StringFixed(5), item.MatchedAmount.StringFixed(5), item.MakerOrder.ID)
+			utils.Debugf("  [Take Liquidity] price: %s amount: %s (%s) ", item.MakerOrder.Price.StringFixed(5), item.MatchedAmount.StringFixed(5), item.MakerOrder.ID)
 		}
 
-		transaction, launchLog = processTransactionAndLaunchLog(resultWithOrders)
-		trades := newTradesByMatchResult(resultWithOrders, transaction.ID)
+		if matchResult.TakerOrderIsDone {
+			eventOrder.CanceledAmount = eventOrder.Amount.Sub(eventOrder.ConfirmedAmount.Add(eventOrder.PendingAmount))
+			eventOrder.AvailableAmount = decimal.Zero
+		}
 
-		for _, trade := range trades {
-			_ = InsertTrade(trade)
+		if matchResult.ExistMatchToBeExecuted() {
+			transaction, launchLog = processTransactionAndLaunchLog(resultWithOrders)
+			trades := newTradesByMatchResult(resultWithOrders, transaction.ID)
+
+			for _, trade := range trades {
+				_ = InsertTrade(trade)
+			}
 		}
 	}
 
@@ -147,6 +174,11 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 	baseTokenDecimal := market.BaseTokenDecimals
 
 	for _, item := range matchResult.MatchItems {
+		if item.MatchShouldBeCanceled {
+			//skip if match should be canceled
+			continue
+		}
+
 		modelMakerOrder := matchResult.modelMakerOrders[item.MakerOrder.ID]
 
 		hydroMakerOrder := getHydroOrderFromModelOrder(modelMakerOrder.GetOrderJson())
@@ -156,7 +188,7 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		baseTokenFilledAmt := utils.DecimalToBigInt(baseTokenHugeAmt)
 		baseTokenFilledAmounts = append(baseTokenFilledAmounts, baseTokenFilledAmt)
 
-		_ = models.OrderDao.InsertOrder(modelMakerOrder)
+		_ = UpdateOrder(modelMakerOrder)
 	}
 
 	transaction := &models.Transaction{
@@ -179,8 +211,8 @@ func processTransactionAndLaunchLog(matchResult *MatchResultWithOrders) (*models
 		ItemType:  "hydroTrade",
 		ItemID:    transaction.ID,
 		Status:    "created",
-		From:      config.Getenv("HSK_RELAYER_ADDRESS"),
-		To:        config.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"),
+		From:      os.Getenv("HSK_RELAYER_ADDRESS"),
+		To:        os.Getenv("HSK_HYBRID_EXCHANGE_ADDRESS"),
 		Value:     decimal.Zero,
 		GasLimit:  int64(len(matchResult.MatchItems) * 250000),
 		Data:      utils.Bytes2HexP(hydroProtocol.GetMatchOrderCallData(hydroTakerOrder, hydroMakerOrders, baseTokenFilledAmounts)),

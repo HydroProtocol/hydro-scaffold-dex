@@ -1,17 +1,15 @@
 package main
 
 import (
-	_ "github.com/joho/godotenv/autoload"
-)
-
-import (
 	"context"
-	"github.com/HydroProtocol/hydro-box-dex/backend/cli"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/cli"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/connection"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
-	"github.com/HydroProtocol/hydro-sdk-backend/connection"
+	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/HydroProtocol/hydro-sdk-backend/websocket"
 	"os"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -21,7 +19,7 @@ func main() {
 func run() int {
 	ctx, stop := context.WithCancel(context.Background())
 
-	redisClient := connection.NewRedisClient(config.Getenv("HSK_REDIS_URL"))
+	redisClient := connection.NewRedisClient(os.Getenv("HSK_REDIS_URL"))
 	redisClient = redisClient.WithContext(ctx)
 
 	go cli.WaitExitSignal(stop)
@@ -37,7 +35,7 @@ func run() int {
 		panic(err)
 	}
 
-	// new a websockert server
+	// new a websocket server
 	wsServer := websocket.NewWSServer(":3002", queue)
 
 	websocket.RegisterChannelCreator(
@@ -49,6 +47,8 @@ func run() int {
 
 	// Start the server
 	// It will block the current process to listen on the `addr` your provided.
+	go utils.StartMetrics()
 	wsServer.Start(ctx)
+
 	return 0
 }

@@ -5,7 +5,7 @@
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/hydroprotocolio/ethereum-test-node.svg)](https://hub.docker.com/r/hydroprotocolio/ethereum-test-node)
 
 - Powered by ganachi-cli
-- HydroHybridExchange 1.1 internally integrated
+- [HydroProtocol Contracts 1.1](https://github.com/hydorprotocol/protocol) internally integrated
 
 
 ## How to use?
@@ -14,7 +14,7 @@ Please install docker first.
 
 ### Way 1: Use autobuild image
 
-	docker run -it --rm -p 8545:8545 hydroprotocolio/hydro-box-dex-ethereum-node:latest
+	docker run -it --rm -p 8545:8545 hydroprotocolio/hydro-scaffold-dex-ethereum-node:latest
 
 ### Way2 2: Build from source
 

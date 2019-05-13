@@ -122,7 +122,7 @@ func (orderDaoPG) UpdateOrder(order *Order) error {
 func (o orderDaoPG) Count() (count int) {
 	err := DB.Model(&Order{}).Count(&count).Error
 	if err != nil {
-		utils.Error("count orders error: %v", err)
+		utils.Errorf("count orders error: %v", err)
 	}
 
 	return

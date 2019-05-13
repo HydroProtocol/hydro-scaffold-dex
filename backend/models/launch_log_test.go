@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/shopspring/decimal"
@@ -52,8 +51,8 @@ func newLaunchLog() *LaunchLog {
 		Hash:        sql.NullString{},
 		BlockNumber: sql.NullInt64{},
 
-		From:     config.User1,
-		To:       config.User2,
+		From:     TestUser1,
+		To:       TestUser2,
 		Value:    decimal.Zero,
 		GasLimit: 1000000,
 		GasPrice: decimal.NullDecimal{Decimal: utils.StringToDecimal("1000000000"), Valid: true},

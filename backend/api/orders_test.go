@@ -3,8 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
-	"github.com/HydroProtocol/hydro-sdk-backend/config"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk"
 	"github.com/HydroProtocol/hydro-sdk-backend/sdk/ethereum"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
@@ -14,6 +13,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 )
@@ -47,10 +47,10 @@ func mockMarketDao() {
 	marketWethDai := &models.Market{
 		ID:                 "WETH-DAI",
 		BaseTokenSymbol:    "WETH",
-		BaseTokenAddress:   config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		BaseTokenAddress:   os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		BaseTokenDecimals:  18,
 		QuoteTokenSymbol:   "DAI",
-		QuoteTokenAddress:  config.Getenv("HSK_USD_TOKEN_ADDRESS"),
+		QuoteTokenAddress:  os.Getenv("HSK_USD_TOKEN_ADDRESS"),
 		QuoteTokenDecimals: 18,
 		MinOrderSize:       decimal.NewFromFloat(0.1),
 		PricePrecision:     5,
@@ -64,10 +64,10 @@ func mockMarketDao() {
 	marketHotDai := &models.Market{
 		ID:                 "HOT-DAI",
 		BaseTokenSymbol:    "HOT",
-		BaseTokenAddress:   config.Getenv("HSK_WETH_TOKEN_ADDRESS"),
+		BaseTokenAddress:   os.Getenv("HSK_WETH_TOKEN_ADDRESS"),
 		BaseTokenDecimals:  18,
 		QuoteTokenSymbol:   "DAI",
-		QuoteTokenAddress:  config.Getenv("HSK_USD_TOKEN_ADDRESS"),
+		QuoteTokenAddress:  os.Getenv("HSK_USD_TOKEN_ADDRESS"),
 		QuoteTokenDecimals: 18,
 		MinOrderSize:       decimal.NewFromFloat(0.1),
 		PricePrecision:     5,

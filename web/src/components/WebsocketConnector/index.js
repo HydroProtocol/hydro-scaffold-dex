@@ -213,8 +213,12 @@ class WebsocketConnector extends React.PureComponent {
           }
           dispatch(marketTrade(data.trade));
           if (address) {
-            dispatch(watchToken(currentMarket.baseTokenAddress, currentMarket.baseToken));
-            dispatch(watchToken(currentMarket.quoteTokenAddress, currentMarket.quoteToken));
+            dispatch(
+              watchToken(currentMarket.baseTokenAddress, currentMarket.baseToken, currentMarket.baseTokenDecimals)
+            );
+            dispatch(
+              watchToken(currentMarket.quoteTokenAddress, currentMarket.quoteToken, currentMarket.quoteTokenDecimals)
+            );
           }
           break;
         default:

@@ -19,7 +19,7 @@ export const getHotTokenAmount = () => {
     if (!address) {
       return;
     }
-    const hotTokenAmount = await dispatch(getTokenBalance(hotContract, address));
+    const hotTokenAmount = await getTokenBalance(hotContract, address);
     dispatch(setConfigs({ hotTokenAmount }));
   };
 };

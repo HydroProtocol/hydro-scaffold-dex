@@ -2,7 +2,7 @@ package dex_engine
 
 import (
 	"encoding/json"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/shopspring/decimal"
@@ -76,13 +76,11 @@ func pushAccountMessage(address string, payload interface{}) error {
 }
 
 func pushMessage(message interface{}) error {
-	utils.Debug("sending pushMessage: %v", message)
-
 	msgBytes, err := json.Marshal(message)
-
 	if err != nil {
 		return nil
 	}
 
+	utils.Debugf("sending pushMessage: %v", string(msgBytes))
 	return wsQueue.Push(msgBytes)
 }

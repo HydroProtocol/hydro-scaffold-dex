@@ -2,12 +2,15 @@ package adminapi
 
 import (
 	"fmt"
-	"github.com/HydroProtocol/hydro-box-dex/backend/models"
+	"github.com/HydroProtocol/hydro-scaffold-dex/backend/models"
 	"github.com/HydroProtocol/hydro-sdk-backend/common"
 	"github.com/HydroProtocol/hydro-sdk-backend/utils"
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
+	"math/big"
 	"net/http"
+	"os"
+	"time"
 )
 
 func RestartEngineHandler(e echo.Context) (err error) {
@@ -192,14 +195,17 @@ func EditMarketHandler(e echo.Context) (err error) {
 	}
 
 	err = models.MarketDao.UpdateMarket(dbMarket)
-	if err != nil {
+	if err == nil {
 		if publishType == "publish" {
 			event := common.Event{
 				Type:     common.EventOpenMarket,
 				MarketID: dbMarket.ID,
 			}
 
-			err = queueService.Push([]byte(utils.ToJsonString(event)))
+			err = approveMarket(dbMarket)
+			if err == nil {
+				err = queueService.Push([]byte(utils.ToJsonString(event)))
+			}
 		} else if publishType == "unPublish" {
 			event := common.CancelOrderEvent{
 				Event: common.Event{
@@ -215,16 +221,73 @@ func EditMarketHandler(e echo.Context) (err error) {
 	return response(e, nil, err)
 }
 
+func ApproveMarketHandler(e echo.Context) (err error) {
+	marketID := e.QueryParam("marketID")
+	dbMarket := models.MarketDao.FindMarketByID(marketID)
+
+	if dbMarket == nil {
+		err = fmt.Errorf("cannot find market by ID %s", marketID)
+		return response(e, nil, err)
+	}
+
+	return response(e, nil, approveMarket(dbMarket))
+}
+
 func CreateMarketHandler(e echo.Context) (err error) {
 	var market models.Market
 	err = e.Bind(&market)
 	if err != nil {
-		utils.Debug("bind param error: %v, params:%v", err, e.Request().Body)
+		utils.Debugf("bind param error: %v, params:%v", err, e.Request().Body)
 		return response(e, nil, err)
 	}
 
 	err = models.MarketDao.InsertMarket(&market)
 	return response(e, nil, err)
+}
+
+func approveMarket(market *models.Market) (err error) {
+	err, quoteTokenAllowance := erc20Service.AllowanceOf(market.QuoteTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), os.Getenv("HSK_RELAYER_ADDRESS"))
+	if err != nil {
+		return
+	}
+	if quoteTokenAllowance.Cmp(big.NewInt(0)) <= 0 {
+		err = approveToken(market.QuoteTokenAddress)
+		if err != nil {
+			return
+		}
+	}
+	err, baseTokenAllowance := erc20Service.AllowanceOf(market.BaseTokenAddress, os.Getenv("HSK_PROXY_ADDRESS"), os.Getenv("HSK_RELAYER_ADDRESS"))
+	if err != nil {
+		return
+	}
+	if baseTokenAllowance.Cmp(big.NewInt(0)) <= 0 {
+		err = approveToken(market.BaseTokenAddress)
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+func approveToken(tokenAddress string) error {
+	proxyAddress := os.Getenv("HSK_PROXY_ADDRESS")
+	if len(proxyAddress) != 42 {
+		return fmt.Errorf("HSK_PROXY_ADDRESS empty")
+	}
+	proxyAddress = proxyAddress[2:]
+	approveLog := models.LaunchLog{
+		ItemType:  "hydroApprove",
+		Status:    "created",
+		From:      os.Getenv("HSK_RELAYER_ADDRESS"),
+		To:        tokenAddress,
+		Value:     decimal.Zero,
+		GasLimit:  int64(200000),
+		Data:      fmt.Sprintf("0x095ea7b3000000000000000000000000%sf000000000000000000000000000000000000000000000000000000000000000", proxyAddress),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+
+	return models.LaunchLogDao.InsertLaunchLog(&approveLog)
 }
 
 func response(e echo.Context, data interface{}, err error) error {
