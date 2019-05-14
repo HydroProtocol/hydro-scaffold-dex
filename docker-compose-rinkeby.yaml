@@ -17,7 +17,7 @@ services:
     volumes:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
-      - ./envs/rinkeby/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
+      - ./envs/rinkeby/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     image: hydroprotocolio/hydro-box-dex-web:latest
     container_name: hydro-box-dex-web
