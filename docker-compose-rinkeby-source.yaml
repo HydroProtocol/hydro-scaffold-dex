@@ -65,7 +65,7 @@ services:
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
-      - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5842e020ce9928f878777c1e3b62a790e425fcc4
       - HSK_BLOCKCHAIN_RPC_URL=https://rinkeby.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_HYDRO_TOKEN_ADDRESS=0xd586fefc58865884d1ba69646c9ed587ce9dd0e6
       - HSK_PROXY_ADDRESS=0x67a4e271949cd9a5b704904fc316ef507d8c7beb
@@ -102,7 +102,7 @@ services:
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_BLOCKCHAIN_RPC_URL=https://rinkeby.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
-      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5842e020ce9928F878777c1e3B62A790e425Fcc4
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5842e020ce9928f878777c1e3b62a790e425fcc4
     logging:
       driver: "none"
     volumes:
@@ -118,7 +118,7 @@ services:
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
-      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5842e020ce9928F878777c1e3B62A790e425Fcc4
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5842e020ce9928f878777c1e3b62a790e425fcc4
       - HSK_LOG_LEVEL=DEBUG
     volumes:
       - datavolume:/data
@@ -133,7 +133,7 @@ services:
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_BLOCKCHAIN_RPC_URL=https://rinkeby.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
-      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5842e020ce9928F878777c1e3B62A790e425Fcc4
+      - HSK_HYBRID_EXCHANGE_ADDRESS=0x5842e020ce9928f878777c1e3b62a790e425fcc4
       - HSK_RELAYER_ADDRESS=___CHANGE_ME___
       - HSK_RELAYER_PK=___CHANGE_ME___
       - HSK_LOG_LEVEL=DEBUG
