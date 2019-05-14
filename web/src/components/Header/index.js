@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { WalletButton, getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 import './styles.scss';
 import { loadAccountHydroAuthentication } from '../../lib/session';
+import env from '../../lib/env';
 
 const mapStateToProps = state => {
   const selectedAccount = getSelectedAccount(state);
