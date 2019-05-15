@@ -7,13 +7,21 @@ services:
     image: redis:5.0
     ports:
       - 6379:6379
-    restart: on-failure:5
+    restart: always
+    logging: &logging_default
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "200m"
+        compress: "true"
   db:
     image: postgres
     container_name: hydro-scaffold-dex-pg
     ports:
       - 5432:5432
     restart: always
+    logging:
+      <<: *logging_default
     volumes:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
@@ -32,7 +40,9 @@ services:
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0xd586fefc58865884d1ba69646c9ed587ce9dd0e6
       - REACT_APP_WETH_TOKEN_ADDRESS=0xc778417e063141139fce010982780140aa0cd5ab
       - REACT_APP_NETWORK_ID=4
-    restart: on-failure:5
+    restart: always
+    logging:
+      <<: *logging_default
   admin:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-admin-api
@@ -55,7 +65,9 @@ services:
     depends_on:
       - db
       - redis
-    restart: on-failure:5
+    restart: always
+    logging:
+      <<: *logging_default
   api:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-api
@@ -76,7 +88,9 @@ services:
     depends_on:
       - db
       - redis
-    restart: on-failure:5
+    restart: always
+    logging:
+      <<: *logging_default
   ws:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-ws
@@ -92,7 +106,9 @@ services:
     depends_on:
       - redis
       - api
-    restart: on-failure:5
+    restart: always
+    logging:
+      <<: *logging_default
   watcher:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-watcher
@@ -108,7 +124,9 @@ services:
     depends_on:
       - redis
       - db
-    restart: on-failure:5
+    restart: always
+    logging:
+      <<: *logging_default
   engine:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-engine
@@ -123,7 +141,9 @@ services:
     depends_on:
       - redis
       - db
-    restart: on-failure:5
+    restart: always
+    logging:
+      <<: *logging_default
   launcher:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-launcher
@@ -139,4 +159,6 @@ services:
       - datavolume:/data
     depends_on:
       - db
-    restart: on-failure:5
+    restart: always
+    logging:
+      <<: *logging_default

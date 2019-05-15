@@ -8,12 +8,20 @@ services:
     ports:
       - 6379:6379
     restart: always
+    logging: &logging_default
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "200m"
+        compress: "true"
   db:
     image: postgres
     container_name: hydro-scaffold-dex-pg
     ports:
       - 5432:5432
     restart: always
+    logging:
+      <<: *logging_default
     volumes:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
@@ -33,6 +41,8 @@ services:
       - REACT_APP_WETH_TOKEN_ADDRESS=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
       - REACT_APP_NETWORK_ID=1
     restart: always
+    logging:
+      <<: *logging_default
   admin:
     build: ./backend
     container_name: hydro-scaffold-dex-admin-api
@@ -58,6 +68,8 @@ services:
       - db
       - redis
     restart: always
+    logging:
+      <<: *logging_default
   api:
     build: ./backend
     container_name: hydro-scaffold-dex-api
@@ -79,6 +91,8 @@ services:
       - db
       - redis
     restart: always
+    logging:
+      <<: *logging_default
   ws:
     build: ./backend
     container_name: hydro-scaffold-dex-ws
@@ -95,6 +109,8 @@ services:
       - redis
       - api
     restart: always
+    logging:
+      <<: *logging_default
   watcher:
     build: ./backend
     container_name: hydro-scaffold-dex-watcher
@@ -105,14 +121,14 @@ services:
       - HSK_BLOCKCHAIN_RPC_URL=https://mainnet.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xe2a0bfe759e2a4444442da5064ec549616fff101
-    logging:
-      driver: "none"
     volumes:
       - datavolume:/data
     depends_on:
       - redis
       - db
     restart: always
+    logging:
+      <<: *logging_default
   engine:
     build: ./backend
     container_name: hydro-scaffold-dex-engine
@@ -128,6 +144,8 @@ services:
       - redis
       - db
     restart: always
+    logging:
+      <<: *logging_default
   launcher:
     build: ./backend
     container_name: hydro-scaffold-dex-launcher
@@ -139,10 +157,10 @@ services:
       - HSK_RELAYER_ADDRESS=___CHANGE_ME___
       - HSK_RELAYER_PK=___CHANGE_ME___
       - HSK_LOG_LEVEL=DEBUG
-    logging:
-      driver: "none"
     volumes:
       - datavolume:/data
     depends_on:
       - db
     restart: always
+    logging:
+      <<: *logging_default
