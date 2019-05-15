@@ -8,12 +8,20 @@ services:
     ports:
       - 6379:6379
     restart: always
+    logging: &logging_default
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "200m"
+        compress: "true"
   db:
     image: postgres
     container_name: hydro-scaffold-dex-pg
     ports:
       - 5432:5432
     restart: always
+    logging:
+      <<: *logging_default
     volumes:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
@@ -33,6 +41,8 @@ services:
       - REACT_APP_WETH_TOKEN_ADDRESS=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
       - REACT_APP_NETWORK_ID=1
     restart: always
+    logging:
+      <<: *logging_default
   admin:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-admin-api
@@ -58,6 +68,8 @@ services:
       - db
       - redis
     restart: always
+    logging:
+      <<: *logging_default
   api:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-api
@@ -79,6 +91,8 @@ services:
       - db
       - redis
     restart: always
+    logging:
+      <<: *logging_default
   ws:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-ws
@@ -95,6 +109,8 @@ services:
       - redis
       - api
     restart: always
+    logging:
+      <<: *logging_default
   watcher:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-watcher
@@ -111,6 +127,8 @@ services:
       - redis
       - db
     restart: always
+    logging:
+      <<: *logging_default
   engine:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-engine
@@ -126,6 +144,8 @@ services:
       - redis
       - db
     restart: always
+    logging:
+      <<: *logging_default
   launcher:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-launcher
@@ -142,3 +162,5 @@ services:
     depends_on:
       - db
     restart: always
+    logging:
+      <<: *logging_default
