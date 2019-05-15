@@ -7,7 +7,7 @@ services:
     container_name: hydro-scaffold-dex-redis
     ports:
       - 6379:6379
-    restart: on-failure:5
+    restart: always
   db:
     image: postgres
     container_name: hydro-scaffold-dex-pg
@@ -17,7 +17,7 @@ services:
     volumes:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
-      - ./envs/mainnet/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
+      - ./envs/mainnet/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     build: ./web
     container_name: hydro-scaffold-dex-web
@@ -32,7 +32,7 @@ services:
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x9af839687f6c94542ac5ece2e317daae355493a1
       - REACT_APP_WETH_TOKEN_ADDRESS=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
       - REACT_APP_NETWORK_ID=1
-    restart: on-failure:5
+    restart: always
   admin:
     build: ./backend
     container_name: hydro-scaffold-dex-admin-api
@@ -57,7 +57,7 @@ services:
     depends_on:
       - db
       - redis
-    restart: on-failure:5
+    restart: always
   api:
     build: ./backend
     container_name: hydro-scaffold-dex-api
@@ -78,7 +78,7 @@ services:
     depends_on:
       - db
       - redis
-    restart: on-failure:5
+    restart: always
   ws:
     build: ./backend
     container_name: hydro-scaffold-dex-ws
@@ -94,7 +94,7 @@ services:
     depends_on:
       - redis
       - api
-    restart: on-failure:5
+    restart: always
   watcher:
     build: ./backend
     container_name: hydro-scaffold-dex-watcher
@@ -112,7 +112,7 @@ services:
     depends_on:
       - redis
       - db
-    restart: on-failure:5
+    restart: always
   engine:
     build: ./backend
     container_name: hydro-scaffold-dex-engine
@@ -127,7 +127,7 @@ services:
     depends_on:
       - redis
       - db
-    restart: on-failure:5
+    restart: always
   launcher:
     build: ./backend
     container_name: hydro-scaffold-dex-launcher
@@ -145,4 +145,4 @@ services:
       - datavolume:/data
     depends_on:
       - db
-    restart: on-failure:5
+    restart: always

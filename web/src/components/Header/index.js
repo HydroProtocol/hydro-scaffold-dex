@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { WalletButton, getSelectedAccount } from '@gongddex/hydro-sdk-wallet';
 import './styles.scss';
 import { loadAccountHydroAuthentication } from '../../lib/session';
+import env from '../../lib/env';
 
 const mapStateToProps = state => {
   const selectedAccount = getSelectedAccount(state);
@@ -88,6 +89,21 @@ class Header extends React.PureComponent {
         </div>
       </div>
     );
+  }
+
+  getNetworkName() {
+    switch (parseInt(env.NETWORK_ID, 10)) {
+      case 1:
+        return 'Mainnet';
+      case 3:
+        return 'Ropsten';
+      case 4:
+        return 'Rinkeby';
+      case 66:
+        return 'localhost:8545';
+      default:
+        return 'id: ' + env.NETWORK_ID;
+    }
   }
 
   renderAccount() {

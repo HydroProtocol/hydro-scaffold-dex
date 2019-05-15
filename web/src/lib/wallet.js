@@ -26,9 +26,7 @@ export const wrapETH = amount => {
     let params = {
       to: WETH.address,
       data: '0xd0e30db0',
-      value,
-      gasPrice: 80000,
-      gasLimit: 80000
+      value
     };
 
     try {
@@ -64,9 +62,7 @@ export const unwrapWETH = amount => {
     let params = {
       to: WETH.address,
       data: `0x${functionSelector}${valueString}`,
-      value: 0,
-      gasPrice: 80000,
-      gasLimit: 80000
+      value: 0
     };
 
     try {
@@ -119,9 +115,7 @@ export const approve = (tokenAddress, symbol, allowance, action, decimals) => {
     let params = {
       to: tokenAddress,
       data: `0x${functionSelector}${spender}${allowance}`,
-      value: 0,
-      gasPrice: 80000,
-      gasLimit: 80000
+      value: 0
     };
 
     try {

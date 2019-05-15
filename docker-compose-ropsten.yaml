@@ -7,7 +7,7 @@ services:
     image: redis:5.0
     ports:
       - 6379:6379
-    restart: on-failure:5
+    restart: always
   db:
     image: postgres
     container_name: hydro-scaffold-dex-pg
@@ -17,7 +17,7 @@ services:
     volumes:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
-      - ./envs/ropsten/seed-pg.sql:/docker-entrypoint-initdb.d/0002-seed.sql
+      - ./envs/ropsten/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
   web:
     image: hydroprotocolio/hydro-scaffold-dex-web:latest
     container_name: hydro-scaffold-dex-web
@@ -32,7 +32,7 @@ services:
       - REACT_APP_HYDRO_TOKEN_ADDRESS=0x6829f329f8f0768ad62a65477514deed90825564
       - REACT_APP_WETH_TOKEN_ADDRESS=0x0a180a76e4466bf68a7f86fb029bed3cccfaaac5
       - REACT_APP_NETWORK_ID=3
-    restart: on-failure:5
+    restart: always
   admin:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-admin-api
@@ -57,7 +57,7 @@ services:
     depends_on:
       - db
       - redis
-    restart: on-failure:5
+    restart: always
   api:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-api
@@ -78,7 +78,7 @@ services:
     depends_on:
       - db
       - redis
-    restart: on-failure:5
+    restart: always
   ws:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-ws
@@ -94,7 +94,7 @@ services:
     depends_on:
       - redis
       - api
-    restart: on-failure:5
+    restart: always
   watcher:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-watcher
@@ -110,7 +110,7 @@ services:
     depends_on:
       - redis
       - db
-    restart: on-failure:5
+    restart: always
   engine:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-engine
@@ -125,7 +125,7 @@ services:
     depends_on:
       - redis
       - db
-    restart: on-failure:5
+    restart: always
   launcher:
     image: hydroprotocolio/hydro-scaffold-dex-backend:latest
     container_name: hydro-scaffold-dex-launcher
@@ -141,4 +141,4 @@ services:
       - datavolume:/data
     depends_on:
       - db
-    restart: on-failure:5
+    restart: always
