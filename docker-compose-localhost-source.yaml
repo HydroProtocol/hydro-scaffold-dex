@@ -8,12 +8,20 @@ services:
     ports:
       - 6379:6379
     restart: on-failure:5
+    logging: &logging_default
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "200m"
+        compress: "true"
   ethereum-node:
     container_name: hydro-scaffold-dex-ethereum-node
     image: hydroprotocolio/hydro-scaffold-dex-ethereum-node:latest
     ports:
       - 8545:8545
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   db:
     container_name: hydro-scaffold-dex-pg
     image: postgres
@@ -24,6 +32,8 @@ services:
       - datavolume:/var/lib/postgresql/data
       - ./backend/db/migrations/0001-init.up.sql:/docker-entrypoint-initdb.d/0001-init.up.sql
       - ./envs/localhost/seed.sql:/docker-entrypoint-initdb.d/0002-seed.sql
+    logging:
+      <<: *logging_default
   web:
     build: ./web
     container_name: hydro-scaffold-dex-web
@@ -39,6 +49,8 @@ services:
       - REACT_APP_WETH_TOKEN_ADDRESS=0x4a817489643A89a1428b2DD441c3fbe4DBf44789
       - REACT_APP_NETWORK_ID=66
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   admin:
     build: ./backend
     container_name: hydro-scaffold-dex-admin-api
@@ -65,6 +77,8 @@ services:
       - redis
       - ethereum-node
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   api:
     build: ./backend
     container_name: hydro-scaffold-dex-api
@@ -89,6 +103,8 @@ services:
       - redis
       - ethereum-node
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   ws:
     build: ./backend
     container_name: hydro-scaffold-dex-ws
@@ -107,6 +123,8 @@ services:
       - redis
       - api
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   watcher:
     build: ./backend
     container_name: hydro-scaffold-dex-watcher
@@ -127,6 +145,8 @@ services:
       - ethereum-node
       - db
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   engine:
     build: ./backend
     container_name: hydro-scaffold-dex-engine
@@ -144,6 +164,8 @@ services:
       - redis
       - db
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   launcher:
     build: ./backend
     container_name: hydro-scaffold-dex-launcher
@@ -162,6 +184,8 @@ services:
       - ethereum-node
       - db
     restart: on-failure:5
+    logging:
+      <<: *logging_default
   maker:
     image: hydroprotocolio/amm-bots
     container_name: hydro-scaffold-dex-maker
@@ -179,3 +203,5 @@ services:
       - BOT_EXPAND_INVENTORY=2
       - BOT_WEB3_URL=http://ethereum-node:8545
     restart: on-failure:10
+    logging:
+      <<: *logging_default
