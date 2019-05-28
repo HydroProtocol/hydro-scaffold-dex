@@ -8,8 +8,12 @@ git.apache.org/thrift.git v0.12.0/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqbl
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.38 h1:/e9+zST8wAN8kHjfM9dT7nH1TlAK5PYmKjJE4PHISoo=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.38/go.mod h1:W65yZJcRbBL1jcvJmduFnPqYJuKB7ifzW0OpHX/DWMg=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.39 h1:bjPY4BFV6HeS2uyimtxM47FX9oi5XQ6dMrqClKlBlrM=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.39/go.mod h1:W65yZJcRbBL1jcvJmduFnPqYJuKB7ifzW0OpHX/DWMg=
 github.com/HydroProtocol/nights-watch v0.0.1 h1:ARspWkhxQ6p2aWY4j4U2WYQngyWrFPYkrAHN7q/KDxg=
 github.com/HydroProtocol/nights-watch v0.0.1/go.mod h1:/2YofAGyGSjDXBbkFMiT0IRmG2mfPoRpEAU8GlbP6Oc=
+github.com/HydroProtocol/nights-watch v0.0.2 h1:3vBUIXOmULXJh7mlWlI0SCm6OMoiJt6J6qGCR4vGFVE=
+github.com/HydroProtocol/nights-watch v0.0.2/go.mod h1:hJeFL21grW3OEdeplW+wc5jVGB6zHchNiEEms6Yg9fI=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=

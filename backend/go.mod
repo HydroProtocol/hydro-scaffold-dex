@@ -3,8 +3,8 @@ module github.com/HydroProtocol/hydro-scaffold-dex/backend
 go 1.12
 
 require (
-	github.com/HydroProtocol/hydro-sdk-backend v0.0.38
-	github.com/HydroProtocol/nights-watch v0.0.1
+	github.com/HydroProtocol/hydro-sdk-backend v0.0.39
+	github.com/HydroProtocol/nights-watch v0.0.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
@@ -34,6 +34,5 @@ require (
 // replace gopkg.in/fsnotify.v1 => github.com/fsnotify/fsnotify v1.4.7
 
 // for local test only
-replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
-
-replace github.com/HydroProtocol/nights-watch => ../../nights-watch
+//replace github.com/HydroProtocol/hydro-sdk-backend => ../../hydro-sdk-backend
+//replace github.com/HydroProtocol/nights-watch => ../../nights-watch
