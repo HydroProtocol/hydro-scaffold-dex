@@ -10,12 +10,13 @@ import Orders from './components/Orders';
 import Charts from './components/Charts';
 import TradeHistory from './components/TradeHistory';
 import { HydroWallet } from '@gongddex/hydro-sdk-wallet/build/wallets';
-import { loadHydroWallet } from '@gongddex/hydro-sdk-wallet/build/actions/wallet';
+import { watchWallet } from '@gongddex/hydro-sdk-wallet/build/actions/wallet';
 import env from './lib/env';
 import MediaQuery from 'react-responsive';
 import Fold from './components/Fold';
 import PerfectScrollbar from 'perfect-scrollbar';
 import { Wallet as SDKWallet } from '@gongddex/hydro-sdk-wallet';
+import '@gongddex/hydro-sdk-wallet/index.css';
 
 const mapStateToProps = state => {
   const selectedAccountID = state.WalletReducer.get('selectedAccountID');
@@ -58,7 +59,7 @@ class App extends React.PureComponent {
       'B7A0C9D2786FC4DD080EA5D619D36771AEB0C8C26C290AFD3451B92BA2B7BC2C',
       '123456'
     );
-    this.props.dispatch(loadHydroWallet(wallet));
+    this.props.dispatch(watchWallet(wallet));
   }
 
   render() {
