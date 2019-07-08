@@ -3,6 +3,7 @@ package main
 import (
 	_ "github.com/joho/godotenv/autoload"
 )
+
 import (
 	"context"
 	"encoding/json"
@@ -67,9 +68,9 @@ func (handler DBTransactionHandler) TxHandlerFunc(txAndReceipt *structs.Removabl
 			Type:     common.EventConfirmTransaction,
 			MarketID: transaction.MarketID,
 		},
-		Hash:   hash,
-		Status: status,
-		//Timestamp: timestamp, //todo
+		Hash:      hash,
+		Status:    status,
+		Timestamp: txAndReceipt.TimeStamp, //todo
 	}
 
 	bts, _ := json.Marshal(event)
