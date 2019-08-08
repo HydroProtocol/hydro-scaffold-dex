@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import BarChart from '../BarChart'
 import './styles.scss';
 
 class OrderBook extends React.Component {
@@ -39,26 +40,35 @@ class OrderBook extends React.Component {
 
   render() {
     let { bids, asks, websocketConnected, currentMarket } = this.props;
+    console.log('his.props',this.props);
 
     return (
       <div className="orderbook flex-column flex-1">
         <div className="flex header text-secondary">
-          <div className="col-6 text-right">Amount</div>
-          <div className="col-6 text-right">Price</div>
+          <div className="col-4 text-center"> <b>Amount</b> </div>
+          <div className="col-4 text-center"><b>Price</b></div>
+          <div className="col-4 text-center">-  </div>
         </div>
         <div className="flex-column flex-1">
-          <div className="asks flex-column flex-column-reverse flex-1 overflow-hidden">
+          <div className="asks flex-column flex-column-reverse overflow-hidden">
             {asks
               .slice(-20)
               .reverse()
               .toArray()
-              .map(([price, amount]) => {
+              .map(([price, amount], index) => {
+                const barSize = (price/amount ) * 10000; // Some confusion how to calculate percentage  
                 return (
-                  <div className="ask flex align-items-center" key={price.toString()}>
-                    <div className="col-6 orderbook-amount text-right">
-                      {amount.toFixed(currentMarket.amountDecimals)}
+                  <div className={`ask flex align-items-center ${index%2 && 'orderbook--zebraGray'}`} key={price.toString()}>
+                    <div className="col-4 orderbook-amount text-left">
+                      <BarChart percent={barSize}/>
+                      <div className="orderbook-amount-value">{amount.toFixed(currentMarket.amountDecimals)} </div>
                     </div>
-                    <div className="col-6 text-danger text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
+                    <div className="col-4 text-danger text-center orderbook--opacityGray"><div><b>{price.toFixed(currentMarket.priceDecimals)}</b>
+                    </div><div className="orderbook--currency">79 <b>USD</b></div>
+                    </div>
+                    <div className="col-4 orderbook-amount text-center">
+                    -
+                    </div>
                   </div>
                 );
               })}
@@ -78,13 +88,20 @@ class OrderBook extends React.Component {
             {bids
               .slice(0, 20)
               .toArray()
-              .map(([price, amount]) => {
+              .map(([price, amount], index) => {
+                const barSize = (price/amount ) * 10000; 
                 return (
-                  <div className="bid flex align-items-center" key={price.toString()}>
-                    <div className="col-6 orderbook-amount text-right">
-                      {amount.toFixed(currentMarket.amountDecimals)}
+                  <div className={`bid flex align-items-center ${index%2 && 'orderbook--zebraGray'}`} key={price.toString()}>
+                    <div className="col-4 orderbook-amount text-center">
+                    <BarChart percent={barSize}/>
+                      <div className="orderbook-amount-value">{amount.toFixed(currentMarket.amountDecimals)}</div>
                     </div>
-                    <div className="col-6 text-success text-right">{price.toFixed(currentMarket.priceDecimals)}</div>
+                    <div className="col-4 text-success text-center orderbook--opacityGray"><div><b>{price.toFixed(currentMarket.priceDecimals)}</b></div>
+                    <div className="orderbook--currency">79 <b>USD</b></div>
+                    </div>
+                    <div className="col-4 text-center">
+                    -
+                    </div>
                   </div>
                 );
               })}

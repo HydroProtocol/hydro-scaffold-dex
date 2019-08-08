@@ -1,0 +1,13 @@
+
+.bar {
+  height: 120%;
+  bottom: 0px;
+  right: 0;
+  position: absolute;
+  background: rgb(204, 227, 241);
+  z-index: 1;
+}
+
+.bar:last-child {
+  border-bottom: none;
+}

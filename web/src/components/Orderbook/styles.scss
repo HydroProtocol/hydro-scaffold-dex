@@ -3,6 +3,7 @@
     .status {
         height: 40px;
         line-height: 40px;
+        border-bottom: 1px solid #666666;
     }
     .asks,
     .bids {
@@ -10,6 +11,28 @@
     }
     .ask,
     .bid {
-        min-height: 24px;
+        min-height: 32px;
+    }
+    &-amount{
+        position: relative;
+        &-value{
+            z-index: 2;
+        }
+    }
+    &--zebraGray{
+        background-color: #f2f2f2
+    }
+    &--opacityGray{
+        background: rgba(0, 102, 204, 0.1);
+        height: 32px;
+        line-height: 14px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    &--currency{
+        color: #666666;
+        font-size: 11px;
     }
 }
