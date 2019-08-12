@@ -42,18 +42,19 @@ func bindUrlParam(c echo.Context, ptr interface{}) {
 
 func commonHandler(params Param, fn func(Param) (interface{}, error)) echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
+		var req Param
 		if params != nil {
 			// Params is shared among all request
 			// We create a new one for each request
-			params = reflect.New(reflect.TypeOf(params).Elem()).Interface().(Param)
-			err = bindAndValidParams(c, params)
+			req = reflect.New(reflect.TypeOf(params).Elem()).Interface().(Param)
+			err = bindAndValidParams(c, req)
 		}
 
 		if err != nil {
 			return
 		}
 
-		resp, err := fn(params)
+		resp, err := fn(req)
 
 		if err != nil {
 			return
