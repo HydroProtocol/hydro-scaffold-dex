@@ -206,8 +206,9 @@ func (e *DexEngine) start() {
 					marketHandler, ok := e.marketHandlerMap[event.MarketID]
 					if !ok {
 						utils.Errorf("engine not support market [%s]", event.MarketID)
+					} else {
+						marketHandler.eventChan <- data
 					}
-					marketHandler.eventChan <- data
 				}
 			}
 		}
