@@ -39,13 +39,25 @@ const _request = (method, url, ...args) => {
   return getAxiosInstance()[method](`${env.API_ADDRESS}${url}`, ...args);
 };
 
+const _coinBaseRequest = (method, url, ...args) => {
+  const instance = axios.create({
+    baseURL: env.COIN_BASE_API_ADDRESS,
+    headers: {
+      'X-CoinAPI-Key': env.COIN_BASE_API_KEY
+    }
+  });
+
+  return instance[method](url, ...args);
+}
+
 const api = {
   get: (url, ...args) => _request('get', url, ...args),
   delete: (url, ...args) => _request('delete', url, ...args),
   head: (url, ...args) => _request('head', url, ...args),
   post: (url, ...args) => _request('post', url, ...args),
   put: (url, ...args) => _request('put', url, ...args),
-  patch: (url, ...args) => _request('patch', url, ...args)
+  patch: (url, ...args) => _request('patch', url, ...args),
+  coinBaseGet: (url, ...args) => _coinBaseRequest('get', url, ...args)
 };
 
 export default api;

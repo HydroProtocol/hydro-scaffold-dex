@@ -1,4 +1,7 @@
+@import '../../styles/variables.scss';
 .orderbook {
+    height: 508px;
+    overflow-y: scroll;
     .header,
     .status {
         height: 40px;
@@ -10,6 +13,40 @@
     }
     .ask,
     .bid {
-        min-height: 24px;
+        min-height: 30px;
+    }
+    .amount {
+        display: inline;
+        position: relative;
+        z-index: 1;
+    }
+    .price-container-ask {
+        background-color: $grey-95;
+    }
+    .bid-price-container {
+        background-color: $pinkLight;
+    }
+    .price {
+        font-size: 15px;
+    }
+    .currency {
+        color: $black;
+        font-size: 9px;
+    }
+    .amount-bar-ask {
+        background-color: $light;
+        background-position: 50% center;
+        height: 22px;
+        position: absolute;
+        right: 1px;
+        top: -1px;
+    }
+    .amount-bar-bid {
+        background-color: $pinkLight;
+        background-position: 50% center;
+        height: 22px;
+        position: absolute;
+        left: 1px;
+        top: -1px;
     }
 }
