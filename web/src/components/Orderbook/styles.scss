@@ -1,3 +1,4 @@
+@import '../../styles/variables.scss';
 .orderbook {
     .header,
     .status {
@@ -10,6 +11,28 @@
     }
     .ask,
     .bid {
-        min-height: 24px;
+        min-height: 30px;
+    }
+    .price-container {
+        background-color: $grey-95;
+    }
+    .price {
+        font-size: 13px;
+        position: relative;
+        z-index: 1;
+    }
+    .currency {
+        color: $black;
+        font-size: 11px;
+        position: relative;
+        z-index: 1;
+    }
+    .price-bar {
+        background-color: $light;
+        background-position: 50% center;
+        height: 21px;
+        position: absolute;
+        right: 0px;
+        top: 9px;
     }
 }

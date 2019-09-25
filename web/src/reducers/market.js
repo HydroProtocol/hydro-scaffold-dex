@@ -1,4 +1,5 @@
 import { Map, List, OrderedMap } from 'immutable';
+import env from '../lib/env';
 
 const initialOrderbook = Map({
   bids: List(),
@@ -34,7 +35,16 @@ const initialState = Map({
   tokenPrices: Map({
     loading: true,
     data: {}
-  })
+  }),
+
+  exchangeRate: Map({
+    loading: true,
+    data: Map({
+      DAI: env.DAI_PRICE_IN_DOLLAR,
+      HOT: env.HOT_PRICE_IN_DOLLAR,
+      WETH: env.WETH_PRICE_IN_DOLLAR,
+    })
+  }),
 });
 
 const reverseBigNumberComparator = (a, b) => {
@@ -95,6 +105,11 @@ export default (state = initialState, action) => {
       }
 
       state = state.setIn(['orderbook', side], state.getIn(['orderbook', side]).sort(reverseBigNumberComparator));
+      return state;
+
+    case 'LOAD_DOLLAR_EXCHANGE_RATE':
+      state = state.updateIn(['exchangeRate', 'loading'], () => false);
+      state = state.updateIn(['exchangeRate', 'data'], () => Map(action.payload));
       return state;
     default:
       return state;
