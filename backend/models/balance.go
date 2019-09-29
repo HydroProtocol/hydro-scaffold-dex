@@ -37,7 +37,7 @@ func (balanceDaoPG) GetByAccountAndSymbol(account, tokenSymbol string, decimals 
 	var sellLockedBalance nullDecimal
 	var buyLockedBalance nullDecimal
 
-	sellRow := DB.Raw(`select sum(amount) as locked_balance from orders where status='pending' and trader_address= $1 and market_id like $2 and side = 'sell'`, account, tokenSymbol+"-%").Row()
+	sellRow := DB.Raw(`select sum(available_amount + pending_amount) as locked_balance from orders where status='pending' and trader_address= $1 and market_id like $2 and side = 'sell'`, account, tokenSymbol+"-%").Row()
 	if sellRow == nil {
 		sellLockedBalance.Scan(nil)
 	}
