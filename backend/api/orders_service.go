@@ -228,7 +228,7 @@ func checkBalanceAllowancePriceAndAmount(order *BuildOrderReq, address string) e
 	feeAmount := feeDetail.AsTakerTotalFeeAmount
 
 	quoteTokenHugeAmount = amount.Mul(decimal.New(1, int32(market.QuoteTokenDecimals))).Mul(price)
-	baseTokenHugeAmount = amount.Mul(decimal.New(1, int32(market.QuoteTokenDecimals)))
+	baseTokenHugeAmount = amount.Mul(decimal.New(1, int32(market.BaseTokenDecimals)))
 
 	if order.Side == "sell" {
 		if quoteTokenHugeAmount.LessThanOrEqual(feeAmount) {
