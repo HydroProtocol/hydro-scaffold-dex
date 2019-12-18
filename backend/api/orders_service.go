@@ -73,6 +73,10 @@ func CancelOrder(p Param) (interface{}, error) {
 		return nil, NewApiError(-1, fmt.Sprintf("order %s not exist", req.ID))
 	}
 
+	if order.Status != common.ORDER_PENDING {
+		return nil, nil
+	}
+
 	cancelOrderEvent := common.CancelOrderEvent{
 		Event: common.Event{
 			Type:     common.EventCancelOrder,

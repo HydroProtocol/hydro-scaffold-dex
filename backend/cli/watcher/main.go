@@ -146,6 +146,7 @@ func main() {
 		startFromBlock = 0
 	}
 
+	go utils.StartMetrics()
 	err = w.RunTillExitFromBlock(startFromBlock)
 	if err != nil {
 		utils.Infof("Watcher Exit with err: %s", err)

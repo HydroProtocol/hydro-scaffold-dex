@@ -76,6 +76,7 @@ services:
     command: /bin/api
     ports:
       - 127.0.0.1:3001:3001
+      - 127.0.0.1:4001:4001
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
@@ -85,6 +86,7 @@ services:
       - HSK_PROXY_ADDRESS=0x1b9540f50b3b9dde35cea9a403026a78965234ac
       - HSK_RELAYER_ADDRESS=___CHANGE_ME___
       - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4001
     volumes:
       - datavolume:/data
     depends_on:
@@ -99,10 +101,12 @@ services:
     command: /bin/websocket
     ports:
       - 127.0.0.1:3002:3002
+      - 127.0.0.1:4002:4002
     environment:
       - HSK_API_URL=http://api:3001
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4002
     volumes:
       - datavolume:/data
     depends_on:
@@ -115,12 +119,15 @@ services:
     build: ./backend
     container_name: hydro-scaffold-dex-watcher
     command: /bin/watcher
+    ports:
+      - 127.0.0.1:4003:4003
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
       - HSK_LOG_LEVEL=DEBUG
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
+      - METRICS_PORT=4003
     volumes:
       - datavolume:/data
     depends_on:
@@ -133,11 +140,14 @@ services:
     build: ./backend
     container_name: hydro-scaffold-dex-engine
     command: /bin/engine
+    ports:
+      - 127.0.0.1:4004:4004
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_REDIS_URL=redis://redis:6379/0
       - HSK_HYBRID_EXCHANGE_ADDRESS=0xaba80a6f1d60a1feff034ab3820c8d98bd6cbe46
       - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4004
     volumes:
       - datavolume:/data
     depends_on:
@@ -150,6 +160,8 @@ services:
     build: ./backend
     container_name: hydro-scaffold-dex-launcher
     command: /bin/launcher
+    ports:
+      - 127.0.0.1:4005:4005
     environment:
       - HSK_DATABASE_URL=postgres://postgres:postgres@db/postgres?sslmode=disable
       - HSK_BLOCKCHAIN_RPC_URL=https://ropsten.infura.io/v3/cabc724fb9534d1bb245582a74ccf3e7
@@ -157,6 +169,7 @@ services:
       - HSK_RELAYER_ADDRESS=___CHANGE_ME___
       - HSK_RELAYER_PK=___CHANGE_ME___
       - HSK_LOG_LEVEL=DEBUG
+      - METRICS_PORT=4005
     volumes:
       - datavolume:/data
     depends_on:
