@@ -8,6 +8,7 @@ git.apache.org/thrift.git v0.12.0/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqbl
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.39 h1:bjPY4BFV6HeS2uyimtxM47FX9oi5XQ6dMrqClKlBlrM=
 github.com/HydroProtocol/hydro-sdk-backend v0.0.39/go.mod h1:W65yZJcRbBL1jcvJmduFnPqYJuKB7ifzW0OpHX/DWMg=
+github.com/HydroProtocol/hydro-sdk-backend v0.0.41/go.mod h1:W65yZJcRbBL1jcvJmduFnPqYJuKB7ifzW0OpHX/DWMg=
 github.com/HydroProtocol/nights-watch v0.0.3 h1:m8lE9ZFecggKnpleMXVbk7eJKHgizHhcEakcl3AwW3E=
 github.com/HydroProtocol/nights-watch v0.0.3/go.mod h1:hJeFL21grW3OEdeplW+wc5jVGB6zHchNiEEms6Yg9fI=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
