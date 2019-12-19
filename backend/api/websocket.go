@@ -39,7 +39,7 @@ type webSocketResponseWriter struct {
 	timeOutInterval time.Duration
 	timer           *timer.Timer
 }
-[func]
+[func] -ping
 
 type webSocketWrappedReader struct {
 	wsConn          *websocket.Conn
@@ -49,4 +49,4 @@ type webSocketWrappedReader struct {
 	cancel          context.CancelFunc
 }
 
-[func]
+[func]-headers
