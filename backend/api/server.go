@@ -1,3 +1,44 @@
+package rpc 
+const MetadataApi = "rpc"
+
+type CodecOption int 
+
+const (
+OptionMethodInvocation CodecOption = 1 << iota
+
+	// OptionSubscriptions is an indication that the codec suports RPC notifications
+	OptionSubscriptions = 1 << iota // support pub sub
+
+)
+//type Server struct {
+	services serviceRegistry
+	idgen    func() ID
+	run      int32
+	codecs   mapset.Set
+//*}
+type Server struct {
+	opts serverOptions
+
+	mu     sync.Mutex // guards following
+	lis    map[net.Listener]bool
+	conns  map[transport.ServerTransport]bool
+	serve  bool
+	drain  bool
+	cv     *sync.Cond          // signaled when connections close for GracefulStop
+	m      map[string]*service // service name -> service info
+	events trace.EventLog
+
+	quit               *grpcsync.Event
+	done               *grpcsync.Event
+	channelzRemoveOnce sync.Once
+	serveWG            sync.WaitGroup // counts active Serve goroutines for GracefulStop
+
+	channelzID int64 // channelz unique identification number
+	czData     *channelzData
+}
+
+
+
 package api
 
 import (
