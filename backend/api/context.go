@@ -4,7 +4,22 @@ import (
 	"github.com/labstack/echo"
 	"strings"
 )
-
+type Context struct {
+	Request   *Request
+	Response  *Response
+	RPC       *ContextRPC
+	container IContainer
+	Component interface{}
+	Meta      *Meta
+	//Log       logger.ILogger
+	//Name      string
+	//Engine    string
+	Service   string //ORDER BOOK //Trade
+}
+funcs [] -SET RPC
+-GET CONTEXT
+hydroAuthToken := cc.Request().Header.Get("Hydro-Authentication")
+hydroAuthTokens := strings.Split(hydroAuthToken, "#")
 type HydroApiContext struct {
 	echo.Context
 	// If address is not empty means this user is authenticated.
