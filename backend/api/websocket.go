@@ -31,3 +31,22 @@ func (s *Server) WebsocketHandler(allowedOrigins []string) http.Handler {
 		s.ServeCodec(codec, 0)
 	})
 }
+type webSocketResponseWriter struct {
+	writtenHeaders  bool
+	wsConn          *websocket.Conn
+	headers         http.Header
+	flushedHeaders  http.Header
+	timeOutInterval time.Duration
+	timer           *timer.Timer
+}
+[func]
+
+type webSocketWrappedReader struct {
+	wsConn          *websocket.Conn
+	respWriter      *webSocketResponseWriter
+	remainingBuffer []byte
+	remainingError  error
+	cancel          context.CancelFunc
+}
+
+[func]
