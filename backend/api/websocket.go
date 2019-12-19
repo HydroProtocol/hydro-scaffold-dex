@@ -1,5 +1,16 @@
 
+Websocket API
+Websocket Endpoint: /socket
 
+There are 8 channels on the matching engine websocket API:
+
+orders
+ohlcv
+orderbook
+trades
+price_board
+markets
+notification
 func NewWSServer(allowedOrigins []string, srv *Server) *http.Server {
 	return &http.Server{Handler: srv.WebsocketHandler(allowedOrigins)}
 }
