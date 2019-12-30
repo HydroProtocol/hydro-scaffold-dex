@@ -105,11 +105,9 @@ func GetMarketStatus(marketID string) *MarketStatus {
 	}
 	price24h = trades[0].Price.Sub(trades[len(trades)-1].Price).Div(trades[len(trades)-1].Price)
 
-	amount24h = decimal.Zero
-	quoteTokenVolume24h = decimal.Zero
 	for _, trade := range trades {
-		amount24h.Add(trade.Price.Mul(trade.Amount))
-		quoteTokenVolume24h.Add(trade.Amount)
+		amount24h = amount24h.Add(trade.Price.Mul(trade.Amount))
+		quoteTokenVolume24h = quoteTokenVolume24h.Add(trade.Amount)
 	}
 
 	return &MarketStatus{

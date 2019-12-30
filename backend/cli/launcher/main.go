@@ -102,7 +102,7 @@ func Run(l *launcher.Launcher, startMetrics func()) {
 			// todo any other fields?
 			modelLaunchLog.Hash = log.Hash
 
-			models.UpdateLaunchLogToPending(modelLaunchLog)
+			err = models.UpdateLaunchLogToPending(modelLaunchLog)
 
 			if err != nil {
 				utils.Infof("Update Launch Log Failed, ID: %d, err: %s", modelLaunchLog.ID, err)

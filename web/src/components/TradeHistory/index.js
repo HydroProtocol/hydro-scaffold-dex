@@ -48,7 +48,7 @@ class TradeHistory extends React.PureComponent {
                       )}
                     </td>
                     <td className="text-right">{new BigNumber(trade.amount).toFixed(currentMarket.amountDecimals)}</td>
-                    <td className="text-secondary">{moment(trade.executedAt).format('hh:mm:ss')}</td>
+                    <td className="text-secondary">{moment(trade.executedAt).format('HH:mm:ss')}</td>
                   </tr>
                 );
               })}
