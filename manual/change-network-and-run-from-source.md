@@ -38,7 +38,7 @@ If the following command shows nothing docker containers existent, you are good 
 
 ## Step 2: Prepare Your Network
 
-**If you are deploying to the Ethereum Mainnet, Ropsten or LocalHost skip to Step 3** as these networks have already been prepared.
+**If you are deploying to the Ethereum Mainnet, Ropsten or localhost skip to Step 3** as these networks have already been prepared.
 
 To use this DEX on a custom network you must first deploy the required [Hydro Protocol v1.1 smart contracts](https://github.com/HydroProtocol/protocol/tree/v1.1). Ensure you are using the correct protocol branch, tagged **v1.1**, as other branches may be incompatible with the current DEX version. This can be done using the provided [deploy script](https://github.com/HydroProtocol/protocol/blob/v1.1/scripts/deploy.js) or following the steps below.
 
