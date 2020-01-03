@@ -36,7 +36,27 @@ If the following command shows nothing docker containers existent, you are good 
 
 	docker ps -a | grep hydro-scaffold-dex
 
-## Step 2: Prepare a relayer address
+## Step 2: Prepare Your Network
+
+**If you are deploying to the Ethereum Mainnet, Ropsten or localhost skip to Step 3** as these networks have already been prepared.
+
+To use this DEX on a custom network you must first deploy the required [Hydro Protocol v1.1 smart contracts](https://github.com/HydroProtocol/protocol/tree/v1.1). Ensure you are using the correct protocol branch, tagged **v1.1**, as other branches may be incompatible with the current DEX version. This can be done using the provided [deploy script](https://github.com/HydroProtocol/protocol/blob/v1.1/scripts/deploy.js) or following the steps below.
+
+1. Deploy `Proxy.sol`, `TestToken.sol` and `HybridExchange.sol` to your Network. You must pass the addresses of Proxy and TestToken to the HybridExchange's constructor.
+
+2. Update the contract address entries in your docker-compose.yaml with the new addresses.
+
+        HSK_HYBRID_EXCHANGE_ADDRESS=new_HybridExchange_Address
+        HSK_PROXY_ADDRESS=new_Proxy_Address
+        HSK_HYDRO_TOKEN_ADDRESS=new_TestToken_Address
+
+3. Call `addAddress` on the Proxy smart contract to register the exchange.
+
+        addAddress(new_HybridExchange_Address)
+        
+   (This is done automatically if you used the provided deploy script)
+
+## Step 3: Prepare a relayer address
 
 A Hydro Relayer needs to send matching orders to the Hydro Protocol Smart Contracts for settlement. It needs to provide the private key of the relayer address to sign the matching transactions.
 
@@ -52,7 +72,7 @@ For the other environments, you shoud prepare your own relayer address. The valu
 
 4) Hydro protocol require all relayer address has all quote token approved. It's beacuse when the taker side is `sell`, relayer will be a delegater for quote token between makers and taker. It is designed to allow taker to pay fee without quote approved. You can operate follow this [manual](admin-api-and-cli.md#approve-market-tokens-1) to approve tokens. This also requires some Ether to pay gas.
 
-## Step 3: Start the service
+## Step 4: Start the service
 
 Use docker-compose to start the service.
 
@@ -64,7 +84,7 @@ docker-compose -f docker-compose-ropsten.yaml up
 docker-compose -f docker-compose-ropsten-source.yaml up
 ```
 
-## Step 4: Use
+## Step 5: Use
 
 Open `http://localhost:3000/` on your browser. 
 
