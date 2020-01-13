@@ -282,7 +282,7 @@ func BuildAndCacheOrder(address string, order *BuildOrderReq) (*BuildOrderResp, 
 
 	baseTokenHugeAmount = amount.Mul(decimal.New(1, int32(market.BaseTokenDecimals)))
 	quoteTokenHugeAmount = price.Mul(amount).Mul(decimal.New(1, int32(market.QuoteTokenDecimals)))
-
+	rand.Seed(time.Now().UnixNano())
 	orderData := hydro.GenerateOrderData(
 		int64(2),
 		getExpiredAt(order.Expires),
