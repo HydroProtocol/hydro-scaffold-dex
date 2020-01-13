@@ -21,6 +21,7 @@ import (
 var apiURL = os.Getenv("HSK_API_URL")
 
 func randomNumber(min, max, decimals float64) float64 {
+	rand.Seed(time.Now().UnixNano())
 	r := rand.Float64()*(max-min) + min
 	pow := math.Pow(10, float64(decimals))
 	return math.Floor(r*pow) / pow
