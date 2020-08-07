@@ -4,7 +4,7 @@
 
 [Hydro Protocol](https://hydroprotocol.io) is an open source framework for building decentralized exchanges.
 
-More detailed information can be found in our [developer documentation](https://developer.hydroprotocol.io/docs/overview/getting-started.html).
+More detailed information can be found in our [developer documentation](https://hydroprotocol.io/docs/overview/getting-started.html).
 
 Building on Hydro? Come chat with our team on our [Hydro Relayer Slack Channel](https://join.slack.com/t/hydrorelayer/shared_invite/enQtNTc1Mjc3MDUyNTkzLWNmZjI0YmFhNTg4OTU4NTI5ZWE1MzY1ZTc1MDMyYmE1YzkwYWUwYzQ2MTNhMTRjNmVjMmEyOTRkMjFlNzAyMTQ).
 
@@ -114,7 +114,7 @@ You now have a fully functioning DEX on your local system, complete with a CLI f
 
 2. **Deploying your DEX**
 
-   Check out our [Developer Documentation](https://developer.hydroprotocol.io/docs/overview/getting-started.html#deploying-your-dex) or come chat with us on our [slack]((https://join.slack.com/t/hydrorelayer/shared_invite/enQtNTc1Mjc3MDUyNTkzLWNmZjI0YmFhNTg4OTU4NTI5ZWE1MzY1ZTc1MDMyYmE1YzkwYWUwYzQ2MTNhMTRjNmVjMmEyOTRkMjFlNzAyMTQ)).
+   Check out our [Developer Documentation](https://hydroprotocol.io/docs/overview/getting-started.htmlx) or come chat with us on our [slack]((https://join.slack.com/t/hydrorelayer/shared_invite/enQtNTc1Mjc3MDUyNTkzLWNmZjI0YmFhNTg4OTU4NTI5ZWE1MzY1ZTc1MDMyYmE1YzkwYWUwYzQ2MTNhMTRjNmVjMmEyOTRkMjFlNzAyMTQ)).
 
 ***
 
