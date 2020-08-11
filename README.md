@@ -1,8 +1,6 @@
 ---
 
-[Hydro Protocol](https://hydroprotocol.io) is an open source toolkit for building decentralized exchanges,
-
-More detailed information can be found in our [developer documentation](https://hydroprotocol.io/docs/overview/getting-started.html).
+[Hydro Protocol](https://hydroprotocol.io) is an open source toolkit for building decentralized exchanges and DeFi applications on Ethereum. Checkout the [developer documentation](https://hydroprotocol.io/docs/overview/getting-started.html) for more details.
 
 ---
 
