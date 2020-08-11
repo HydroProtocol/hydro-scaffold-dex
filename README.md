@@ -1,33 +1,29 @@
-![image](assets/hydro_black_wider.png)
+---
 
-***
-
-[Hydro Protocol](https://hydroprotocol.io) is an open source framework for building decentralized exchanges.
+[Hydro Protocol](https://hydroprotocol.io) is an open source toolkit for building decentralized exchanges,
 
 More detailed information can be found in our [developer documentation](https://hydroprotocol.io/docs/overview/getting-started.html).
 
-Building on Hydro? Come chat with our team on our [Hydro Relayer Slack Channel](https://join.slack.com/t/hydrorelayer/shared_invite/enQtNTc1Mjc3MDUyNTkzLWNmZjI0YmFhNTg4OTU4NTI5ZWE1MzY1ZTc1MDMyYmE1YzkwYWUwYzQ2MTNhMTRjNmVjMmEyOTRkMjFlNzAyMTQ).
+---
 
-***
+# Overview
 
-# Standard DEX Scaffold
+This repository provides a basic scaffold for building a Decentralized Exchange (DEX) on the Ethereum blockchain. Follow the guides to learn how to:
 
-This repository provides a basic template for building a Decentralized Exchange (DEX) on the Ethereum blockchain. When you finish the steps outlined in this guide, you will have:
-
-- Setup a fully functioning DEX (or "Hydro Relayer") on your local server
-- Leveraged Hydro Protocol smart contracts on Ethereum to securely exchange tokens
-- Performed some trades on your DEX
-- Learned how to customize your DEX: change fees, add markets, etc.
+- Setup an open source, fully modifyable decentralized exchange on your local server
+- Send Ethereum transactions
+- Make changes to the front-end UI
+- Customize all parts of a DeFi application: change fees, parameters, adding markets, etc.
 
 ![web-screen-shot](./assets/hydro_dex_scaffold_screenshot.png)
 
 It should take less than 10 minutes to get your DEX running.
 
-## Launching Your DEX
+## Launching the Scaffold App
 
 ### Prerequisites
 
-The only required software that you must have installed are `docker` and `docker-compose`.
+The easiest way to launch the scaffold dex is via `docker` and `docker-compose`.
 
 If you don't already have them installed, you can follow [this link](https://docs.docker.com/compose/install/) to install them (free).
 
@@ -48,21 +44,22 @@ If you don't already have them installed, you can follow [this link](https://doc
     This step may takes a few minutes.
     When complete, it will start all necessary services.
 
-    It will use ports `3000`, `3001`, `3002`, `6379`, `8043`, and `8545` on your computer. Please make sure theses ports are available.
+    Note: It will use ports `3000`, `3001`, `3002`, `6379`, `8043`, and `8545` on your computer. Please make sure theses ports are available.
 
 1.  **Check out your relayer**
 
     Open http://localhost:3000/ on your browser to see your exchange in action!
-    
+
 ## Testdrive Your DEX
 
 Now that your DEX is up on your local server, let's try it out a bit.
 
 1. **Connect a wallet**
 
-   You can connect to a wallet by clicking the button at right-top corner. We have already prepared an address for you. 
+   You can connect to a wallet by clicking the button at right-top corner. The demo is running a localhost ethereum instance, with a pre-configured wallet address:
 
    You can find it under the `Browser Wallet` type. The address is:
+
 - public key: `0x31ebd457b999bf99759602f5ece5aa5033cb56b3`
 - private key: `0xb7a0c9d2786fc4dd080ea5d619d36771aeb0c8c26c290afd3451b92ba2b7bc2c`
 
@@ -72,17 +69,17 @@ Now that your DEX is up on your local server, let's try it out a bit.
 
 ## Configuring Your DEX
 
-Our Hydro Scaffolds come with a powerful API and easy Command Line Interface (CLI) for configuring your DEX. 
+Our Hydro Scaffolds come with a powerful API and easy Command Line Interface (CLI) for configuring your DEX.
 
-1. **Login to the CLI**
+1.  **Login to the CLI**
 
         docker-compose exec admin sh
 
-2. **View the CLI manual to see a list of functions you can perform**
+2.  **View the CLI manual to see a list of functions you can perform**
 
     See [admin cli manual](./manual/admin-api-and-cli.md#cli-guide-admin-cli)
 
-3. **Try creating a new market**
+3.  **Try creating a new market**
 
         hydro-dex-ctl market new HOT-WWW \
           --baseTokenAddress=0x4c4fa7e8ea4cfcfc93deae2c0cff142a1dd3a218 \
@@ -96,7 +93,7 @@ Our Hydro Scaffolds come with a powerful API and easy Command Line Interface (CL
 
 - This makes the market viewable on the frontend
 
-4. **Exit the CLI**
+4.  **Exit the CLI**
 
         exit
 
@@ -106,41 +103,39 @@ Our Hydro Scaffolds come with a powerful API and easy Command Line Interface (CL
 
 You now have a fully functioning DEX on your local system, complete with a CLI for easy customization.
 
-1. **Support Channels**
+1. **Support**
 
-   We're happy to help you through the setup process at anytime. Our [Hydro Relayer Slack Channel](https://join.slack.com/t/hydrorelayer/shared_invite/enQtNTc1Mjc3MDUyNTkzLWNmZjI0YmFhNTg4OTU4NTI5ZWE1MzY1ZTc1MDMyYmE1YzkwYWUwYzQ2MTNhMTRjNmVjMmEyOTRkMjFlNzAyMTQ) is designed specifically for this. Come say hi and show off your DEX!
-
-   Our team has thorough exchange experience and would be happy to talk over details of what it takes to operate a successful relayer.
+   Please open an Github Issue for questions, requests, or bugs.
 
 2. **Deploying your DEX**
 
-   Check out our [Developer Documentation](https://hydroprotocol.io/docs/overview/getting-started.htmlx) or come chat with us on our [slack]((https://join.slack.com/t/hydrorelayer/shared_invite/enQtNTc1Mjc3MDUyNTkzLWNmZjI0YmFhNTg4OTU4NTI5ZWE1MzY1ZTc1MDMyYmE1YzkwYWUwYzQ2MTNhMTRjNmVjMmEyOTRkMjFlNzAyMTQ)).
+   Check out our [Developer Documentation](https://hydroprotocol.io/docs/overview/getting-started.html).
 
-***
+---
 
 # Additional Info
 
 ## Useful Docker Commands
 
-1. **Display the status of all services running**
+1.  **Display the status of all services running**
 
-        docker-compose ps
+         docker-compose ps
 
-   This command displays the status of all services running in docker. It's helpful for troubleshooting and for understanding the combination of components that goes into running your DEX.
+    This command displays the status of all services running in docker. It's helpful for troubleshooting and for understanding the combination of components that goes into running your DEX.
 
-2. **Stopping your DEX**
+2.  **Stopping your DEX**
 
-        docker-compose stop
+         docker-compose stop
 
-   This command will stop all of the current services running in docker.
+    This command will stop all of the current services running in docker.
 
-3. **Restarting your DEX**
+3.  **Restarting your DEX**
 
-        docker-compose pull && docker-compose up -d
+         docker-compose pull && docker-compose up -d
 
-   The same command that you ran to start it the first time can be used for subsequent restarts. Always run the pull command first, as the docker-compose up command will not run without an image.
+    The same command that you ran to start it the first time can be used for subsequent restarts. Always run the pull command first, as the docker-compose up command will not run without an image.
 
-4. **View logs**
+4.  **View logs**
 
         # view logs of the service that defined in docker-compose.yml services
         # e.g. view watcher log
@@ -162,11 +157,13 @@ You now have a fully functioning DEX on your local system, complete with a CLI f
 
 - Frontend:
   - A Basic Exchange Web UI
+  - A modular Ethereum Wallet interface
 - Backend:
-  - Http Server to serve API data
+  - API Server
   - Websocket Server to handle keepalive connections and serve realtime data
-  - Matching Engine to send matching orders to the hydro smart contracts
-  - Blockchain Monitor to watch for transaction changes on the blockchain
+  - Matching Engine to send matching orders to the hydro smart contracts on Ethereum
+  - Monitoring processes to watch for transaction changes on the blockchain
+  - Examples of market making bots, including a Uniswap-like constant price AMM
 - [PostgresSQL](https://www.postgresql.org) database
 - [ganache-cli](https://github.com/trufflesuite/ganache-cli) to run a local ethereum node and support for ropsten and mainnet
 
