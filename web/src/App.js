@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { loadMarkets, loadTradeHistory } from './actions/markets';
+import { loadMarkets, loadExchange, loadTradeHistory } from './actions/markets';
 import Header from './components/Header';
 import WebsocketConnector from './components/WebsocketConnector';
 import OrderBook from './components/Orderbook';
@@ -38,6 +38,7 @@ class App extends React.PureComponent {
   componentDidMount() {
     const { dispatch, currentMarket } = this.props;
     dispatch(loadMarkets());
+    dispatch(loadExchange());
     if (parseInt(env.NETWORK_ID) === 66) {
       this.initTestBrowserWallet();
     }

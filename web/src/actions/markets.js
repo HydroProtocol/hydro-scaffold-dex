@@ -24,6 +24,24 @@ export const loadMarkets = () => {
   };
 };
 
+export const loadExchange = () => {
+  return async (dispatch, getState) => {
+    try {
+      const res = await Promise.all([api.coinBaseGet('/exchangerate/DAI/USD'), api.coinBaseGet('/exchangerate/HOT/USD'), api.coinBaseGet('/exchangerate/ETH/USD')]);
+      if (res) {
+        const dollarExchange = {DAI: res[0]['data']['rate'], HOT: res[1]['data']['rate'], WETH: res[2]['data']['rate']}
+        return dispatch({
+          type: 'LOAD_DOLLAR_EXCHANGE_RATE',
+          payload: dollarExchange
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  }
+}
+
 // load current market trade history
 export const loadTradeHistory = marketID => {
   return async (dispatch, getState) => {
